@@ -46,4 +46,31 @@ def get_projects():
     
     return result
 
+@app.get("/analysis")
+def analysis():
+    # 總預算
+    cursor.execute("SELECT SUM(budget) FROM projects")
+    total_budget = cursor.fetchone()[0]
+    
+
+
+    # 平均預算
+    cursor.execute("SELECT AVG(budget) FROM projects")
+    avg_budget = cursor.fetchone()[0]
+
+    # 項目數量
+    cursor.execute("SELECT COUNT(*) FROM projects")
+    total_projects = cursor.fetchone()[0]
+
+    return {
+        "total_budget": total_budget,
+        "avg_budget": avg_budget,
+        "total_projects": total_projects
+    }
+
+
+
+
+
+
 
