@@ -68,9 +68,35 @@ def analysis():
         "total_projects": total_projects
     }
 
+@app.get("/count")
+def count():
+    cursor.execute("SELECT COUNT(*) FROM projects WHERE budget >= 200000")
+    count = cursor.fetchone()[0]
+
+    return {
+        "The count of budget over 200000": count
+    }
 
 
 
 
+@app.get("/project_cost/{project_id}")
+def project_cost(project_id: int):
+    cursor.execute(
+        "SELECT SUM(amount) FROM costs WHERE project_id = %s",
+        (project_id, )
+        )
+    
+    
+    project_cost = cursor.fetchone()[0] or 0
+
+    return {
+        "project_cost id:": project_id,
+        "project_cost is:": project_cost
+
+    }
 
 
+@app.get("/test/{x}")
+def test(x: int):
+    return {"value:", x}
