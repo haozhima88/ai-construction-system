@@ -134,3 +134,27 @@ def get_project_profit(project_id: int):
         "profit:": profit
     }
 
+@app.get("/project-profit-join/{project_id}")
+def get_project_join(project_id: int):
+    cursor.execute("""
+        SELECT
+            p.id,
+            p.budget,
+            COALESCE(SUM(c.amount),0) AS total_cost,
+            p.budget - COALESCE(SUM(c.amount), 0) AS profit
+        FROM projects p
+        LEFT JOIN costs c ON p.id = c.project_id
+        WHERE p.id = %s
+        GROUP BY p.id
+        """, (project_id,)    
+    )
+    result = cursor.fetchone()
+    if not result:
+        return {"Error": "project not found!"}
+
+    return{
+        "project_id": result[0],
+        "budget:": result[1],
+        "total_cost:": result[2],
+        "profit:":result[3]
+    }
