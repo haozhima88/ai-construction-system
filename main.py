@@ -14,12 +14,12 @@ app = FastAPI()
 def read_root():
     return {"message": "AI system is running"}
 
-# 2. 简单计算接口
+# 2. 簡單計算接口
 @app.get("/add")
 def add(a: int, b: int):
     return {"result": a + b}
 
-# 3. 新增接口： 创建项目
+# 3. 新增接口： 創建項目
 @app.post("/projects")
 def create_project(projects: Project):
     cursor.execute(
@@ -30,7 +30,7 @@ def create_project(projects: Project):
     conn.commit()
     return {"message": "project created"}
 
-# 4. 新增接口： 查询项目
+# 4. 新增接口： 查詢項目
 @app.get("/projects")
 def get_projects():
     cursor.execute("SELECT * FROM projects")
@@ -70,6 +70,7 @@ def analysis():
 
 @app.get("/count")
 def count():
+    # 找出預算超過20萬的項目數量
     cursor.execute("SELECT COUNT(*) FROM projects WHERE budget >= 200000")
     count = cursor.fetchone()[0]
 
@@ -82,6 +83,7 @@ def count():
 
 @app.get("/project_cost/{project_id}")
 def project_cost(project_id: int):
+    # 通過id計算縂成本
     cursor.execute(
         "SELECT SUM(amount) FROM costs WHERE project_id = %s",
         (project_id, )
@@ -96,7 +98,39 @@ def project_cost(project_id: int):
 
     }
 
+# 測試裝飾器
+# @app.get("/test/{x}")
+# def test(x: int):
+#     return {"value:", x}
 
-@app.get("/test/{x}")
-def test(x: int):
-    return {"value:", x}
+@app.get("/project-frofit/{project_id}")
+def get_project_profit(project_id: int):
+    # 查預算
+    cursor.execute(
+        "SELECT budget FROM projects WHERE id = %s",
+        (project_id,)
+    )
+    budget = cursor.fetchone()
+
+    if not budget:
+        return {"error:": "Project not found"}
+    
+    budget = budget[0]
+
+    # 查成本
+    cursor.execute(
+        "SELECT SUM(amount) FROM costs WHERE project_id = %s", 
+        (project_id,)
+    )
+    total_cost = cursor.fetchone()[0] or 0
+
+    # 計算利潤
+    profit = budget - total_cost
+
+    return {
+        "project_id:": project_id,
+        "budget:": budget,
+        "total_cost:" : total_cost,
+        "profit:": profit
+    }
+
