@@ -19,7 +19,7 @@ def read_root():
 def add(a: int, b: int):
     return {"result": a + b}
 
-# 3. 新增接口： 創建項目
+# 3. 新增接口： 創建專案
 @app.post("/projects")
 def create_project(projects: Project):
     cursor.execute(
@@ -30,7 +30,7 @@ def create_project(projects: Project):
     conn.commit()
     return {"message": "project created"}
 
-# 4. 新增接口： 查詢項目
+# 4. 新增接口： 查詢專案
 @app.get("/projects")
 def get_projects():
     cursor.execute("SELECT * FROM projects")
@@ -58,7 +58,7 @@ def analysis():
     cursor.execute("SELECT AVG(budget) FROM projects")
     avg_budget = cursor.fetchone()[0]
 
-    # 項目數量
+    # 專案數量
     cursor.execute("SELECT COUNT(*) FROM projects")
     total_projects = cursor.fetchone()[0]
 
@@ -70,7 +70,7 @@ def analysis():
 
 @app.get("/count")
 def count():
-    # 找出預算超過20萬的項目數量
+    # 找出預算超過20萬的專案數量
     cursor.execute("SELECT COUNT(*) FROM projects WHERE budget >= 200000")
     count = cursor.fetchone()[0]
 
