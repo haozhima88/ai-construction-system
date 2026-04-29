@@ -153,8 +153,38 @@ def get_project_join(project_id: int):
         return {"Error": "project not found!"}
 
     return{
-        "project_id": result[0],
-        "budget:": result[1],
-        "total_cost:": result[2],
-        "profit:":result[3]
+        "project_id":{
+            "id": result[0],
+            "budget:": result[1]
+        },
+        "cost":{
+            "total_cost:": result[2]
+        },
+        "profit":{
+            "profit:":result[3]
+        }
+    }
+
+@app.get("/project-cost-detail/{project_id}")
+def get_project_cost_detail(project_id: int):
+    cursor.execute("""
+        SELECT cost_type, amount 
+        FROM costs
+        WHERE project_id = %s
+    """,(project_id,)
+        )
+    
+    result = cursor.fetchall()
+
+    if not result:
+        return{"error": "project not found!"}
+    
+    costs = [
+        {"type": row[0], "amount": row[1]}
+        for row in result
+    ]
+    
+    return{
+        "project_id": project_id,
+        "costs":costs
     }
