@@ -2,18 +2,18 @@
 
 ## 📌 專案簡介
 
-本專案基於 FastAPI + PostgreSQL 開發，用於模擬建築企業中的專案管理系統。
+本專案使用 FastAPI + PostgreSQL 建立一個模擬建築專案管理系統。
 
 目標：
 
-* 建立專案與成本數據模型
-* 實現數據分析與業務計算
-* 培養 API + SQL + 系統設計能力
-* 為 AI 應用打下基礎
+* 建立資料模型（專案 / 成本）
+* 完成資料分析（預算 / 成本 / 利潤）
+* 提升 API 設計能力
+* 為 AI 分析做準備
 
 ---
 
-## 🚀 已實現功能（Day 1 - Day 6）
+## 🚀 功能進度（Day 1 - Day 7）
 
 ### 1️⃣ 專案管理
 
@@ -25,18 +25,15 @@
 ### 2️⃣ 數據分析
 
 * GET /analysis
-
-支援：
-
-* SUM / AVG / COUNT
+* 支援 SUM / AVG / COUNT
 
 ---
 
-### 3️⃣ 成本系統（多表）
+### 3️⃣ 成本系統
 
 * projects（主表）
 * costs（子表）
-* 一對多關係（project → costs）
+* 一對多關係
 
 ---
 
@@ -46,28 +43,54 @@
 
 ---
 
-### 5️⃣ 利潤分析（Python計算）
+### 5️⃣ 利潤分析（Python）
 
 * GET /project-profit/{project_id}
 
 ---
 
-### 6️⃣ 利潤分析（JOIN優化）⭐
+### 6️⃣ 利潤分析（JOIN）
 
 * GET /project-profit-join/{project_id}
 
 ---
 
-## 🧠 核心技術重點
+### 7️⃣ 成本明細（新增 ⭐）
 
-### SQL JOIN（核心能力）
+* GET /project-cost-detail/{project_id}
 
-```sql id="sql_join_readme"
+#### 回傳格式：
+
+```json
+{
+  "project_id": 1,
+  "costs": [
+    {"type": "人工費", "amount": 100000},
+    {"type": "材料費", "amount": 80000}
+  ]
+}
+```
+
+---
+
+## 🧠 技術重點
+
+### fetchone vs fetchall
+
+```text
+fetchone → 單筆資料
+fetchall → 多筆資料（list）
+```
+
+---
+
+### JOIN 查詢（核心）
+
+```sql
 SELECT 
     p.id,
     p.budget,
-    COALESCE(SUM(c.amount), 0) AS total_cost,
-    p.budget - COALESCE(SUM(c.amount), 0) AS profit
+    COALESCE(SUM(c.amount), 0) AS total_cost
 FROM projects p
 LEFT JOIN costs c ON p.id = c.project_id
 GROUP BY p.id;
@@ -75,32 +98,12 @@ GROUP BY p.id;
 
 ---
 
-### cursor.execute 使用方式
+### API 設計升級
 
-#### 簡單查詢
-
-```python id="simple_exec"
-cursor.execute("SELECT * FROM projects")
+```text
+✔ 扁平 → 結構化（dict）
+✔ 單值 → 列表（list）
 ```
-
-#### 複雜查詢（推薦）
-
-```python id="multi_exec"
-cursor.execute("""
-    SELECT ...
-    FROM ...
-    JOIN ...
-""")
-```
-
----
-
-## 🧠 技術棧
-
-* Python
-* FastAPI
-* PostgreSQL
-* psycopg2
 
 ---
 
@@ -118,7 +121,7 @@ ai-system/
 
 ## ⚙️ 執行方式
 
-```bash id="run_cmd"
+```bash
 venv\Scripts\activate
 pip install fastapi[standard] psycopg2-binary
 uvicorn main:app --reload
@@ -132,20 +135,9 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 📈 學習進度
-
-* Day 1：API
-* Day 2：資料庫
-* Day 3：統計
-* Day 4：多表
-* Day 5：業務邏輯（利潤）
-* Day 6：JOIN優化（核心能力）
-
----
-
 ## 🔮 下一步
 
-* 成本明細 API
-* 返回結構優化
-* API 設計進階
-* AI 數據分析
+* 查詢參數（filter）
+* 分頁（pagination）
+* API 標準化
+* AI 分析功能
