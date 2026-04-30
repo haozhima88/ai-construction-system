@@ -9,6 +9,12 @@ class Project(BaseModel):
 
 app = FastAPI()
 
+# 測試裝飾器
+# @app.get("/test/{x}")
+# def test(x: int):
+#     return {"value:", x}
+
+
 # 1. 根接口
 @app.get("/")
 def read_root():
@@ -98,10 +104,6 @@ def project_cost(project_id: int):
 
     }
 
-# 測試裝飾器
-# @app.get("/test/{x}")
-# def test(x: int):
-#     return {"value:", x}
 
 @app.get("/project-frofit/{project_id}")
 def get_project_profit(project_id: int):
@@ -187,4 +189,51 @@ def get_project_cost_detail(project_id: int):
     return{
         "project_id": project_id,
         "costs":costs
+    }
+
+
+@app.get("/projects/filter")
+def filter_projects(min_budget: int = 0):
+    # 查詢參數，大於某一預算
+    cursor.execute("""
+        SELECT id, name, budget
+        FROM projects
+        WHERE budget >= %s
+    """,(min_budget,))
+
+    rows = cursor.fetchall()
+
+    projects = [
+        {"id": row[0], "name":row[1], "budget": row[2]}
+        for row in rows
+    ]
+
+    return {
+        "count": len(projects),
+        "projects": projects
+    }
+
+
+@app.get("/projects/page")
+def get_projects_page(limit: int = 10, offset: int = 0):
+    # 分頁（Pagination）
+    cursor.execute("""
+        SELECT id, name, budget
+        FROM projects
+        ORDER BY id
+        LIMIT %s OFFSET %s
+    """,(limit, offset))
+
+    rows = cursor.fetchall()
+
+    projects = [
+        {"id": row[0], "name":row[1], "budget": row[2]}
+        for row in rows
+    ]
+
+    return {
+        "limit": limit,
+        "offset": offset,
+        "count": len(projects),
+        "projects": projects
     }

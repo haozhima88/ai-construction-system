@@ -1,8 +1,8 @@
-# 📚 Learning Notes（關鍵知識整理）
+# 📚 Learning Notes（完整知識整理）
 
 ---
 
-## 1️⃣ fetchone vs fetchall（重要）
+## 1️⃣ fetchone vs fetchall
 
 ### fetchone
 
@@ -38,36 +38,18 @@ cursor.fetchall()
 ### ❗判斷原則
 
 ```text
-查一筆 → fetchone
-查多筆 → fetchall
+單筆 → fetchone
+多筆 → fetchall
 ```
 
 ---
 
-## 2️⃣ 常見錯誤（本次踩坑）
+## 2️⃣ 常見錯誤
 
 ```python
 result = cursor.fetchone()
 
-for row in result: ❌
-```
-
----
-
-### 原因
-
-```text
-result 是 tuple，不是 list
-```
-
----
-
-### 正確
-
-```python
-rows = cursor.fetchall()
-
-for row in rows:
+for row in result ❌
 ```
 
 ---
@@ -91,7 +73,15 @@ LEFT JOIN costs ON p.id = c.project_id
 
 ---
 
-## 5️⃣ COALESCE
+## 5️⃣ GROUP BY
+
+```sql
+GROUP BY p.id
+```
+
+---
+
+## 6️⃣ COALESCE
 
 ```sql
 COALESCE(SUM(amount), 0)
@@ -99,25 +89,48 @@ COALESCE(SUM(amount), 0)
 
 ---
 
+## 7️⃣ 查詢參數 vs 路徑參數
+
+```text
+/project/1 → path
+/projects?min=100 → query
+```
+
+---
+
+## 8️⃣ 分頁（Pagination）
+
+```sql
+LIMIT 10 OFFSET 0
+```
+
+---
+
 ### 含義
 
 ```text
-NULL → 0
+LIMIT → 筆數
+OFFSET → 起點
 ```
 
 ---
 
-## 6️⃣ API 設計
+## 9️⃣ API 結構設計
 
 ```text
-✔ 使用 list（多筆）
-✔ 使用 dict（結構化）
-✔ 不要扁平設計
+不要扁平
+使用：
+{
+  "query": {},
+  "pagination": {},
+  "count": 10,
+  "data": []
+}
 ```
 
 ---
 
-## 7️⃣ Python tuple 陷阱
+## 🔟 Python tuple 陷阱
 
 ```python
 (project_id)   ❌
@@ -126,7 +139,7 @@ NULL → 0
 
 ---
 
-## 8️⃣ SQL 參數化
+## 11️⃣ SQL 參數化
 
 ```python
 cursor.execute(
@@ -150,5 +163,5 @@ API → JSON
 ## 🚀 學習方法
 
 ```text
-自己寫 → 出錯 → 修正 → 記錄（LEARNING.md）
+自己寫 → 出錯 → 修正 → 記錄
 ```

@@ -2,18 +2,18 @@
 
 ## 📌 專案簡介
 
-本專案使用 FastAPI + PostgreSQL 建立一個模擬建築專案管理系統。
+本專案使用 FastAPI + PostgreSQL 建立一個建築專案管理系統。
 
 目標：
 
-* 建立資料模型（專案 / 成本）
-* 完成資料分析（預算 / 成本 / 利潤）
-* 提升 API 設計能力
-* 為 AI 分析做準備
+* 建立專案與成本資料模型
+* 實現預算 / 成本 / 利潤分析
+* 設計可擴展 API 結構
+* 為 AI 分析能力做準備
 
 ---
 
-## 🚀 功能進度（Day 1 - Day 7）
+## 🚀 功能進度（Day 1 - Day 8）
 
 ### 1️⃣ 專案管理
 
@@ -55,18 +55,48 @@
 
 ---
 
-### 7️⃣ 成本明細（新增 ⭐）
+### 7️⃣ 成本明細 ⭐
 
 * GET /project-cost-detail/{project_id}
 
-#### 回傳格式：
+---
+
+### 8️⃣ 查詢與分頁（新增 ⭐⭐）
+
+#### 查詢（Filter）
+
+```text
+GET /projects/filter?min_budget=100000
+```
+
+#### 分頁（Pagination）
+
+```text
+GET /projects/page?limit=10&offset=0
+```
+
+#### 查詢 + 分頁
+
+```text
+GET /projects/search?min_budget=100000&limit=10&offset=0
+```
+
+---
+
+## 📊 API 回傳結構（升級）
 
 ```json
 {
-  "project_id": 1,
-  "costs": [
-    {"type": "人工費", "amount": 100000},
-    {"type": "材料費", "amount": 80000}
+  "query": {
+    "min_budget": 100000
+  },
+  "pagination": {
+    "limit": 10,
+    "offset": 0
+  },
+  "count": 2,
+  "projects": [
+    {"id": 1, "name": "A", "budget": 200000}
   ]
 }
 ```
@@ -75,34 +105,45 @@
 
 ## 🧠 技術重點
 
-### fetchone vs fetchall
+### 1️⃣ fetchone vs fetchall
 
 ```text
-fetchone → 單筆資料
-fetchall → 多筆資料（list）
+fetchone → 單筆
+fetchall → 多筆（list）
 ```
 
 ---
 
-### JOIN 查詢（核心）
+### 2️⃣ JOIN
 
 ```sql
-SELECT 
-    p.id,
-    p.budget,
-    COALESCE(SUM(c.amount), 0) AS total_cost
-FROM projects p
-LEFT JOIN costs c ON p.id = c.project_id
-GROUP BY p.id;
+LEFT JOIN costs ON p.id = c.project_id
 ```
 
 ---
 
-### API 設計升級
+### 3️⃣ COALESCE
+
+```sql
+COALESCE(SUM(amount), 0)
+```
+
+---
+
+### 4️⃣ 分頁
+
+```sql
+LIMIT + OFFSET
+```
+
+---
+
+### 5️⃣ API 設計
 
 ```text
-✔ 扁平 → 結構化（dict）
-✔ 單值 → 列表（list）
+✔ 使用 list 表示多筆資料
+✔ 使用 dict 表示結構
+✔ 加入 query / pagination metadata
 ```
 
 ---
@@ -135,9 +176,8 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 🔮 下一步
+## 🔮 下一步（Day 9）
 
-* 查詢參數（filter）
-* 分頁（pagination）
-* API 標準化
-* AI 分析功能
+* API 標準化（Response Model）
+* 錯誤處理（HTTPException）
+* AI 分析模組（開始引入）
