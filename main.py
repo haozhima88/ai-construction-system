@@ -1,19 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from ai_analysis import analyze_project
 from db import conn, cursor
 from pydantic import BaseModel
+from typing import List
 
 class Project(BaseModel):
     name: str
     budget: float
 
+class CostItem(BaseModel):
+    type: str
+    amount: int
+
+class ProjectCostResponse(BaseModel):
+    project_id: int
+    costs: List[CostItem]
 
 app = FastAPI()
-
-# 測試裝飾器
-# @app.get("/test/{x}")
-# def test(x: int):
-#     return {"value:", x}
-
 
 # 1. 根接口
 @app.get("/")
@@ -167,7 +170,7 @@ def get_project_join(project_id: int):
         }
     }
 
-@app.get("/project-cost-detail/{project_id}")
+@app.get("/project-cost-detail/{project_id}", response_model=ProjectCostResponse)
 def get_project_cost_detail(project_id: int):
     cursor.execute("""
         SELECT cost_type, amount 
@@ -176,14 +179,14 @@ def get_project_cost_detail(project_id: int):
     """,(project_id,)
         )
     
-    result = cursor.fetchall()
+    rows = cursor.fetchall()
 
-    if not result:
-        return{"error": "project not found!"}
+    if not rows:
+        raise HTTPException(status_code=404, detail="Project not found")
     
     costs = [
         {"type": row[0], "amount": row[1]}
-        for row in result
+        for row in rows
     ]
     
     return{
@@ -237,3 +240,47 @@ def get_projects_page(limit: int = 10, offset: int = 0):
         "count": len(projects),
         "projects": projects
     }
+
+@app.get("/project-analysis/{project_id}")
+def project_analysis(project_id: int):
+    cursor.execute("""
+        SELECT 
+            p.budget,
+            COALESCE(SUM(c.amount), 0) AS total_cost
+        FROM projects p
+        LEFT JOIN costs c ON p.id = c.project_id
+        WHERE p.id = %s
+        GROUP BY p.id
+    """, (project_id,))
+    
+    result = cursor.fetchone()
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    budget, total_cost = result
+    profit = budget - total_cost
+
+    # 規則分析（不用AI）
+    if total_cost > budget:
+        status = "虧損"
+    elif total_cost > budget * 0.8:
+        status = "成本偏高"
+    else:
+        status = "正常"
+
+
+    analysis_text = analyze_project(budget, total_cost, profit)
+
+
+    return {
+        "project_id": project_id,
+        "budget": budget,
+        "total_cost": total_cost,
+        "profit": profit,
+        "status": status,
+        "ai_analysis": analysis_text
+    }
+    
+
+

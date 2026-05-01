@@ -1,69 +1,110 @@
-# AI 建築管理系統（AI Construction Management System）
+# 🏗️ AI 建築管理系統（AI Construction Management System）
+
+---
 
 ## 📌 專案簡介
 
-本專案使用 FastAPI + PostgreSQL 建立一個建築專案管理系統。
+本專案基於 **FastAPI + PostgreSQL + AI（可選）** 建立一套建築專案管理與分析系統。
 
-目標：
+核心目標：
 
-* 建立專案與成本資料模型
-* 實現預算 / 成本 / 利潤分析
-* 設計可擴展 API 結構
-* 為 AI 分析能力做準備
-
----
-
-## 🚀 功能進度（Day 1 - Day 8）
-
-### 1️⃣ 專案管理
-
-* POST /projects
-* GET /projects
+```text
+✔ 將建築業務數據結構化
+✔ 建立可擴展 API 系統
+✔ 實現成本與利潤分析
+✔ 引入 AI 作為決策輔助（非核心依賴）
+```
 
 ---
 
-### 2️⃣ 數據分析
+## 🎯 專案定位（非常重要）
 
-* GET /analysis
-* 支援 SUM / AVG / COUNT
+本專案不是單純後端練習，而是：
 
----
-
-### 3️⃣ 成本系統
-
-* projects（主表）
-* costs（子表）
-* 一對多關係
+```text
+「業務 + 系統 + AI」整合實驗
+```
 
 ---
 
-### 4️⃣ 成本統計
-
-* GET /project-cost/{project_id}
+## 🚀 已實現功能（Day 1 - Day 10）
 
 ---
 
-### 5️⃣ 利潤分析（Python）
+### 1️⃣ 專案管理（Projects）
 
-* GET /project-profit/{project_id}
+* 建立專案
+* 查詢專案
 
----
-
-### 6️⃣ 利潤分析（JOIN）
-
-* GET /project-profit-join/{project_id}
-
----
-
-### 7️⃣ 成本明細 ⭐
-
-* GET /project-cost-detail/{project_id}
+```text
+POST /projects
+GET /projects
+```
 
 ---
 
-### 8️⃣ 查詢與分頁（新增 ⭐⭐）
+### 2️⃣ 成本系統（Costs）
 
-#### 查詢（Filter）
+* 一對多關係（project → costs）
+* 成本分類（人工 / 材料 / 機械）
+
+---
+
+### 3️⃣ 數據分析（Analysis）
+
+```text
+GET /analysis
+```
+
+支援：
+
+```text
+✔ 總預算（SUM）
+✔ 平均預算（AVG）
+✔ 專案數量（COUNT）
+```
+
+---
+
+### 4️⃣ 利潤分析（Profit）
+
+#### Python 計算
+
+```text
+GET /project-profit/{project_id}
+```
+
+#### SQL JOIN 優化（核心能力）
+
+```text
+GET /project-profit-join/{project_id}
+```
+
+---
+
+### 5️⃣ 成本明細（結構化輸出）
+
+```text
+GET /project-cost-detail/{project_id}
+```
+
+回傳：
+
+```json
+{
+  "project_id": 1,
+  "costs": [
+    {"type": "人工費", "amount": 100000},
+    {"type": "材料費", "amount": 80000}
+  ]
+}
+```
+
+---
+
+### 6️⃣ 查詢與分頁（企業級 API）
+
+#### 篩選（Filter）
 
 ```text
 GET /projects/filter?min_budget=100000
@@ -83,67 +124,66 @@ GET /projects/search?min_budget=100000&limit=10&offset=0
 
 ---
 
-## 📊 API 回傳結構（升級）
+### 7️⃣ API 標準化（Day 9）
 
-```json
-{
-  "query": {
-    "min_budget": 100000
-  },
-  "pagination": {
-    "limit": 10,
-    "offset": 0
-  },
-  "count": 2,
-  "projects": [
-    {"id": 1, "name": "A", "budget": 200000}
-  ]
-}
-```
+* 使用 Pydantic（response_model）
+* 統一資料格式
+* HTTPException 錯誤處理
 
 ---
 
-## 🧠 技術重點
-
-### 1️⃣ fetchone vs fetchall
+### 8️⃣ AI 分析（Day 10，選用）
 
 ```text
-fetchone → 單筆
-fetchall → 多筆（list）
+GET /project-analysis/{project_id}
 ```
 
----
-
-### 2️⃣ JOIN
-
-```sql
-LEFT JOIN costs ON p.id = c.project_id
-```
-
----
-
-### 3️⃣ COALESCE
-
-```sql
-COALESCE(SUM(amount), 0)
-```
-
----
-
-### 4️⃣ 分頁
-
-```sql
-LIMIT + OFFSET
-```
-
----
-
-### 5️⃣ API 設計
+功能：
 
 ```text
-✔ 使用 list 表示多筆資料
-✔ 使用 dict 表示結構
-✔ 加入 query / pagination metadata
+✔ 自動計算（預算 / 成本 / 利潤）
+✔ 規則判斷（正常 / 偏高 / 虧損）
+✔ AI 自然語言分析（可選）
+```
+
+---
+
+## 🧠 系統架構設計（核心價值）
+
+```text
+資料層（SQL） → PostgreSQL
+邏輯層（Python） → FastAPI
+語意層（AI） → OpenAI API
+```
+
+---
+
+## ❗ AI 設計原則（非常關鍵）
+
+```text
+✔ AI = 解讀層（Interpretation）
+✔ SQL = 計算
+✔ Python = 邏輯
+```
+
+---
+
+## 🔐 環境變數與安全
+
+### 使用 `.env`
+
+```text
+OPENAI_API_KEY=your_api_key
+```
+
+---
+
+### 安全規範
+
+```text
+✔ .env 已加入 .gitignore
+✔ 不可上傳 GitHub
+✔ 使用 .env.example 提供範本
 ```
 
 ---
@@ -153,7 +193,11 @@ LIMIT + OFFSET
 ```
 ai-system/
 ├── main.py
+├── ai_analysis.py
 ├── db.py
+├── .env              ❌ 不提交
+├── .env.example      ✔ 提交
+├── .gitignore
 ├── README.md
 ├── LEARNING.md
 ```
@@ -164,7 +208,7 @@ ai-system/
 
 ```bash
 venv\Scripts\activate
-pip install fastapi[standard] psycopg2-binary
+pip install fastapi[standard] psycopg2-binary openai python-dotenv
 uvicorn main:app --reload
 ```
 
@@ -172,12 +216,40 @@ uvicorn main:app --reload
 
 ## 🔗 API 文件
 
+```text
 http://127.0.0.1:8000/docs
+```
 
 ---
 
-## 🔮 下一步（Day 9）
+## 📊 技術能力總結
 
-* API 標準化（Response Model）
-* 錯誤處理（HTTPException）
-* AI 分析模組（開始引入）
+```text
+✔ API 設計（FastAPI）
+✔ SQL（JOIN / 聚合）
+✔ 資料建模（Pydantic）
+✔ 分頁 / 查詢設計
+✔ AI 接入（OpenAI）
+✔ 環境與安全管理
+```
+
+---
+
+## 🔮 未來規劃
+
+```text
+✔ 多專案比較分析
+✔ 自動報告生成（AI）
+✔ 成本優化建議系統
+✔ Excel / 招標系統整合
+```
+
+---
+
+## 🎯 專案價值
+
+```text
+從「會寫程式」
+→ 到「設計業務系統」
+→ 到「AI賦能決策」
+```

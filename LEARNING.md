@@ -2,155 +2,7 @@
 
 ---
 
-## 1️⃣ fetchone vs fetchall
-
-### fetchone
-
-```python
-cursor.fetchone()
-```
-
-回傳：
-
-```text
-("人工費", 100000)
-```
-
----
-
-### fetchall
-
-```python
-cursor.fetchall()
-```
-
-回傳：
-
-```text
-[
-  ("人工費", 100000),
-  ("材料費", 80000)
-]
-```
-
----
-
-### ❗判斷原則
-
-```text
-單筆 → fetchone
-多筆 → fetchall
-```
-
----
-
-## 2️⃣ 常見錯誤
-
-```python
-result = cursor.fetchone()
-
-for row in result ❌
-```
-
----
-
-## 3️⃣ tuple → dict → list
-
-```python
-costs = [
-    {"type": row[0], "amount": row[1]}
-    for row in rows
-]
-```
-
----
-
-## 4️⃣ SQL JOIN
-
-```sql
-LEFT JOIN costs ON p.id = c.project_id
-```
-
----
-
-## 5️⃣ GROUP BY
-
-```sql
-GROUP BY p.id
-```
-
----
-
-## 6️⃣ COALESCE
-
-```sql
-COALESCE(SUM(amount), 0)
-```
-
----
-
-## 7️⃣ 查詢參數 vs 路徑參數
-
-```text
-/project/1 → path
-/projects?min=100 → query
-```
-
----
-
-## 8️⃣ 分頁（Pagination）
-
-```sql
-LIMIT 10 OFFSET 0
-```
-
----
-
-### 含義
-
-```text
-LIMIT → 筆數
-OFFSET → 起點
-```
-
----
-
-## 9️⃣ API 結構設計
-
-```text
-不要扁平
-使用：
-{
-  "query": {},
-  "pagination": {},
-  "count": 10,
-  "data": []
-}
-```
-
----
-
-## 🔟 Python tuple 陷阱
-
-```python
-(project_id)   ❌
-(project_id,)  ✅
-```
-
----
-
-## 11️⃣ SQL 參數化
-
-```python
-cursor.execute(
-    "SELECT * FROM projects WHERE id = %s",
-    (project_id,)
-)
-```
-
----
-
-## 🧠 核心理解
+## 🧠 一、資料流理解（核心）
 
 ```text
 資料庫 → tuple
@@ -160,8 +12,145 @@ API → JSON
 
 ---
 
-## 🚀 學習方法
+## 🧠 二、fetchone vs fetchall
 
 ```text
-自己寫 → 出錯 → 修正 → 記錄
+fetchone → 單筆
+fetchall → 多筆
+```
+
+---
+
+## 🧠 三、SQL 核心
+
+### JOIN
+
+```sql
+LEFT JOIN costs ON p.id = c.project_id
+```
+
+---
+
+### GROUP BY
+
+```sql
+GROUP BY p.id
+```
+
+---
+
+### COALESCE
+
+```sql
+COALESCE(SUM(amount), 0)
+```
+
+---
+
+## 🧠 四、API 設計
+
+```text
+/path → 單資源
+?query → 篩選
+limit/offset → 分頁
+```
+
+---
+
+## 🧠 五、Pydantic（專業感來源）
+
+```python
+class CostItem(BaseModel):
+```
+
+---
+
+### List[CostItem]
+
+```text
+✔ 定義結構
+✔ API 契約
+✔ 自動文件
+```
+
+---
+
+## 🧠 六、HTTPException
+
+```python
+raise HTTPException(status_code=404)
+```
+
+---
+
+## 🧠 七、分頁
+
+```sql
+LIMIT + OFFSET
+```
+
+---
+
+## 🧠 八、環境變數
+
+```text
+setx → 需重開 terminal
+.env → 推薦方式
+```
+
+---
+
+## 🧠 九、AI 使用原則
+
+```text
+✔ 解讀
+✔ 建議
+❌ 計算
+```
+
+---
+
+## 🧠 十、錯誤碼理解
+
+```text
+401 → Key錯
+429 → 沒額度
+```
+
+---
+
+## 🧠 十一、安全
+
+```text
+✔ .env 不上傳
+✔ 使用 .gitignore
+✔ 使用 .env.example
+```
+
+---
+
+## 🧠 十二、工程思維（最重要）
+
+```text
+能跑 ≠ 專業
+可維護 ≠ 能跑
+安全 ≠ 可選
+```
+
+---
+
+## 🧠 十三、AI 系統本質
+
+```text
+AI ≠ 系統
+AI = 語意層
+```
+
+---
+
+## 🧠 核心理解（總結）
+
+```text
+你不是在學 Python
+你在學「如何把業務變成系統」
 ```
