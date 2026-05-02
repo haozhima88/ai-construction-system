@@ -1,18 +1,16 @@
-# 📚 Learning Notes（完整知識整理）
+# 📚 Learning Notes（完整知識體系）
 
 ---
 
-## 🧠 一、資料流理解（核心）
+## 🧠 1️⃣ 資料流
 
 ```text
-資料庫 → tuple
-Python → dict
-API → JSON
+DB → tuple → Python → dict → API → JSON
 ```
 
 ---
 
-## 🧠 二、fetchone vs fetchall
+## 🧠 2️⃣ fetchone vs fetchall
 
 ```text
 fetchone → 單筆
@@ -21,7 +19,9 @@ fetchall → 多筆
 
 ---
 
-## 🧠 三、SQL 核心
+## 🧠 3️⃣ SQL 核心
+
+---
 
 ### JOIN
 
@@ -47,7 +47,7 @@ COALESCE(SUM(amount), 0)
 
 ---
 
-## 🧠 四、API 設計
+## 🧠 4️⃣ API 設計
 
 ```text
 /path → 單資源
@@ -57,33 +57,33 @@ limit/offset → 分頁
 
 ---
 
-## 🧠 五、Pydantic（專業感來源）
-
-```python
-class CostItem(BaseModel):
-```
-
----
-
-### List[CostItem]
+## 🧠 5️⃣ Pydantic
 
 ```text
-✔ 定義結構
+✔ 定義資料結構
 ✔ API 契約
 ✔ 自動文件
 ```
 
 ---
 
-## 🧠 六、HTTPException
+## 🧠 6️⃣ List[CostItem]
 
-```python
-raise HTTPException(status_code=404)
+```text
+列表 + 結構型資料
 ```
 
 ---
 
-## 🧠 七、分頁
+## 🧠 7️⃣ HTTPException
+
+```text
+標準錯誤處理
+```
+
+---
+
+## 🧠 8️⃣ 分頁
 
 ```sql
 LIMIT + OFFSET
@@ -91,16 +91,16 @@ LIMIT + OFFSET
 
 ---
 
-## 🧠 八、環境變數
+## 🧠 9️⃣ 環境變數
 
 ```text
 setx → 需重開 terminal
-.env → 推薦方式
+.env → 推薦
 ```
 
 ---
 
-## 🧠 九、AI 使用原則
+## 🧠 🔟 AI 原則
 
 ```text
 ✔ 解讀
@@ -110,47 +110,71 @@ setx → 需重開 terminal
 
 ---
 
-## 🧠 十、錯誤碼理解
+## 🧠 11️⃣ 錯誤碼
 
 ```text
-401 → Key錯
+401 → API Key錯
 429 → 沒額度
 ```
 
 ---
 
-## 🧠 十一、安全
+## 🧠 12️⃣ 安全
 
 ```text
 ✔ .env 不上傳
-✔ 使用 .gitignore
-✔ 使用 .env.example
+✔ .gitignore
+✔ .env.example
 ```
 
 ---
 
-## 🧠 十二、工程思維（最重要）
+## 🧠 13️⃣ Portfolio Analysis
+
+```text
+多專案分析（管理視角）
+```
+
+---
+
+## 🧠 14️⃣ 成本率
+
+```text
+成本 / 預算
+```
+
+---
+
+## 🧠 15️⃣ SQL 排序
+
+```sql
+ORDER BY profit DESC
+```
+
+---
+
+## 🧠 16️⃣ SQL 設計原則（關鍵）
+
+```text
+SQL結構 → 拼接
+數據值 → %s
+```
+
+---
+
+## 🧠 17️⃣ 工程思維
 
 ```text
 能跑 ≠ 專業
-可維護 ≠ 能跑
-安全 ≠ 可選
+可維護 > 能跑
+安全 = 基礎能力
 ```
 
 ---
 
-## 🧠 十三、AI 系統本質
+## 🧠 核心理解（最重要）
 
 ```text
-AI ≠ 系統
-AI = 語意層
-```
-
----
-
-## 🧠 核心理解（總結）
-
-```text
-你不是在學 Python
+你不是在學語法
 你在學「如何把業務變成系統」
 ```

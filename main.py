@@ -282,5 +282,55 @@ def project_analysis(project_id: int):
         "ai_analysis": analysis_text
     }
     
+@app.get("/project/portfolio-analysis")
+def get_project_portfolio_analysis(sort: str = "profit_desc"):
+    if sort == "profit_desc":
+        order_clause = "ORDER BY profit DESC"
+    elif sort == "profit_asc":
+        order_clause = "ORDER BY profit ASC"
+    else:
+        order_clause = ""
 
+    cursor.execute(f"""
+        SELECT 
+            p.id,
+            p.name,
+            p.budget,
+            COALESCE(SUM(c.amount), 0) AS total_cost,
+            (p.budget - COALESCE(SUM(c.amount), 0)) AS profit
+        FROM projects p
+        LEFT JOIN costs c ON p.id = c.project_id
+        GROUP BY p.id
+        {order_clause};
+    """)
+
+    rows = cursor.fetchall()
+
+    projects = []
+
+    for row in rows:
+        budget = row[2]
+        cost = row[3]
+        profit = row[4]
+
+        # 成本率（超重要）
+        # 成本率 = 成本 / 預算
+        # 0.5 → 很健康
+        # 0.8 → 偏高
+        # >1 → 虧損
+        cost_ratio = cost / budget if budget else 0
+
+        projects.append({
+            "id": row[0],
+            "name": row[1],
+            "budget": budget,
+            "total_cost": cost,
+            "profit": profit,
+            "cost_ratio": round(cost_ratio, 2)
+        })
+
+    return{
+        "count": len(projects),
+        "projects": projects
+    }
 
