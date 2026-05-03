@@ -35,6 +35,7 @@ LEFT JOIN costs ON p.id = c.project_id
 
 ```sql
 GROUP BY p.id
+GROUP BY cost_type
 ```
 
 ---
@@ -67,15 +68,7 @@ limit/offset → 分頁
 
 ---
 
-## 🧠 6️⃣ List[CostItem]
-
-```text
-列表 + 結構型資料
-```
-
----
-
-## 🧠 7️⃣ HTTPException
+## 🧠 6️⃣ HTTPException
 
 ```text
 標準錯誤處理
@@ -83,7 +76,7 @@ limit/offset → 分頁
 
 ---
 
-## 🧠 8️⃣ 分頁
+## 🧠 7️⃣ 分頁
 
 ```sql
 LIMIT + OFFSET
@@ -91,16 +84,16 @@ LIMIT + OFFSET
 
 ---
 
-## 🧠 9️⃣ 環境變數
+## 🧠 8️⃣ 環境變數
 
 ```text
-setx → 需重開 terminal
-.env → 推薦
+.env 管理 API key
+setx 需重開 terminal
 ```
 
 ---
 
-## 🧠 🔟 AI 原則
+## 🧠 9️⃣ AI 使用原則
 
 ```text
 ✔ 解讀
@@ -110,26 +103,26 @@ setx → 需重開 terminal
 
 ---
 
-## 🧠 11️⃣ 錯誤碼
+## 🧠 🔟 錯誤碼
 
 ```text
-401 → API Key錯
-429 → 沒額度
+401 → API Key錯誤
+429 → 無配額
 ```
 
 ---
 
-## 🧠 12️⃣ 安全
+## 🧠 11️⃣ 安全
 
 ```text
-✔ .env 不上傳
+✔ .env 不提交
 ✔ .gitignore
 ✔ .env.example
 ```
 
 ---
 
-## 🧠 13️⃣ Portfolio Analysis
+## 🧠 12️⃣ Portfolio Analysis
 
 ```text
 多專案分析（管理視角）
@@ -137,23 +130,40 @@ setx → 需重開 terminal
 
 ---
 
-## 🧠 14️⃣ 成本率
+## 🧠 13️⃣ 成本率
 
 ```text
-成本 / 預算
+cost_ratio = cost / budget
 ```
 
 ---
 
-## 🧠 15️⃣ SQL 排序
+## 🧠 14️⃣ 成本分類分析（Day12核心）
 
-```sql
-ORDER BY profit DESC
+```text
+GROUP BY cost_type
 ```
 
 ---
 
-## 🧠 16️⃣ SQL 設計原則（關鍵）
+## 🧠 15️⃣ 成本占比
+
+```text
+ratio = 部分 / 總體
+```
+
+---
+
+## 🧠 16️⃣ 成本結構
+
+```text
+不是總數
+而是「分佈」
+```
+
+---
+
+## 🧠 17️⃣ SQL 設計原則
 
 ```text
 SQL結構 → 拼接
@@ -162,7 +172,7 @@ SQL結構 → 拼接
 
 ---
 
-## 🧠 17️⃣ 工程思維
+## 🧠 18️⃣ 工程思維
 
 ```text
 能跑 ≠ 專業
@@ -172,7 +182,7 @@ SQL結構 → 拼接
 
 ---
 
-## 🧠 核心理解（最重要）
+## 🧠 核心理解
 
 ```text
 你不是在學語法

@@ -11,7 +11,7 @@ print("API KEY:", os.getenv("OPENAI_API_KEY"))
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def analyze_project(budget, cost, profit):
-    return "（AI 未啟用）成本分析功能暫時使用規則判斷"
+    return "(AI 未啟用)成本分析功能暫時使用規則判斷"
 '''
     prompt = f"""
     你是一位建築成本分析師。
@@ -21,7 +21,7 @@ def analyze_project(budget, cost, profit):
     成本：{cost}
     利潤：{profit}
 
-    請用一句專業且簡潔的話，分析該專案狀況並給出建議。我這只是一個測試用例，所以簡潔就行。
+    請用一句專業且簡潔的話，分析該專案狀況並給出建議。
     """
 
     try:

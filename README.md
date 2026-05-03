@@ -4,15 +4,15 @@
 
 ## 📌 專案簡介
 
-本專案基於 **FastAPI + PostgreSQL + AI（可選）** 建立一套建築專案管理與分析系統。
+本專案基於 **FastAPI + PostgreSQL + AI（可選）** 建立一套建築專案管理與成本分析系統。
 
 核心目標：
 
 ```text
 ✔ 將建築業務數據結構化
 ✔ 建立可擴展 API 系統
-✔ 實現成本與利潤分析
-✔ 引入 AI 作為決策輔助（非核心依賴）
+✔ 支持成本與利潤分析
+✔ 為 AI 決策提供數據基礎
 ```
 
 ---
@@ -20,16 +20,16 @@
 ## 🎯 專案定位
 
 ```text
-業務 + 系統 + AI 整合能力實驗
+業務 + 系統 + AI 的整合實驗
 ```
 
 ---
 
-## 🚀 功能總覽（Day1–Day11）
+## 🚀 功能總覽（Day1–Day12）
 
 ---
 
-### 1️⃣ 專案管理（Projects）
+### 1️⃣ 專案管理
 
 ```text
 POST /projects
@@ -38,7 +38,7 @@ GET /projects
 
 ---
 
-### 2️⃣ 成本管理（Costs）
+### 2️⃣ 成本管理
 
 * 一對多關係（Project → Costs）
 * 支援成本分類（人工 / 材料 / 機械）
@@ -54,9 +54,9 @@ GET /analysis
 支援：
 
 ```text
-✔ SUM（總預算）
-✔ AVG（平均預算）
-✔ COUNT（專案數量）
+✔ 總預算（SUM）
+✔ 平均預算（AVG）
+✔ 專案數量（COUNT）
 ```
 
 ---
@@ -70,7 +70,7 @@ GET /project-profit-join/{project_id}
 
 ---
 
-### 5️⃣ 成本明細（結構化輸出）
+### 5️⃣ 成本明細
 
 ```text
 GET /project-cost-detail/{project_id}
@@ -78,7 +78,7 @@ GET /project-cost-detail/{project_id}
 
 ---
 
-### 6️⃣ 查詢與分頁（企業級 API）
+### 6️⃣ 查詢與分頁
 
 ```text
 GET /projects/filter
@@ -88,7 +88,7 @@ GET /projects/search
 
 ---
 
-### 7️⃣ API 標準化（Day9）
+### 7️⃣ API 標準化
 
 ```text
 ✔ Pydantic（response_model）
@@ -98,7 +98,7 @@ GET /projects/search
 
 ---
 
-### 8️⃣ AI 分析（Day10｜可選）
+### 8️⃣ AI 分析（可選）
 
 ```text
 GET /project-analysis/{project_id}
@@ -106,7 +106,7 @@ GET /project-analysis/{project_id}
 
 ---
 
-### 9️⃣ ⭐ 多專案分析（Day11 核心）
+### 9️⃣ 多專案分析（Portfolio）
 
 ```text
 GET /projects/portfolio-analysis
@@ -114,44 +114,46 @@ GET /projects/portfolio-analysis
 
 ---
 
-## 📊 Portfolio Analysis（核心能力）
+### 🔟 ⭐ 成本分類分析（Day12 核心）
+
+```text
+GET /project-cost-breakdown/{project_id}
+```
+
+---
+
+## 📊 成本分類分析（Cost Breakdown）
 
 ---
 
 ### 功能
 
 ```text
-✔ 多專案總覽
-✔ 成本 / 利潤計算
-✔ 成本率（Cost Ratio）
-✔ 排序（最賺 / 最虧）
+✔ 按成本類型分類（人工 / 材料 / 機械）
+✔ 計算各類成本總額
+✔ 計算成本占比（ratio）
+✔ 找出最高成本類型
 ```
 
 ---
 
-### 成本率公式
+### SQL 核心
 
-```text
-cost_ratio = total_cost / budget
+```sql
+SELECT 
+    cost_type,
+    SUM(amount)
+FROM costs
+WHERE project_id = %s
+GROUP BY cost_type;
 ```
 
 ---
 
-### 解讀標準
+### 成本占比公式
 
 ```text
-< 0.6 → 健康
-0.6–0.8 → 注意
-> 0.8 → 高風險
-> 1 → 虧損
-```
-
----
-
-### API 範例
-
-```text
-/projects/portfolio-analysis?sort=profit_desc
+ratio = 某類成本 / 總成本
 ```
 
 ---
@@ -160,47 +162,49 @@ cost_ratio = total_cost / budget
 
 ```json
 {
-  "count": 3,
-  "projects": [
-    {
-      "id": 1,
-      "name": "項目A",
-      "budget": 300000,
-      "total_cost": 250000,
-      "profit": 50000,
-      "cost_ratio": 0.83
-    }
-  ]
+  "project_id": 1,
+  "total_cost": 250000,
+  "breakdown": [
+    {"type": "人工費", "amount": 100000, "ratio": 0.4},
+    {"type": "材料費", "amount": 120000, "ratio": 0.48},
+    {"type": "機械費", "amount": 30000, "ratio": 0.12}
+  ],
+  "highest_cost": {
+    "type": "材料費",
+    "amount": 120000
+  }
 }
 ```
 
 ---
 
-## 🧠 系統架構（關鍵）
+## 🧠 系統能力演進
 
 ```text
-資料層 → PostgreSQL
-邏輯層 → FastAPI
-語意層 → AI（可選）
+Day1-5   → CRUD
+Day6-9   → API + 結構化
+Day10    → AI 接入
+Day11    → 多專案分析
+Day12    → 成本結構分析（核心）
 ```
 
 ---
 
-## ❗ AI 使用原則
+## ❗ AI 設計原則
 
 ```text
-✔ AI 負責「解讀」
-✔ SQL 負責「計算」
-✔ Python 負責「邏輯」
+✔ SQL → 計算
+✔ Python → 邏輯
+✔ AI → 解讀（非必需）
 ```
 
 ---
 
-## 🔐 環境變數與安全
+## 🔐 安全與環境變數
 
 ---
 
-### .env 設定
+### .env
 
 ```text
 OPENAI_API_KEY=your_api_key
@@ -208,37 +212,17 @@ OPENAI_API_KEY=your_api_key
 
 ---
 
-### 安全規範
+### 規範
 
 ```text
-✔ .env 不可上傳
-✔ 已加入 .gitignore
+✔ .env 不提交
+✔ 使用 .gitignore
 ✔ 使用 .env.example
 ```
 
 ---
 
-## ⚠️ SQL 設計注意（Day11 關鍵）
-
----
-
-### ❌ 錯誤
-
-```text
-ORDER BY = %s
-```
-
----
-
-### ✅ 正確
-
-```text
-使用白名單 + SQL 拼接
-```
-
----
-
-### 原則
+## ⚠️ SQL 設計原則
 
 ```text
 SQL 結構 → 拼接
@@ -285,12 +269,13 @@ http://127.0.0.1:8000/docs
 
 ```text
 ✔ API 設計
-✔ SQL（JOIN / 聚合）
+✔ SQL（JOIN / 聚合 / 分組）
 ✔ 分頁與查詢
 ✔ 資料建模（Pydantic）
 ✔ 多專案分析
+✔ 成本結構分析
 ✔ AI 接入（可選）
-✔ 環境與安全管理
+✔ 安全與環境管理
 ```
 
 ---
@@ -298,9 +283,10 @@ http://127.0.0.1:8000/docs
 ## 🔮 下一步
 
 ```text
-✔ 成本分類分析（Day12）
+✔ 多專案成本對比（Day13）
 ✔ AI 報告生成
-✔ Excel / 招標系統整合
+✔ 投標決策系統
+✔ Excel / 招標數據整合
 ```
 
 ---
@@ -310,5 +296,5 @@ http://127.0.0.1:8000/docs
 ```text
 從「寫 API」
 → 到「建系統」
-→ 到「做決策分析」
+→ 到「做成本決策」
 ```

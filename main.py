@@ -334,3 +334,47 @@ def get_project_portfolio_analysis(sort: str = "profit_desc"):
         "projects": projects
     }
 
+@app.get("/project-cost-breakdown/{project_id}")
+def get_project_cost_breakdown(project_id: int):
+    cursor.execute("""
+        SELECT 
+            cost_type,
+            SUM(amount) AS total_amount
+        FROM costs
+        WHERE project_id = %s
+        GROUP BY cost_type;
+    """,(project_id,))
+
+    rows = cursor.fetchall()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    total_cost = sum(row[1] for row in rows)
+
+    breakdown = []
+
+    for row in rows:
+        cost_type = row[0]
+        amount = row[1]
+
+        ratio = amount / total_cost if total_cost else 0
+
+        breakdown.append({
+            "type": cost_type,
+            "amount": amount,
+            "ratio": round(ratio, 2)
+        })
+
+        max_item = max(breakdown, key=lambda x:x["amount"])
+
+    return{
+        "project_id": project_id,
+        "total_cost": total_cost,
+        "breakdown": breakdown,
+        "highest_cost":{
+            "type": max_item["type"],
+            "amount": max_item["amount"]
+        }
+        
+    }
