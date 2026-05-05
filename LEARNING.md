@@ -1,161 +1,178 @@
-# 📚 Learning Notes（完整知識體系）
+# 📚 Learning Notes（學習總結）
 
 ---
 
-## 🧠 1️⃣ 資料流
+## 🧠 Data Flow｜數據流
 
-```text id="ru1v7q"
+```text id="2a1"
 DB → tuple → Python → dict → JSON
+資料庫 → 元組 → Python → 字典 → JSON
 ```
 
 ---
 
-## 🧠 2️⃣ SQL 核心
+## 🧠 SQL Core｜SQL核心
 
----
-
-### JOIN
-
-```sql id="21w4ut"
-LEFT JOIN costs ON p.id = c.project_id
+```text id="2a2"
+JOIN / GROUP BY / SUM / AVG / COUNT
 ```
 
 ---
 
-### GROUP BY
+## 🧠 API Design｜API設計
 
-```sql id="4q4hbd"
-GROUP BY p.id
-GROUP BY cost_type
+```text id="2a3"
+/path → resource  
+?query → filter  
+limit/offset → pagination  
 ```
 
 ---
 
-### 聚合
+## 🧠 Cost Ratio｜成本率
 
-```sql id="43nq3u"
-SUM()
-AVG()
-COUNT()
+```text id="2a4"
+cost / budget
 ```
 
 ---
 
-## 🧠 3️⃣ API 設計
+## 🧠 Cost Structure｜成本結構
 
-```text id="nsx4yf"
-/path → 資源
-?query → 篩選
-limit/offset → 分頁
-```
-
----
-
-## 🧠 4️⃣ 成本率
-
-```text id="gh41wk"
-cost_ratio = cost / budget
-```
-
----
-
-## 🧠 5️⃣ 成本分類分析
-
-```text id="lpgmqp"
-GROUP BY cost_type
-```
-
----
-
-## 🧠 6️⃣ 成本結構
-
-```text id="u3m6u9"
-總成本 ≠ 本質
+```text id="2a5"
+Total ≠ Insight  
 結構 = 本質
 ```
 
 ---
 
-## 🧠 7️⃣ Portfolio Analysis
+## 🧠 Portfolio Thinking｜多專案思維
 
-```text id="ij29rg"
-多專案整體分析
+```text id="2a6"
+Single → Tool  
+Multiple → Decision System  
 ```
 
 ---
 
-## 🧠 8️⃣ 健康度模型（核心）
+## 🧠 Scoring Model｜評分模型
 
-```text id="drh3r3"
-cost_ratio → score
+```text id="2a7"
+Data → Metric → Decision  
+數據 → 指標 → 決策
 ```
 
 ---
 
-## 🧠 9️⃣ 分組（最重要）
+## 🧠 Data Reshaping｜數據重構（核心）
 
-```python id="09bkl9"
+```python id="2a8"
 cost_map[pid][ctype] = amount
 ```
 
 ---
 
-### 本質
-
-```text id="gr3e7u"
-SQL → 平面
-Python → 結構
+```text id="2a9"
+Flat → Structured  
+平面 → 結構
 ```
 
 ---
 
-## 🧠 🔟 dict.get()
+## 🧠 dict.get()
 
-```python id="y8m7kb"
-value = dict.get(key, default)
+```python id="2a10"
+dict.get(key, default)
 ```
 
 ---
 
-### 含義
-
-```text id="v7k5nt"
-有 → 返回
-無 → default
+```text id="2a11"
+Safe access  
+安全取值
 ```
 
 ---
 
-## 🧠 11️⃣ 工程思維
+## 🧠 Performance｜性能
 
-```text id="jz44zv"
-能跑 ≠ 專業
-可維護 > 能跑
+```text id="2a12"
+O(n²) ❌  
+O(1) ✔  
 ```
 
 ---
 
-## 🧠 12️⃣ 安全
+## 🧠 Responsibility Split｜責任分離
 
-```text id="cb6c1m"
-✔ .env
-✔ .gitignore
-✔ 不暴露 key
+```text id="2a13"
+SQL → query  
+Python → structure  
 ```
 
 ---
 
-## 🧠 13️⃣ 測試數據設計
+## 🧠 Security｜安全
 
-```text id="4ej9g9"
-正常 / 邊界 / 異常
+```text id="2a14"
+.env  
+.gitignore  
+No hardcoding  
 ```
 
 ---
 
-## 🧠 核心理解（最重要）
+## 🧠 Testing｜測試
 
-```text id="xf3b8p"
-你在學的是：
-「如何把業務變成決策系統」
+```text id="2a15"
+Normal / Boundary / Failure / Scenario
+```
+
+---
+
+## 🧠 Engineering Thinking｜工程思維
+
+```text id="2a16"
+Working ≠ Good  
+Maintainable > Working  
+```
+
+---
+
+## 🧠 Core Insight｜核心理解
+
+```text id="2a17"
+You are not learning Python  
+You are learning system thinking  
+
+你不是在學語法  
+你在學系統思維
+```
+
+---
+
+## 🧠 Your Level｜你現在的水平
+
+```text id="2a18"
+✔ Backend logic  
+✔ SQL mastery  
+✔ API design  
+✔ Data modeling  
+✔ Decision system thinking  
+```
+
+---
+
+## 🧠 What You Are Becoming｜你的定位
+
+```text id="2a19"
+Not a coder  
+Not just AI user  
+
+✔ Business-oriented system builder  
+
+不是程序員  
+不是AI使用者  
+
+是：業務系統構建者
 ```
