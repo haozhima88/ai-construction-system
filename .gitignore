@@ -16,3 +16,4 @@ venv/
 
 # text test demo
 .text_demo.sql
+SQL_demo.sql
