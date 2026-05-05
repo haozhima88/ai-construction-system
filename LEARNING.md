@@ -4,28 +4,19 @@
 
 ## 🧠 1️⃣ 資料流
 
-```text
-DB → tuple → Python → dict → API → JSON
+```text id="ru1v7q"
+DB → tuple → Python → dict → JSON
 ```
 
 ---
 
-## 🧠 2️⃣ fetchone vs fetchall
-
-```text
-fetchone → 單筆
-fetchall → 多筆
-```
-
----
-
-## 🧠 3️⃣ SQL 核心
+## 🧠 2️⃣ SQL 核心
 
 ---
 
 ### JOIN
 
-```sql
+```sql id="21w4ut"
 LEFT JOIN costs ON p.id = c.project_id
 ```
 
@@ -33,158 +24,138 @@ LEFT JOIN costs ON p.id = c.project_id
 
 ### GROUP BY
 
-```sql
+```sql id="4q4hbd"
 GROUP BY p.id
 GROUP BY cost_type
 ```
 
 ---
 
-### COALESCE
+### 聚合
 
-```sql
-COALESCE(SUM(amount), 0)
+```sql id="43nq3u"
+SUM()
+AVG()
+COUNT()
 ```
 
 ---
 
-## 🧠 4️⃣ API 設計
+## 🧠 3️⃣ API 設計
 
-```text
-/path → 單資源
+```text id="nsx4yf"
+/path → 資源
 ?query → 篩選
 limit/offset → 分頁
 ```
 
 ---
 
-## 🧠 5️⃣ Pydantic
+## 🧠 4️⃣ 成本率
 
-```text
-✔ 定義資料結構
-✔ API 契約
-✔ 自動文件
-```
-
----
-
-## 🧠 6️⃣ HTTPException
-
-```text
-標準錯誤處理
-```
-
----
-
-## 🧠 7️⃣ 分頁
-
-```sql
-LIMIT + OFFSET
-```
-
----
-
-## 🧠 8️⃣ 環境變數
-
-```text
-.env 管理 API key
-setx 需重開 terminal
-```
-
----
-
-## 🧠 9️⃣ AI 使用原則
-
-```text
-✔ 解讀
-✔ 建議
-❌ 計算
-```
-
----
-
-## 🧠 🔟 錯誤碼
-
-```text
-401 → API Key錯誤
-429 → 無配額
-```
-
----
-
-## 🧠 11️⃣ 安全
-
-```text
-✔ .env 不提交
-✔ .gitignore
-✔ .env.example
-```
-
----
-
-## 🧠 12️⃣ Portfolio Analysis
-
-```text
-多專案分析（管理視角）
-```
-
----
-
-## 🧠 13️⃣ 成本率
-
-```text
+```text id="gh41wk"
 cost_ratio = cost / budget
 ```
 
 ---
 
-## 🧠 14️⃣ 成本分類分析（Day12核心）
+## 🧠 5️⃣ 成本分類分析
 
-```text
+```text id="lpgmqp"
 GROUP BY cost_type
 ```
 
 ---
 
-## 🧠 15️⃣ 成本占比
+## 🧠 6️⃣ 成本結構
 
-```text
-ratio = 部分 / 總體
+```text id="u3m6u9"
+總成本 ≠ 本質
+結構 = 本質
 ```
 
 ---
 
-## 🧠 16️⃣ 成本結構
+## 🧠 7️⃣ Portfolio Analysis
 
-```text
-不是總數
-而是「分佈」
+```text id="ij29rg"
+多專案整體分析
 ```
 
 ---
 
-## 🧠 17️⃣ SQL 設計原則
+## 🧠 8️⃣ 健康度模型（核心）
 
-```text
-SQL結構 → 拼接
-數據值 → %s
+```text id="drh3r3"
+cost_ratio → score
 ```
 
 ---
 
-## 🧠 18️⃣ 工程思維
+## 🧠 9️⃣ 分組（最重要）
 
-```text
+```python id="09bkl9"
+cost_map[pid][ctype] = amount
+```
+
+---
+
+### 本質
+
+```text id="gr3e7u"
+SQL → 平面
+Python → 結構
+```
+
+---
+
+## 🧠 🔟 dict.get()
+
+```python id="y8m7kb"
+value = dict.get(key, default)
+```
+
+---
+
+### 含義
+
+```text id="v7k5nt"
+有 → 返回
+無 → default
+```
+
+---
+
+## 🧠 11️⃣ 工程思維
+
+```text id="jz44zv"
 能跑 ≠ 專業
 可維護 > 能跑
-安全 = 基礎能力
 ```
 
 ---
 
-## 🧠 核心理解
+## 🧠 12️⃣ 安全
 
-```text
-你不是在學語法
-你在學「如何把業務變成系統」
+```text id="cb6c1m"
+✔ .env
+✔ .gitignore
+✔ 不暴露 key
+```
+
+---
+
+## 🧠 13️⃣ 測試數據設計
+
+```text id="4ej9g9"
+正常 / 邊界 / 異常
+```
+
+---
+
+## 🧠 核心理解（最重要）
+
+```text id="xf3b8p"
+你在學的是：
+「如何把業務變成決策系統」
 ```

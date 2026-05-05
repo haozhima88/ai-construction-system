@@ -3,6 +3,7 @@ from ai_analysis import analyze_project
 from db import conn, cursor
 from pydantic import BaseModel
 from typing import List
+from collections import defaultdict
 
 class Project(BaseModel):
     name: str
@@ -378,3 +379,92 @@ def get_project_cost_breakdown(project_id: int):
         }
         
     }
+
+@app.get("/projects/portfolio-health/")
+def portfolio_health():
+    # 1. 基本數據
+    cursor.execute("""
+        SELECT 
+            p.id,
+            p.name,
+            p.budget,
+            COALESCE(SUM(c.amount), 0) AS total_cost,
+            (p.budget - COALESCE(SUM(c.amount), 0)) AS profit
+        FROM projects p
+        LEFT JOIN costs c ON p.id = c.project_id
+        GROUP BY p.id;
+    """)
+
+    project_data = cursor.fetchall()
+    if not project_data:
+        raise HTTPException(status_code=404, detail="project not found")
+    
+    # 2. 成本分析數據
+    cursor.execute("""
+        SELECT
+            project_id,
+            cost_type,
+            SUM(amount) AS cost
+        FROM costs
+        GROUP BY project_id, cost_type;
+    """)
+
+    cost_rows = cursor.fetchall()
+    if not cost_rows:
+        raise HTTPException(status_code=404, detail="cost not found")
+    
+    # 建立分類映射 方法一
+    # cost_map = {}
+    # for row in cost_rows:
+    #     pid, ctype, amount = row
+    #     if pid not in cost_map:
+    #         cost_map[pid] = {}
+    #     cost_map[pid][ctype] = amount
+    #
+    # 建立分類映射 方法二
+    cost_map = defaultdict(dict)
+
+    for pid, ctype, amount in cost_rows:
+        cost_map[pid][ctype] = amount
+
+
+    results  = []
+
+    for row in project_data:
+        pid, name, budget, cost, profit = row
+
+        cost_ratio = cost / budget if budget else 0
+    
+    # 健康度評分（核心）
+    if cost_ratio < 0.6:
+        health = "健康"
+        score = 90
+    elif cost_ratio < 0.8:
+        health = "正常"
+        score = 70
+    elif cost_ratio < 1:
+        health = "警告"
+        score = 50
+    else:
+        health = "危險"
+        score = 30
+
+    # 成本結構
+    breakdown = cost_map.get(pid, {})
+    
+    results .append({
+        "project_id": pid,
+        "name": name,
+        "budget": budget,
+        "total_cost": cost,
+        "profit": profit,
+        "cost_ratio": round(cost_ratio, 2),
+        "health": health,
+        "score": score,
+        "cost_breakdown": breakdown
+})
+
+    return{
+        "count": len(results),
+        "projects": results
+    } 
