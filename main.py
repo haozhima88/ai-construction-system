@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from ai_analysis import analyze_project
+from ai_analysis import generate_report
 from db import conn, cursor
 from pydantic import BaseModel
 from typing import List
@@ -468,3 +468,31 @@ def portfolio_health():
         "count": len(results),
         "projects": results
     } 
+
+def build_prompt(data):
+    text = "以下是專案健康分析：\n\n"
+
+    for p in data["projects"]:
+        text += f"""
+            項目：{p['name']}
+            成本率：{p['cost_ratio']}
+            狀態：{p['health']}
+            利潤：{p['profit']}
+        """
+
+    text += "\n請分析整體情況並提出管理建議。"
+
+    return text
+
+@app.get("/projects/portfolio-report")
+def portfolio_report():
+    data = portfolio_health()
+
+    prompt = build_prompt(data)
+
+    report = generate_report(prompt)
+
+    return {
+        "summary": data,
+        "ai_report": report
+    }

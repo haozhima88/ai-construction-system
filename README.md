@@ -1,240 +1,405 @@
-# 🏗️ AI Construction Management System（AI 建築管理系統）
+# 🏗️ AI Construction Management System
+
+# 🏗️ AI 建築管理系統
 
 ---
 
-## 📌 Project Overview｜專案簡介
+# 📌 Project Overview｜專案概覽
 
-This project is a backend system built with:
+This project is a backend-oriented AI-assisted construction management system built with:
 
-本專案基於以下技術構建：
+本專案是一套基於後端架構的 AI 輔助建築管理系統，核心技術包括：
 
-```text id="1a1"
-FastAPI + PostgreSQL + (Optional) AI Integration
+```text
+FastAPI + PostgreSQL + Python + AI Integration
+```
+
+The project simulates real-world construction management workflows including:
+
+本專案模擬真實建築管理流程，包括：
+
+```text
+✔ Project Management｜專案管理
+✔ Cost Management｜成本管理
+✔ Profit Analysis｜利潤分析
+✔ Portfolio Analysis｜多專案分析
+✔ Health Scoring｜健康度評分
+✔ AI-generated Management Reports｜AI 管理報告
 ```
 
 ---
 
-### Purpose｜目標
+# 🎯 Core Objectives｜核心目標
 
-```text id="1a2"
-✔ Transform construction business logic into structured systems  
-✔ 將建築業務邏輯轉換為結構化系統  
+```text
+✔ Transform construction business logic into structured systems
+✔ 將建築業務邏輯轉換為結構化系統
 
-✔ Build scalable API architecture  
-✔ 建立可擴展的 API 架構  
+✔ Build scalable backend APIs
+✔ 建立可擴展後端 API
 
-✔ Enable cost & profit analysis  
-✔ 支持成本與利潤分析  
+✔ Create decision-support capabilities
+✔ 建立決策支持能力
 
-✔ Build decision-support capabilities  
-✔ 建立決策支持能力  
+✔ Combine SQL + Python + AI into one workflow
+✔ 將 SQL + Python + AI 整合為完整工作流
 
-✔ Prepare structured data for AI  
-✔ 為 AI 提供高質量結構化數據  
+✔ Prepare high-quality structured data for AI reasoning
+✔ 為 AI 推理準備高質量結構化數據
 ```
 
 ---
 
-## 🎯 Project Positioning｜專案定位
+# 🧭 System Evolution｜系統演進路線
 
-```text id="1a3"
-Tool API → Decision System  
-工具型API → 決策系統
+```text
+Day1–5
+CRUD + Database + API Basics
+
+Day6–9
+Filtering + Pagination + API Standardization
+
+Day10
+AI Integration Layer
+
+Day11
+Portfolio Analysis
+
+Day12
+Cost Breakdown Analysis
+
+Day13
+Portfolio Health Scoring System
+
+Day14
+AI-generated Management Report System
 ```
 
 ---
 
-## 🧭 System Evolution｜系統演進
+# 🧠 System Architecture｜系統架構
 
-```text id="1a4"
-Day1–5   → CRUD  
-Day6–9   → API standardization  
-Day10    → AI integration  
-Day11    → Portfolio analysis  
-Day12    → Cost breakdown  
-Day13    → Health scoring system  
+```text
+Database Layer
+PostgreSQL + SQL
 
-CRUD → API → 分析 → 結構 → 多專案 → 決策系統
+Logic Layer
+FastAPI + Python
+
+Analysis Layer
+Portfolio / Cost / Health Analysis
+
+Semantic Layer
+AI-generated Reports & Suggestions
 ```
 
 ---
 
-## 🧠 Architecture｜系統架構
+# ⚠️ AI Design Principles｜AI 設計原則
 
-```text id="1a5"
-Database Layer → PostgreSQL（SQL）
-Logic Layer    → FastAPI（Python）
-Semantic Layer → AI（Optional）
+```text
+✔ SQL handles calculations
+✔ SQL 負責計算
 
-資料層 → SQL  
-邏輯層 → Python  
-語意層 → AI（可選）
+✔ Python handles logic and structure
+✔ Python 負責邏輯與結構
+
+✔ AI handles interpretation and reporting
+✔ AI 負責解讀與報告
+
+❌ AI should NOT replace deterministic calculations
+❌ AI 不應替代確定性計算
 ```
 
 ---
 
-## ⚠️ AI Design Principle｜AI設計原則
+# 📂 Project Structure｜專案結構
 
-```text id="1a6"
-✔ SQL = Calculation  
-✔ Python = Logic  
-✔ AI = Interpretation  
-
-✔ SQL 負責計算  
-✔ Python 負責邏輯  
-✔ AI 負責解讀  
-
-❌ AI 不應替代計算
-```
-
----
-
-## 📂 Project Structure｜專案結構
-
-```text id="1a7"
+```text
 ai-system/
+│
 ├── main.py
 ├── db.py
 ├── ai_analysis.py
+│
 ├── README.md
 ├── LEARNING.md
-├── .env              (NOT committed)
+│
+├── .env
 ├── .env.example
 ├── .gitignore
+│
 ├── __pycache__/      (ignored)
 ├── .vscode/          (ignored)
+└── venv/             (ignored)
 ```
 
 ---
 
-## 🔐 Environment & Security｜環境與安全
+# 🔐 Environment & Security｜環境與安全
 
-```text id="1a8"
+---
+
+## Environment Variables｜環境變數
+
+```env
 OPENAI_API_KEY=your_api_key
 ```
 
 ---
 
-### Rules｜規範
+## Security Rules｜安全規範
 
-```text id="1a9"
-✔ Never commit .env  
-✔ 不提交 .env  
+```text
+✔ Never commit .env
+✔ 不提交 .env
 
-✔ Use .gitignore  
-✔ 使用 .gitignore  
+✔ Use .gitignore
+✔ 使用 .gitignore
 
-✔ Use .env.example  
-✔ 提供範例文件  
+✔ Avoid hardcoded API keys
+✔ 不寫死 API key
 
-✔ No hardcoded keys  
-✔ 不寫死 API key  
+✔ Use .env.example
+✔ 提供 .env.example
 ```
 
 ---
 
-## 🚀 API Overview｜API總覽
+# 🚀 API Overview｜API 功能總覽
 
 ---
 
-### Project Management｜專案管理
+# 1️⃣ Project Management｜專案管理
 
-```text id="1a10"
-POST /projects  
+```text
+POST /projects
 GET  /projects
 ```
 
----
+Functions｜功能：
 
-### Cost Management｜成本管理
+```text
+✔ Create project
+✔ 建立專案
 
-```text id="1a11"
-人工費 / 材料費 / 機械費
-Labor / Material / Equipment
+✔ Retrieve projects
+✔ 查詢專案
 ```
 
 ---
 
-### Analysis｜基礎分析
+# 2️⃣ Cost Management｜成本管理
 
-```text id="1a12"
+Supports cost categories：
+
+支持成本分類：
+
+```text
+人工費｜Labor
+材料費｜Material
+機械費｜Equipment
+```
+
+Relationship：
+
+```text
+One Project → Many Costs
+一個專案 → 多筆成本
+```
+
+---
+
+# 3️⃣ Basic Analysis｜基礎分析
+
+```text
 GET /analysis
 ```
 
+Provides：
+
+```text
+✔ SUM(budget)
+✔ AVG(budget)
+✔ COUNT(projects)
+```
+
 ---
 
-### Profit｜利潤分析
+# 4️⃣ Profit Analysis｜利潤分析
 
-```text id="1a13"
+```text
 GET /project-profit/{id}
 GET /project-profit-join/{id}
 ```
 
+Calculates：
+
+```text
+Profit = Budget - Total Cost
+利潤 = 預算 - 成本
+```
+
 ---
 
-### Portfolio Analysis｜多專案分析
+# 5️⃣ Cost Detail｜成本明細
 
-```text id="1a14"
+```text
+GET /project-cost-detail/{id}
+```
+
+Returns structured cost items.
+
+返回結構化成本明細。
+
+---
+
+# 6️⃣ Filtering & Pagination｜篩選與分頁
+
+```text
+GET /projects/filter
+GET /projects/page
+GET /projects/search
+```
+
+---
+
+# 7️⃣ Portfolio Analysis｜多專案分析
+
+```text
 GET /projects/portfolio-analysis
 ```
 
----
+Provides：
 
-### Cost Breakdown｜成本分類
+```text
+✔ Multi-project comparison
+✔ 多專案比較
 
-```text id="1a15"
-GET /project-cost-breakdown/{id}
+✔ Cost ratio
+✔ 成本率
+
+✔ Profit ranking
+✔ 利潤排序
 ```
 
 ---
 
-### ⭐ Portfolio Health｜健康度分析
+# 8️⃣ Cost Breakdown｜成本結構分析
 
-```text id="1a16"
+```text
+GET /project-cost-breakdown/{id}
+```
+
+Provides：
+
+```text
+✔ Cost category grouping
+✔ 成本分類統計
+
+✔ Ratio calculation
+✔ 占比計算
+
+✔ Highest cost detection
+✔ 最高成本識別
+```
+
+---
+
+# 9️⃣ Portfolio Health System｜健康度分析系統
+
+```text
 GET /projects/portfolio-health
 ```
 
 ---
 
-## 📊 Portfolio Health Model｜健康度模型
+## Health Scoring Model｜健康度模型
 
----
-
-### Cost Ratio｜成本率
-
-```text id="1a17"
+```text
 cost_ratio = total_cost / budget
 ```
 
 ---
 
-### Scoring｜評分模型
+## Scoring Rules｜評分規則
 
-```text id="1a18"
-< 0.6   → Healthy / 健康  
-0.6–0.8 → Normal / 正常  
-0.8–1.0 → Warning / 警告  
-> 1.0   → Dangerous / 危險  
+```text
+< 0.6
+Healthy｜健康
+
+0.6–0.8
+Normal｜正常
+
+0.8–1.0
+Warning｜警告
+
+> 1.0
+Dangerous｜危險
 ```
 
 ---
 
-## 🧠 Data Transformation｜數據重構（核心）
+# 🔟 AI-generated Management Report｜AI 管理報告
+
+```text
+GET /projects/portfolio-report
+```
 
 ---
 
-### SQL（Flat）
+## Workflow｜工作流
 
-```text id="1a19"
+```text
+SQL Data
+↓
+Python Structure
+↓
+Portfolio Analysis
+↓
+Prompt Construction
+↓
+AI Report Generation
+```
+
+---
+
+## AI Responsibilities｜AI 職責
+
+```text
+✔ Summarize project status
+✔ 總結專案狀態
+
+✔ Identify risk
+✔ 識別風險
+
+✔ Generate management suggestions
+✔ 生成管理建議
+
+✔ Produce readable reports
+✔ 生成可讀報告
+```
+
+---
+
+# 🧠 Data Transformation（Critical）
+
+# 🧠 數據重構（核心能力）
+
+---
+
+## SQL Output（Flat Structure）
+
+```text
 (1, 人工費, 100000)
 (1, 材料費, 120000)
 ```
 
 ---
 
-### Python（Structured）
+## Python Grouped Structure
 
-```python id="1a20"
+```python
 cost_map = {
     1: {
         "人工費": 100000,
@@ -245,92 +410,143 @@ cost_map = {
 
 ---
 
-### Key Logic｜核心代碼
+## Core Logic｜核心邏輯
 
-```python id="1a21"
+```python
 cost_map[pid][ctype] = amount
 ```
 
----
+Meaning：
 
-## ⚠️ SQL Rules｜SQL設計原則
+```text
+Flat SQL data
+→ Structured Python data
 
-```text id="1a22"
-SQL structure → string building  
-SQL結構 → 拼接  
-
-Values → parameterized (%s)  
-數據值 → %s  
+SQL 平面數據
+→ Python 結構化數據
 ```
 
 ---
 
-## 🧪 Testing Strategy｜測試數據
+# ⚠️ SQL Design Rules｜SQL 設計原則
 
-```text id="1a23"
-✔ Normal case  
-✔ 正常  
+```text
+✔ SQL structure → string building
+✔ SQL結構 → 拼接
 
-✔ Boundary case  
-✔ 邊界  
+✔ Values → parameterized (%s)
+✔ 數據值 → %s
 
-✔ Failure case  
-✔ 異常  
-
-✔ Business scenario  
-✔ 業務場景  
+❌ Never pass SQL syntax as parameters
+❌ 不要將 SQL 語法作為參數
 ```
 
 ---
 
-## ⚙️ Run｜運行方式
+# 🧪 Testing Strategy｜測試策略
 
-```bash id="1a24"
+The system includes multiple business scenarios：
+
+系統包含多種業務場景：
+
+```text
+✔ Healthy project｜健康專案
+✔ Warning project｜警告專案
+✔ Loss project｜虧損專案
+✔ Material-heavy project｜材料異常專案
+✔ Boundary cases｜邊界測試
+```
+
+---
+
+# ⚙️ Run Project｜運行方式
+
+```bash
 venv\Scripts\activate
-pip install fastapi psycopg2-binary openai python-dotenv
+
+pip install fastapi[standard]
+pip install psycopg2-binary
+pip install python-dotenv
+pip install openai
+
 uvicorn main:app --reload
 ```
 
 ---
 
-## 🔗 Docs｜接口文檔
+# 🔗 Swagger API Docs｜接口文檔
 
-```text id="1a25"
+```text
 http://127.0.0.1:8000/docs
 ```
 
 ---
 
-## 📈 Capabilities｜能力總結
+# 📈 Current Capabilities｜目前能力
 
-```text id="1a26"
-✔ API design  
-✔ SQL aggregation  
-✔ Data modeling  
-✔ Portfolio analysis  
-✔ Cost structure analysis  
-✔ Decision scoring  
-✔ Secure config  
+```text
+✔ API Design
+✔ API 設計
+
+✔ SQL Aggregation & JOIN
+✔ SQL 聚合與 JOIN
+
+✔ Pagination & Filtering
+✔ 分頁與篩選
+
+✔ Data Modeling
+✔ 數據建模
+
+✔ Portfolio Analysis
+✔ 多專案分析
+
+✔ Cost Structure Analysis
+✔ 成本結構分析
+
+✔ Health Scoring
+✔ 健康度評分
+
+✔ AI-generated Reports
+✔ AI 管理報告
+
+✔ Data Reshaping
+✔ 數據重構
+
+✔ Environment Management
+✔ 環境管理
 ```
 
 ---
 
-## 🔮 Next｜下一步
+# 🔮 Next Stage｜下一階段
 
-```text id="1a27"
-Day14 → AI-generated report  
-Day15 → Business simulation  
-Day20 → System refactor  
+```text
+Day15
+AI-assisted bidding simulation
+
+Day16
+Excel import system
+
+Day17
+Cost benchmark database
+
+Day18
+Historical trend analysis
+
+Day20+
+Low-code system refactor
 ```
 
 ---
 
-## 🎯 Final Insight｜最終定位
+# 🎯 Final Positioning｜最終定位
 
-```text id="1a28"
-You are NOT writing APIs  
-You are building a decision system  
+```text
+This is NOT just an API project.
 
-你不是在寫API  
-你在構建決策系統
+It is an AI-assisted business decision system.
+
+這不只是 API 專案。
+
+而是一套 AI 輔助業務決策系統。
 ```

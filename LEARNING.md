@@ -1,178 +1,327 @@
-# 📚 Learning Notes（學習總結）
+# 📚 LEARNING.md
+
+# 📚 學習總結（完整雙語版）
 
 ---
 
-## 🧠 Data Flow｜數據流
+# 🧠 1. Data Flow｜數據流
 
-```text id="2a1"
-DB → tuple → Python → dict → JSON
-資料庫 → 元組 → Python → 字典 → JSON
+```text
+Database
+→ tuple
+→ Python
+→ dict
+→ JSON
+→ API
+→ AI
+
+資料庫
+→ 元組
+→ Python
+→ 字典
+→ JSON
+→ API
+→ AI
 ```
 
 ---
 
-## 🧠 SQL Core｜SQL核心
+# 🧠 2. SQL Core Concepts｜SQL 核心
 
-```text id="2a2"
-JOIN / GROUP BY / SUM / AVG / COUNT
+```text
+JOIN
+GROUP BY
+SUM
+AVG
+COUNT
+COALESCE
 ```
 
 ---
 
-## 🧠 API Design｜API設計
+# 🧠 3. API Design Principles｜API 設計原則
 
-```text id="2a3"
-/path → resource  
-?query → filter  
-limit/offset → pagination  
+```text
+/path
+→ resource
+
+?query
+→ filter
+
+limit/offset
+→ pagination
 ```
 
 ---
 
-## 🧠 Cost Ratio｜成本率
+# 🧠 4. Portfolio Thinking｜多專案思維
 
-```text id="2a4"
-cost / budget
+```text
+Single Project
+→ Tool
+
+Multiple Projects
+→ Decision System
+
+單專案
+→ 工具
+
+多專案
+→ 決策系統
 ```
 
 ---
 
-## 🧠 Cost Structure｜成本結構
+# 🧠 5. Cost Ratio｜成本率
 
-```text id="2a5"
-Total ≠ Insight  
-結構 = 本質
+```text
+cost_ratio = total_cost / budget
 ```
 
 ---
 
-## 🧠 Portfolio Thinking｜多專案思維
+# 🧠 6. Health Scoring｜健康度評分
 
-```text id="2a6"
-Single → Tool  
-Multiple → Decision System  
+```text
+Raw Data
+→ Metric
+→ Decision
+
+原始數據
+→ 指標
+→ 決策
 ```
 
 ---
 
-## 🧠 Scoring Model｜評分模型
+# 🧠 7. Cost Structure｜成本結構
 
-```text id="2a7"
-Data → Metric → Decision  
-數據 → 指標 → 決策
+```text
+Total cost ≠ insight
+
+Structure = insight
+
+總成本 ≠ 洞察
+
+結構 = 洞察
 ```
 
 ---
 
-## 🧠 Data Reshaping｜數據重構（核心）
+# 🧠 8. Data Reshaping｜數據重構（核心）
 
-```python id="2a8"
+---
+
+## Problem｜問題
+
+```text
+SQL result = flat list
+SQL 結果 = 平面列表
+```
+
+---
+
+## Solution｜解法
+
+```python
 cost_map[pid][ctype] = amount
 ```
 
 ---
 
-```text id="2a9"
-Flat → Structured  
-平面 → 結構
+## Meaning｜含義
+
+```text
+Flat
+→ Structured
+
+平面
+→ 結構
 ```
 
 ---
 
-## 🧠 dict.get()
+# 🧠 9. dict.get()
 
-```python id="2a10"
+```python
 dict.get(key, default)
 ```
 
 ---
 
-```text id="2a11"
-Safe access  
+## Meaning｜含義
+
+```text
+Safe access
+without KeyError
+
 安全取值
+避免報錯
 ```
 
 ---
 
-## 🧠 Performance｜性能
+# 🧠 10. Performance Thinking｜性能思維
 
-```text id="2a12"
-O(n²) ❌  
-O(1) ✔  
+```text
+Loop search
+→ O(n²) ❌
+
+Dict lookup
+→ O(1) ✔
 ```
 
 ---
 
-## 🧠 Responsibility Split｜責任分離
+# 🧠 11. Responsibility Separation｜責任分離
 
-```text id="2a13"
-SQL → query  
-Python → structure  
+```text
+SQL
+→ Query & aggregation
+
+Python
+→ Logic & structure
+
+AI
+→ Interpretation & reporting
 ```
 
 ---
 
-## 🧠 Security｜安全
+# 🧠 12. AI Integration Thinking｜AI 整合思維
 
-```text id="2a14"
-.env  
-.gitignore  
-No hardcoding  
+```text
+AI is NOT the system
+
+AI is a semantic layer
+
+AI 不是系統本身
+
+AI 是語意層
 ```
 
 ---
 
-## 🧠 Testing｜測試
+# 🧠 13. Prompt Engineering｜Prompt 工程
 
-```text id="2a15"
-Normal / Boundary / Failure / Scenario
+```text
+AI output quality
+depends on:
+
+✔ Structured data
+✔ Context
+✔ Prompt quality
 ```
 
 ---
 
-## 🧠 Engineering Thinking｜工程思維
+# 🧠 14. Environment Management｜環境管理
 
-```text id="2a16"
-Working ≠ Good  
-Maintainable > Working  
+```text
+.env
+.gitignore
+API keys
+load_dotenv()
 ```
 
 ---
 
-## 🧠 Core Insight｜核心理解
+# 🧠 15. Security Thinking｜安全思維
 
-```text id="2a17"
-You are not learning Python  
-You are learning system thinking  
+```text
+✔ No hardcoded secrets
+✔ 不寫死敏感資訊
 
-你不是在學語法  
-你在學系統思維
+✔ Ignore .env
+✔ 忽略 .env
+
+✔ Use environment variables
+✔ 使用環境變數
 ```
 
 ---
 
-## 🧠 Your Level｜你現在的水平
+# 🧠 16. Testing Strategy｜測試策略
 
-```text id="2a18"
-✔ Backend logic  
-✔ SQL mastery  
-✔ API design  
-✔ Data modeling  
-✔ Decision system thinking  
+```text
+✔ Normal case
+✔ Boundary case
+✔ Failure case
+✔ Business scenario
 ```
 
 ---
 
-## 🧠 What You Are Becoming｜你的定位
+# 🧠 17. Engineering Thinking｜工程思維
 
-```text id="2a19"
-Not a coder  
-Not just AI user  
+```text
+Working ≠ Good
 
-✔ Business-oriented system builder  
+Maintainable > Working
 
-不是程序員  
-不是AI使用者  
+Security = Mandatory
 
-是：業務系統構建者
+能跑 ≠ 專業
+
+可維護 > 能跑
+
+安全 = 必須
+```
+
+---
+
+# 🧠 18. Business System Thinking｜業務系統思維
+
+```text
+You are NOT learning syntax.
+
+You are learning:
+
+How to transform business
+into systems.
+
+你不是在學語法。
+
+你在學：
+
+如何把業務
+轉化為系統。
+```
+
+---
+
+# 🧠 19. AI Positioning｜AI 的定位
+
+```text
+Weak system + strong AI
+= unstable
+
+Strong system + normal AI
+= valuable
+
+弱系統 + 強AI
+= 不穩定
+
+強系統 + 普通AI
+= 高價值
+```
+
+---
+
+# 🧠 20. Your Current Direction｜你目前的方向
+
+```text
+Not a pure developer
+
+Not just an AI user
+
+✔ Business-oriented AI system builder
+
+不是純程序員
+
+不是 AI 使用者
+
+而是：
+
+業務導向 AI 系統構建者
 ```
