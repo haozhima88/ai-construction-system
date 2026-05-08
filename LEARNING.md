@@ -1,35 +1,38 @@
 # 📚 LEARNING.md
 
-# 📚 學習總結（完整雙語版）
+# 📚 學習總結（Day15 完整雙語版）
 
 ---
 
-# 🧠 1. Data Flow｜數據流
+# 🧠 1. Backend Data Flow｜後端資料流
 
-```text
-Database
+```text id="l15_1"
+SQL
 → tuple
-→ Python
+→ Python variables
 → dict
+→ list
 → JSON
-→ API
+→ API response
 → AI
 
-資料庫
+SQL
 → 元組
-→ Python
+→ Python變數
 → 字典
+→ 列表
 → JSON
-→ API
+→ API回應
 → AI
 ```
 
 ---
 
-# 🧠 2. SQL Core Concepts｜SQL 核心
+# 🧠 2. SQL Core Concepts｜SQL 核心概念
 
-```text
+```text id="l15_2"
 JOIN
+LEFT JOIN
 GROUP BY
 SUM
 AVG
@@ -39,28 +42,13 @@ COALESCE
 
 ---
 
-# 🧠 3. API Design Principles｜API 設計原則
+# 🧠 3. Portfolio Thinking｜多專案思維
 
-```text
-/path
-→ resource
-
-?query
-→ filter
-
-limit/offset
-→ pagination
-```
-
----
-
-# 🧠 4. Portfolio Thinking｜多專案思維
-
-```text
-Single Project
+```text id="l15_3"
+Single project
 → Tool
 
-Multiple Projects
+Multiple projects
 → Decision System
 
 單專案
@@ -72,31 +60,9 @@ Multiple Projects
 
 ---
 
-# 🧠 5. Cost Ratio｜成本率
+# 🧠 4. Cost Structure Thinking｜成本結構思維
 
-```text
-cost_ratio = total_cost / budget
-```
-
----
-
-# 🧠 6. Health Scoring｜健康度評分
-
-```text
-Raw Data
-→ Metric
-→ Decision
-
-原始數據
-→ 指標
-→ 決策
-```
-
----
-
-# 🧠 7. Cost Structure｜成本結構
-
-```text
+```text id="l15_4"
 Total cost ≠ insight
 
 Structure = insight
@@ -108,220 +74,245 @@ Structure = insight
 
 ---
 
-# 🧠 8. Data Reshaping｜數據重構（核心）
+# 🧠 5. Health Scoring｜健康度評分
 
----
+```text id="l15_5"
+Data
+→ Metric
+→ Score
+→ Decision
 
-## Problem｜問題
-
-```text
-SQL result = flat list
-SQL 結果 = 平面列表
+數據
+→ 指標
+→ 評分
+→ 決策
 ```
 
 ---
 
-## Solution｜解法
+# 🧠 6. Bid Decision Logic｜投標決策邏輯
 
-```python
-cost_map[pid][ctype] = amount
+```text id="l15_6"
+Cost ratio
+Profit
+Material ratio
+Risk level
 ```
 
 ---
 
-## Meaning｜含義
+# 🧠 7. Rule-based System｜規則系統
 
-```text
-Flat
-→ Structured
+```text id="l15_7"
+Rules first
+AI second
 
-平面
-→ 結構
+規則優先
+AI其次
 ```
 
 ---
 
-# 🧠 9. dict.get()
+# 🧠 8. AI Positioning｜AI 定位
 
-```python
-dict.get(key, default)
+```text id="l15_8"
+AI should:
+✔ explain
+✔ summarize
+✔ suggest
+
+AI should NOT:
+❌ replace deterministic rules
 ```
 
 ---
 
-## Meaning｜含義
+# 🧠 9. Data Reshaping｜資料重構（核心）
 
-```text
-Safe access
-without KeyError
+---
 
-安全取值
-避免報錯
+## SQL Output
+
+```text id="l15_9"
+Flat structure
+平面結構
 ```
 
 ---
 
-# 🧠 10. Performance Thinking｜性能思維
+## Python Output
 
-```text
-Loop search
-→ O(n²) ❌
-
-Dict lookup
-→ O(1) ✔
+```text id="l15_10"
+Structured objects
+結構化物件
 ```
 
 ---
 
-# 🧠 11. Responsibility Separation｜責任分離
+## Core Logic
 
-```text
-SQL
-→ Query & aggregation
-
-Python
-→ Logic & structure
-
-AI
-→ Interpretation & reporting
+```python id="l15_11"
+results.append({...})
 ```
 
 ---
 
-# 🧠 12. AI Integration Thinking｜AI 整合思維
+# 🧠 10. list / dict Understanding｜list / dict 理解
 
-```text
-AI is NOT the system
+---
 
-AI is a semantic layer
+## list
 
-AI 不是系統本身
+```python id="l15_12"
+[
+    {...},
+    {...}
+]
+```
 
-AI 是語意層
+Meaning：
+
+```text id="l15_13"
+Ordered collection
+有順序的集合
 ```
 
 ---
 
-# 🧠 13. Prompt Engineering｜Prompt 工程
+## dict
 
-```text
-AI output quality
-depends on:
+```python id="l15_14"
+{
+    "name": "住宅A"
+}
+```
 
-✔ Structured data
-✔ Context
-✔ Prompt quality
+Meaning：
+
+```text id="l15_15"
+Structured key-value object
+鍵值對結構
 ```
 
 ---
 
-# 🧠 14. Environment Management｜環境管理
+# 🧠 11. Loop Scope｜Loop 作用域
 
-```text
-.env
-.gitignore
-API keys
-load_dotenv()
+```text id="l15_16"
+Indentation controls logic flow
+
+縮排控制邏輯流
 ```
 
 ---
 
-# 🧠 15. Security Thinking｜安全思維
+## Important Lesson
 
-```text
-✔ No hardcoded secrets
-✔ 不寫死敏感資訊
+```text id="l15_17"
+append outside loop
+→ only one result
 
-✔ Ignore .env
-✔ 忽略 .env
-
-✔ Use environment variables
-✔ 使用環境變數
+append 在 loop 外
+→ 只剩一筆
 ```
 
 ---
 
-# 🧠 16. Testing Strategy｜測試策略
+# 🧠 12. Backend Debugging｜後端 Debug 能力
 
-```text
-✔ Normal case
-✔ Boundary case
-✔ Failure case
-✔ Business scenario
+```text id="l15_18"
+Debugging is:
+✔ data tracing
+✔ scope tracing
+✔ logic tracing
+
+Debug 的本質：
+✔ 資料追蹤
+✔ 作用域追蹤
+✔ 邏輯追蹤
 ```
 
 ---
 
-# 🧠 17. Engineering Thinking｜工程思維
+# 🧠 13. Backend Thinking｜後端思維
 
-```text
-Working ≠ Good
+```text id="l15_19"
+Backend engineers
+spend most time tracing data flow.
 
-Maintainable > Working
-
-Security = Mandatory
-
-能跑 ≠ 專業
-
-可維護 > 能跑
-
-安全 = 必須
+後端工程師
+大部分時間都在追資料流。
 ```
 
 ---
 
-# 🧠 18. Business System Thinking｜業務系統思維
+# 🧠 14. Data Visualization Ability｜資料視覺化能力
 
-```text
+```text id="l15_20"
+Strong backend developers
+can mentally see:
+
+✔ variable structure
+✔ data movement
+✔ loop transformations
+
+優秀後端工程師
+能在腦中看到：
+
+✔ 變數結構
+✔ 資料流動
+✔ loop 轉換
+```
+
+---
+
+# 🧠 15. System Thinking｜系統思維
+
+```text id="l15_21"
 You are NOT learning syntax.
 
 You are learning:
 
-How to transform business
-into systems.
+How business data
+flows through systems.
 
 你不是在學語法。
 
 你在學：
 
-如何把業務
-轉化為系統。
+業務數據如何在系統中流動。
 ```
 
 ---
 
-# 🧠 19. AI Positioning｜AI 的定位
+# 🧠 16. Current Positioning｜目前定位
 
-```text
-Weak system + strong AI
+```text id="l15_22"
+Not a beginner anymore.
+
+Transitioning into:
+Backend system thinking.
+
+已不再是初學者。
+
+正在進入：
+後端系統思維階段。
+```
+
+---
+
+# 🧠 17. Core Insight｜核心理解
+
+```text id="l15_23"
+Weak structure + strong AI
 = unstable
 
-Strong system + normal AI
+Strong structure + normal AI
 = valuable
 
-弱系統 + 強AI
+弱結構 + 強AI
 = 不穩定
 
-強系統 + 普通AI
+強結構 + 普通AI
 = 高價值
-```
-
----
-
-# 🧠 20. Your Current Direction｜你目前的方向
-
-```text
-Not a pure developer
-
-Not just an AI user
-
-✔ Business-oriented AI system builder
-
-不是純程序員
-
-不是 AI 使用者
-
-而是：
-
-業務導向 AI 系統構建者
 ```

@@ -435,34 +435,34 @@ def portfolio_health():
 
         cost_ratio = cost / budget if budget else 0
     
-    # 健康度評分（核心）
-    if cost_ratio < 0.6:
-        health = "健康"
-        score = 90
-    elif cost_ratio < 0.8:
-        health = "正常"
-        score = 70
-    elif cost_ratio < 1:
-        health = "警告"
-        score = 50
-    else:
-        health = "危險"
-        score = 30
+        # 健康度評分（核心）
+        if cost_ratio < 0.6:
+            health = "健康"
+            score = 90
+        elif cost_ratio < 0.8:
+            health = "正常"
+            score = 70
+        elif cost_ratio < 1:
+            health = "警告"
+            score = 50
+        else:
+            health = "危險"
+            score = 30
 
-    # 成本結構
-    breakdown = cost_map.get(pid, {})
-    
-    results .append({
-        "project_id": pid,
-        "name": name,
-        "budget": budget,
-        "total_cost": cost,
-        "profit": profit,
-        "cost_ratio": round(cost_ratio, 2),
-        "health": health,
-        "score": score,
-        "cost_breakdown": breakdown
-})
+        # 成本結構
+        breakdown = cost_map.get(pid, {})
+        
+        results .append({
+            "project_id": pid,
+            "name": name,
+            "budget": budget,
+            "total_cost": cost,
+            "profit": profit,
+            "cost_ratio": round(cost_ratio, 2),
+            "health": health,
+            "score": score,
+            "cost_breakdown": breakdown
+        })
 
     return{
         "count": len(results),
@@ -495,4 +495,79 @@ def portfolio_report():
     return {
         "summary": data,
         "ai_report": report
+    }
+
+
+# 業務規則建模
+def evaluate_bid(project):
+    
+    score = 0
+    reasons = []
+
+    # 成本率
+    if project["cost_ratio"] < 0.7:
+        score += 40
+        reasons.append("成本控制優秀")
+
+    elif project["cost_ratio"] < 0.9:
+        score += 20
+        reasons.append("成本率正常")
+
+    else:
+        reasons.append("成本率偏高")
+
+    # 利潤
+    if project["profit"] > 100000:
+        score += 30
+        reasons.append("利潤良好")
+
+    elif project["profit"] < 0:
+        score -= 100
+        reasons.append("存在虧損")
+
+    # 材料占比
+    material = project["cost_breakdown"].get("材料費", 0)
+
+    if project["total_cost"] > 0:
+        material_ratio = material / project["total_cost"]
+
+        if material_ratio > 0.6:
+            reasons.append("材料成本占比過高")
+
+    # 最終判定
+    if score >= 60:
+        decision = "建議投標"
+
+    elif score >= 30:
+        decision = "謹慎評估"
+
+    else:
+        decision = "不建議投標"
+
+    return {
+        "score": score,
+        "decision": decision,
+        "reasons": reasons
+    }
+
+@app.get("/projects/bid-decision/{project_id}")
+def bid_decision(project_id: int):
+
+    data = portfolio_health()
+
+    project = None
+
+    for p in data["projects"]:
+        if p["project_id"] == project_id:
+            project = p
+            break
+
+    if not project:
+        return {"error": "Project not found"}
+
+    result = evaluate_bid(project)
+
+    return {
+        "project": project,
+        "decision": result
     }

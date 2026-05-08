@@ -6,53 +6,44 @@
 
 # 📌 Project Overview｜專案概覽
 
-This project is a backend-oriented AI-assisted construction management system built with:
+This project is an AI-assisted backend system focused on construction cost management, portfolio analysis, and bidding decision support.
 
-本專案是一套基於後端架構的 AI 輔助建築管理系統，核心技術包括：
+本專案是一套以建築成本管理、多專案分析與投標決策支持為核心的 AI 輔助後端系統。
 
-```text
+Core technologies：
+
+核心技術：
+
+```text id="r15_1"
 FastAPI + PostgreSQL + Python + AI Integration
-```
-
-The project simulates real-world construction management workflows including:
-
-本專案模擬真實建築管理流程，包括：
-
-```text
-✔ Project Management｜專案管理
-✔ Cost Management｜成本管理
-✔ Profit Analysis｜利潤分析
-✔ Portfolio Analysis｜多專案分析
-✔ Health Scoring｜健康度評分
-✔ AI-generated Management Reports｜AI 管理報告
 ```
 
 ---
 
-# 🎯 Core Objectives｜核心目標
+# 🎯 Project Goals｜專案目標
 
-```text
+```text id="r15_2"
 ✔ Transform construction business logic into structured systems
-✔ 將建築業務邏輯轉換為結構化系統
+✔ 將建築業務邏輯轉化為結構化系統
 
 ✔ Build scalable backend APIs
 ✔ 建立可擴展後端 API
 
-✔ Create decision-support capabilities
-✔ 建立決策支持能力
+✔ Build portfolio & bidding analysis capabilities
+✔ 建立多專案與投標分析能力
 
 ✔ Combine SQL + Python + AI into one workflow
 ✔ 將 SQL + Python + AI 整合為完整工作流
 
-✔ Prepare high-quality structured data for AI reasoning
-✔ 為 AI 推理準備高質量結構化數據
+✔ Create AI-assisted decision systems
+✔ 建立 AI 輔助決策系統
 ```
 
 ---
 
-# 🧭 System Evolution｜系統演進路線
+# 🧭 System Evolution｜系統演進
 
-```text
+```text id="r15_3"
 Day1–5
 CRUD + Database + API Basics
 
@@ -69,25 +60,31 @@ Day12
 Cost Breakdown Analysis
 
 Day13
-Portfolio Health Scoring System
+Portfolio Health Scoring
 
 Day14
-AI-generated Management Report System
+AI-generated Management Reports
+
+Day15
+AI-assisted Bid Decision System
 ```
 
 ---
 
 # 🧠 System Architecture｜系統架構
 
-```text
+```text id="r15_4"
 Database Layer
 PostgreSQL + SQL
 
 Logic Layer
 FastAPI + Python
 
-Analysis Layer
-Portfolio / Cost / Health Analysis
+Business Layer
+Portfolio / Cost / Bid Analysis
+
+Decision Layer
+Rule-based Scoring
 
 Semantic Layer
 AI-generated Reports & Suggestions
@@ -97,25 +94,28 @@ AI-generated Reports & Suggestions
 
 # ⚠️ AI Design Principles｜AI 設計原則
 
-```text
+```text id="r15_5"
 ✔ SQL handles calculations
 ✔ SQL 負責計算
 
 ✔ Python handles logic and structure
-✔ Python 負責邏輯與結構
+✔ Python 負責邏輯與資料結構
 
-✔ AI handles interpretation and reporting
+✔ Rule system handles decisions
+✔ 規則系統負責決策
+
+✔ AI handles interpretation & reporting
 ✔ AI 負責解讀與報告
 
 ❌ AI should NOT replace deterministic calculations
-❌ AI 不應替代確定性計算
+❌ AI 不應替代確定性邏輯
 ```
 
 ---
 
 # 📂 Project Structure｜專案結構
 
-```text
+```text id="r15_6"
 ai-system/
 │
 ├── main.py
@@ -142,7 +142,7 @@ ai-system/
 
 ## Environment Variables｜環境變數
 
-```env
+```env id="r15_7"
 OPENAI_API_KEY=your_api_key
 ```
 
@@ -150,18 +150,18 @@ OPENAI_API_KEY=your_api_key
 
 ## Security Rules｜安全規範
 
-```text
+```text id="r15_8"
 ✔ Never commit .env
 ✔ 不提交 .env
 
 ✔ Use .gitignore
 ✔ 使用 .gitignore
 
-✔ Avoid hardcoded API keys
-✔ 不寫死 API key
+✔ Avoid hardcoded secrets
+✔ 避免硬編碼敏感資訊
 
 ✔ Use .env.example
-✔ 提供 .env.example
+✔ 使用 .env.example
 ```
 
 ---
@@ -172,30 +172,20 @@ OPENAI_API_KEY=your_api_key
 
 # 1️⃣ Project Management｜專案管理
 
-```text
+```text id="r15_9"
 POST /projects
 GET  /projects
-```
-
-Functions｜功能：
-
-```text
-✔ Create project
-✔ 建立專案
-
-✔ Retrieve projects
-✔ 查詢專案
 ```
 
 ---
 
 # 2️⃣ Cost Management｜成本管理
 
-Supports cost categories：
+Supported categories：
 
-支持成本分類：
+支持分類：
 
-```text
+```text id="r15_10"
 人工費｜Labor
 材料費｜Material
 機械費｜Equipment
@@ -203,7 +193,7 @@ Supports cost categories：
 
 Relationship：
 
-```text
+```text id="r15_11"
 One Project → Many Costs
 一個專案 → 多筆成本
 ```
@@ -212,51 +202,40 @@ One Project → Many Costs
 
 # 3️⃣ Basic Analysis｜基礎分析
 
-```text
+```text id="r15_12"
 GET /analysis
 ```
 
-Provides：
+Functions：
 
-```text
-✔ SUM(budget)
-✔ AVG(budget)
-✔ COUNT(projects)
+```text id="r15_13"
+✔ Total budget
+✔ Average budget
+✔ Project count
 ```
 
 ---
 
 # 4️⃣ Profit Analysis｜利潤分析
 
-```text
+```text id="r15_14"
 GET /project-profit/{id}
 GET /project-profit-join/{id}
-```
-
-Calculates：
-
-```text
-Profit = Budget - Total Cost
-利潤 = 預算 - 成本
 ```
 
 ---
 
 # 5️⃣ Cost Detail｜成本明細
 
-```text
+```text id="r15_15"
 GET /project-cost-detail/{id}
 ```
-
-Returns structured cost items.
-
-返回結構化成本明細。
 
 ---
 
 # 6️⃣ Filtering & Pagination｜篩選與分頁
 
-```text
+```text id="r15_16"
 GET /projects/filter
 GET /projects/page
 GET /projects/search
@@ -266,65 +245,55 @@ GET /projects/search
 
 # 7️⃣ Portfolio Analysis｜多專案分析
 
-```text
+```text id="r15_17"
 GET /projects/portfolio-analysis
 ```
 
 Provides：
 
-```text
+```text id="r15_18"
 ✔ Multi-project comparison
-✔ 多專案比較
-
-✔ Cost ratio
-✔ 成本率
-
 ✔ Profit ranking
-✔ 利潤排序
+✔ Cost ratio analysis
 ```
 
 ---
 
 # 8️⃣ Cost Breakdown｜成本結構分析
 
-```text
+```text id="r15_19"
 GET /project-cost-breakdown/{id}
 ```
 
 Provides：
 
-```text
-✔ Cost category grouping
-✔ 成本分類統計
-
-✔ Ratio calculation
-✔ 占比計算
-
-✔ Highest cost detection
-✔ 最高成本識別
+```text id="r15_20"
+✔ Cost grouping
+✔ Ratio analysis
+✔ Highest-cost category detection
 ```
 
 ---
 
 # 9️⃣ Portfolio Health System｜健康度分析系統
 
-```text
+```text id="r15_21"
 GET /projects/portfolio-health
 ```
 
 ---
 
-## Health Scoring Model｜健康度模型
+## Health Formula｜健康度公式
 
-```text
+```text id="r15_22"
 cost_ratio = total_cost / budget
 ```
 
 ---
 
-## Scoring Rules｜評分規則
+## Health Scoring｜健康度評分
 
-```text
+```text id="r15_23"
 < 0.6
 Healthy｜健康
 
@@ -342,16 +311,14 @@ Dangerous｜危險
 
 # 🔟 AI-generated Management Report｜AI 管理報告
 
-```text
+```text id="r15_24"
 GET /projects/portfolio-report
 ```
 
----
+Workflow：
 
-## Workflow｜工作流
-
-```text
-SQL Data
+```text id="r15_25"
+SQL
 ↓
 Python Structure
 ↓
@@ -359,109 +326,206 @@ Portfolio Analysis
 ↓
 Prompt Construction
 ↓
-AI Report Generation
+AI-generated Report
 ```
 
 ---
 
-## AI Responsibilities｜AI 職責
+# 1️⃣1️⃣ ⭐ Bid Decision System｜投標決策系統（Day15 核心）
 
-```text
-✔ Summarize project status
-✔ 總結專案狀態
+```text id="r15_26"
+GET /projects/bid-decision/{project_id}
+```
 
-✔ Identify risk
+---
+
+# 🎯 Purpose｜目標
+
+```text id="r15_27"
+✔ Determine whether a project should be bid
+✔ 判斷是否應投標
+
+✔ Analyze project risk
+✔ 分析專案風險
+
+✔ Evaluate profitability
+✔ 評估利潤
+
+✔ Detect abnormal cost structures
+✔ 發現異常成本結構
+
+✔ Generate AI-assisted bidding suggestions
+✔ AI 輔助投標建議
+```
+
+---
+
+# 🧠 Core Principle｜核心原則
+
+```text id="r15_28"
+Rules first
+AI second
+
+規則優先
+AI其次
+```
+
+---
+
+# 📊 Bid Decision Logic｜投標決策邏輯
+
+---
+
+## Cost Ratio｜成本率
+
+```text id="r15_29"
+cost_ratio < 0.7
+→ Excellent｜優秀
+
+0.7–0.9
+→ Acceptable｜正常
+
+> 0.9
+→ High Risk｜高風險
+```
+
+---
+
+## Profit Analysis｜利潤分析
+
+```text id="r15_30"
+profit > 100000
+→ Good Profit｜利潤良好
+
+profit < 0
+→ Reject｜禁止投標
+```
+
+---
+
+## Material Ratio｜材料占比
+
+```text id="r15_31"
+material_ratio > 0.6
+→ Material Risk｜材料風險
+```
+
+---
+
+# 🤖 AI Responsibilities｜AI 職責
+
+```text id="r15_32"
+✔ Explain decisions
+✔ 解釋決策
+
+✔ Identify risks
 ✔ 識別風險
 
-✔ Generate management suggestions
-✔ 生成管理建議
+✔ Generate bidding strategies
+✔ 生成投標策略
 
-✔ Produce readable reports
-✔ 生成可讀報告
+✔ Produce management-level reports
+✔ 生成管理層報告
 ```
 
 ---
 
-# 🧠 Data Transformation（Critical）
+# 🧠 Data Flow｜資料流（重要）
 
-# 🧠 數據重構（核心能力）
-
----
-
-## SQL Output（Flat Structure）
-
-```text
-(1, 人工費, 100000)
-(1, 材料費, 120000)
+```text id="r15_33"
+SQL
+↓
+tuple
+↓
+Python variables
+↓
+dict
+↓
+list.append()
+↓
+JSON
+↓
+AI
 ```
 
 ---
 
-## Python Grouped Structure
+# 🧠 Data Transformation｜數據重構
 
-```python
-cost_map = {
-    1: {
-        "人工費": 100000,
-        "材料費": 120000
-    }
+---
+
+## SQL Output
+
+```text id="r15_34"
+(1, '住宅A', 300000, 160000, 140000)
+```
+
+---
+
+## Python Structure
+
+```python id="r15_35"
+{
+    "project_id": 1,
+    "name": "住宅A"
 }
 ```
 
 ---
 
-## Core Logic｜核心邏輯
+## Grouped Structure
 
-```python
-cost_map[pid][ctype] = amount
-```
-
-Meaning：
-
-```text
-Flat SQL data
-→ Structured Python data
-
-SQL 平面數據
-→ Python 結構化數據
+```python id="r15_36"
+results = [
+    {...},
+    {...}
+]
 ```
 
 ---
 
-# ⚠️ SQL Design Rules｜SQL 設計原則
+# ⚠️ Important Debugging Lessons｜重要 Debug 經驗
 
-```text
-✔ SQL structure → string building
-✔ SQL結構 → 拼接
+---
 
-✔ Values → parameterized (%s)
-✔ 數據值 → %s
+## Python Indentation
 
-❌ Never pass SQL syntax as parameters
-❌ 不要將 SQL 語法作為參數
+```text id="r15_37"
+Indentation = Program structure
+
+縮排 = 程式結構
 ```
 
 ---
 
-# 🧪 Testing Strategy｜測試策略
+## Common Mistake
 
-The system includes multiple business scenarios：
+```text id="r15_38"
+append outside loop
+→ only one result
 
-系統包含多種業務場景：
+append 在 loop 外
+→ 只會保留一筆
+```
 
-```text
-✔ Healthy project｜健康專案
-✔ Warning project｜警告專案
-✔ Loss project｜虧損專案
-✔ Material-heavy project｜材料異常專案
-✔ Boundary cases｜邊界測試
+---
+
+## Debug Thinking
+
+```text id="r15_39"
+Check:
+✔ SQL result
+✔ Python variables
+✔ loop scope
+✔ append position
+✔ return position
 ```
 
 ---
 
 # ⚙️ Run Project｜運行方式
 
-```bash
+```bash id="r15_40"
 venv\Scripts\activate
 
 pip install fastapi[standard]
@@ -476,7 +540,7 @@ uvicorn main:app --reload
 
 # 🔗 Swagger API Docs｜接口文檔
 
-```text
+```text id="r15_41"
 http://127.0.0.1:8000/docs
 ```
 
@@ -484,69 +548,51 @@ http://127.0.0.1:8000/docs
 
 # 📈 Current Capabilities｜目前能力
 
-```text
+```text id="r15_42"
 ✔ API Design
-✔ API 設計
-
-✔ SQL Aggregation & JOIN
-✔ SQL 聚合與 JOIN
-
-✔ Pagination & Filtering
-✔ 分頁與篩選
-
-✔ Data Modeling
-✔ 數據建模
-
+✔ SQL Aggregation
 ✔ Portfolio Analysis
-✔ 多專案分析
-
 ✔ Cost Structure Analysis
-✔ 成本結構分析
-
 ✔ Health Scoring
-✔ 健康度評分
-
+✔ Bid Decision Logic
 ✔ AI-generated Reports
-✔ AI 管理報告
-
+✔ Rule-based Systems
 ✔ Data Reshaping
-✔ 數據重構
-
+✔ Backend Debugging
 ✔ Environment Management
-✔ 環境管理
 ```
 
 ---
 
 # 🔮 Next Stage｜下一階段
 
-```text
-Day15
-AI-assisted bidding simulation
-
+```text id="r15_43"
 Day16
-Excel import system
+Excel Import System
 
 Day17
-Cost benchmark database
+Bid Item Parsing
 
 Day18
-Historical trend analysis
+Cost Benchmark Database
+
+Day19
+Historical Trend Analysis
 
 Day20+
-Low-code system refactor
+Low-code System Refactor
 ```
 
 ---
 
 # 🎯 Final Positioning｜最終定位
 
-```text
-This is NOT just an API project.
+```text id="r15_44"
+This is NOT just a backend API project.
 
-It is an AI-assisted business decision system.
+It is an AI-assisted construction business decision system.
 
-這不只是 API 專案。
+這不只是後端 API 專案。
 
-而是一套 AI 輔助業務決策系統。
+而是一套 AI 輔助建築業務決策系統。
 ```
