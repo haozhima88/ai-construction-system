@@ -15,5 +15,5 @@ venv/
 .DS_Store
 
 # text test demo
-.text_demo.sql
+.text_demo.md
 SQL_demo.sql

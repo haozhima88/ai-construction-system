@@ -10,7 +10,7 @@ load_dotenv()
 # 初始化 client（會自動讀環境變數）
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 #
-# def generate_report(prompt):
+# def generate_ai_report(prompt):
 #     try:
 #         response = client.chat.completions.create(
 #             model="gpt-4o-mini",
@@ -35,7 +35,7 @@ client = OpenAI(
     api_key=os.environ.get('DEEPSEEK_API_KEY'),
     base_url="https://api.deepseek.com")
 
-def generate_report(prompt):
+def generate_ai_report(prompt):
     try:
         response = client.chat.completions.create(
             model="deepseek-v4-pro",
