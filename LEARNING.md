@@ -1,318 +1,443 @@
-# 📚 LEARNING.md
-
-# 📚 學習總結（Day15 完整雙語版）
+# LEARNING.md
+# AI Construction System Learning Journey
 
 ---
 
-# 🧠 1. Backend Data Flow｜後端資料流
+# Day 1–5
+# FastAPI + PostgreSQL 基礎
 
-```text id="l15_1"
-SQL
-→ tuple
-→ Python variables
-→ dict
-→ list
-→ JSON
-→ API response
-→ AI
+---
 
-SQL
-→ 元組
-→ Python變數
-→ 字典
-→ 列表
-→ JSON
-→ API回應
-→ AI
+## 學習內容
+
+- FastAPI basics
+- PostgreSQL basics
+- CRUD API
+- Swagger testing
+
+---
+
+## 理解
+
+API 本質：
+
+```text
+HTTP Interface
+```
+
+資料庫本質：
+
+```text
+Business Data Structure
+```
+
+開始理解：
+
+- Request / Response
+- SQL basics
+- Backend fundamentals
+
+---
+
+# Day 6–10
+# 成本分析系統
+
+---
+
+## 建立內容
+
+- projects table
+- costs table
+- 成本分析 API
+
+---
+
+## 學習內容
+
+- SQL JOIN
+- GROUP BY
+- SUM()
+- COALESCE()
+
+---
+
+## 理解
+
+資料庫並不是：
+
+```text
+單純存資料
+```
+
+而是：
+
+```text
+業務關係模型
 ```
 
 ---
 
-# 🧠 2. SQL Core Concepts｜SQL 核心概念
+# Day 11–13
+# Portfolio Health System
 
-```text id="l15_2"
-JOIN
-LEFT JOIN
-GROUP BY
-SUM
-AVG
-COUNT
-COALESCE
+---
+
+## 建立
+
+- 成本率分析
+- 健康評分
+- 成本分類映射
+
+---
+
+## 關鍵理解
+
+```python
+cost_map[pid][ctype] = amount
+```
+
+本質：
+
+```text
+Project ID
+↓
+Cost Type
+↓
+Amount
+```
+
+開始真正理解：
+
+- nested dict
+- data mapping
+- structured business data
+
+---
+
+# Day 14–15
+# AI Integration
+
+---
+
+## 建立
+
+- OpenAI API integration
+- AI 成本分析
+
+---
+
+## 學習
+
+- .env
+- API Key
+- Environment Variables
+
+---
+
+## 理解
+
+真正工程：
+
+```text
+不會把秘密寫死在代碼裡
 ```
 
 ---
 
-# 🧠 3. Portfolio Thinking｜多專案思維
+# Day 16–17
+# Data Engineering + Architecture Refactor
 
-```text id="l15_3"
-Single project
-→ Tool
+---
 
-Multiple projects
-→ Decision System
+## 1. Excel Data Normalization
 
-單專案
-→ 工具
+發現：
 
-多專案
-→ 決策系統
+中國建築業 Excel：
+
+- 簡繁混用
+- 命名混亂
+- 欄位不統一
+
+例如：
+
+```text
+清單項目
+清单项目名称
+項目名稱
+名称
+```
+
+因此建立：
+
+```python
+COLUMN_MAPPING
 ```
 
 ---
 
-# 🧠 4. Cost Structure Thinking｜成本結構思維
+## 理解
 
-```text id="l15_4"
-Total cost ≠ insight
-
-Structure = insight
-
-總成本 ≠ 洞察
-
-結構 = 洞察
+```text
+外部資料混亂，
+系統內部必須統一。
 ```
 
 ---
 
-# 🧠 5. Health Scoring｜健康度評分
+# 2. ETL Thinking
 
-```text id="l15_5"
-Data
-→ Metric
-→ Score
-→ Decision
+開始理解：
 
-數據
-→ 指標
-→ 評分
-→ 決策
+```text
+Extract
+Transform
+Load
 ```
 
 ---
 
-# 🧠 6. Bid Decision Logic｜投標決策邏輯
+## Pipeline
 
-```text id="l15_6"
-Cost ratio
-Profit
-Material ratio
-Risk level
+```text
+Excel
+↓
+DataFrame
+↓
+dict
+↓
+normalized dict
+↓
+business logic
+↓
+AI analysis
 ```
 
 ---
 
-# 🧠 7. Rule-based System｜規則系統
+# 3. dict.items()
 
-```text id="l15_7"
-Rules first
-AI second
+錯誤：
 
-規則優先
-AI其次
+```python
+row.item()
+```
+
+正確：
+
+```python
+row.items()
 ```
 
 ---
 
-# 🧠 8. AI Positioning｜AI 定位
+## 理解
 
-```text id="l15_8"
-AI should:
-✔ explain
-✔ summarize
-✔ suggest
+```python
+for key, value in row.items()
+```
 
-AI should NOT:
-❌ replace deterministic rules
+本質：
+
+```text
+遍歷 dict key-value pair
 ```
 
 ---
 
-# 🧠 9. Data Reshaping｜資料重構（核心）
+# 4. Engineering Refactor
 
----
+開始從：
 
-## SQL Output
+```text
+Single File Script
+```
 
-```text id="l15_9"
-Flat structure
-平面結構
+轉向：
+
+```text
+Layered Backend Architecture
 ```
 
 ---
 
-## Python Output
+## 建立
 
-```text id="l15_10"
-Structured objects
-結構化物件
+```text
+api/
+services/
+utils/
+models/
 ```
 
 ---
 
-## Core Logic
+# 5. Engineering Thinking
 
-```python id="l15_11"
-results.append({...})
+---
+
+## main.py
+
+不是：
+
+```text
+做業務
+```
+
+而是：
+
+```text
+組裝系統
 ```
 
 ---
 
-# 🧠 10. list / dict Understanding｜list / dict 理解
+## api/
 
----
+負責：
 
-## list
-
-```python id="l15_12"
-[
-    {...},
-    {...}
-]
-```
-
-Meaning：
-
-```text id="l15_13"
-Ordered collection
-有順序的集合
+```text
+HTTP Layer
 ```
 
 ---
 
-## dict
+## services/
 
-```python id="l15_14"
-{
-    "name": "住宅A"
-}
-```
+負責：
 
-Meaning：
-
-```text id="l15_15"
-Structured key-value object
-鍵值對結構
+```text
+Business Logic
 ```
 
 ---
 
-# 🧠 11. Loop Scope｜Loop 作用域
+## utils/
 
-```text id="l15_16"
-Indentation controls logic flow
+負責：
 
-縮排控制邏輯流
+```text
+Infrastructure
 ```
 
 ---
 
-## Important Lesson
+# 6. Import Chain Understanding
 
-```text id="l15_17"
-append outside loop
-→ only one result
+開始理解：
 
-append 在 loop 外
-→ 只剩一筆
+```text
+main.py
+↓
+api
+↓
+service
+↓
+utils
+↓
+db
 ```
 
 ---
 
-# 🧠 12. Backend Debugging｜後端 Debug 能力
+## 理解
 
-```text id="l15_18"
-Debugging is:
-✔ data tracing
-✔ scope tracing
-✔ logic tracing
+```python
+import
+```
 
-Debug 的本質：
-✔ 資料追蹤
-✔ 作用域追蹤
-✔ 邏輯追蹤
+不是單純引用。
+
+而是：
+
+```text
+整個文件都會執行
 ```
 
 ---
 
-# 🧠 13. Backend Thinking｜後端思維
+# 7. Git Engineering
 
-```text id="l15_19"
-Backend engineers
-spend most time tracing data flow.
+學習：
 
-後端工程師
-大部分時間都在追資料流。
+- .gitignore
+- archive/
+- repository hygiene
+
+---
+
+## 理解
+
+Git：
+
+```text
+不是備份
+而是版本演進系統
 ```
 
 ---
 
-# 🧠 14. Data Visualization Ability｜資料視覺化能力
+# Current Understanding｜目前理解層級
 
-```text id="l15_20"
-Strong backend developers
-can mentally see:
+目前已開始接觸：
 
-✔ variable structure
-✔ data movement
-✔ loop transformations
+- Backend Engineering
+- Data Engineering
+- AI Integration
+- Layered Architecture
+- Data Normalization
+- ETL Thinking
 
-優秀後端工程師
-能在腦中看到：
+---
 
-✔ 變數結構
-✔ 資料流動
-✔ loop 轉換
+# Current Weaknesses｜目前弱點
+
+仍需加強：
+
+- dict intuition
+- async understanding
+- SQL optimization
+- deployment engineering
+- Python fluency
+
+---
+
+# Most Important Insight｜目前最大收穫
+
+真正企業 AI 系統：
+
+```text
+不是：
+AI 聊天
+
+而是：
+
+資料結構
++
+規則系統
++
+AI
 ```
 
 ---
 
-# 🧠 15. System Thinking｜系統思維
+# Long-term Direction｜長期方向
 
-```text id="l15_21"
-You are NOT learning syntax.
+目標不是：
 
-You are learning:
-
-How business data
-flows through systems.
-
-你不是在學語法。
-
-你在學：
-
-業務數據如何在系統中流動。
+```text
+普通 Python 程式員
 ```
 
----
+而是：
 
-# 🧠 16. Current Positioning｜目前定位
-
-```text id="l15_22"
-Not a beginner anymore.
-
-Transitioning into:
-Backend system thinking.
-
-已不再是初學者。
-
-正在進入：
-後端系統思維階段。
+```text
+懂建築業務的 AI 系統工程方向
 ```
 
----
+核心能力：
 
-# 🧠 17. Core Insight｜核心理解
-
-```text id="l15_23"
-Weak structure + strong AI
-= unstable
-
-Strong structure + normal AI
-= valuable
-
-弱結構 + 強AI
-= 不穩定
-
-強結構 + 普通AI
-= 高價值
-```
+- Construction Business
+- Backend Engineering
+- Data Engineering
+- AI Business System
