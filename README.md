@@ -3,7 +3,7 @@
 
 ---
 
-# Project Overview｜專案概覽
+# 1. Project Overview｜專案概覽
 
 AI Construction System 是一套基於：
 
@@ -11,50 +11,47 @@ AI Construction System 是一套基於：
 - PostgreSQL
 - Pandas
 - OpenAI / DeepSeek API
-- Excel Data Engineering
+- Python 3.11
 
-建立的 AI 建築管理與成本分析後端系統。
-
-This project focuses on transforming:
+建立的：
 
 ```text
-Unstructured / Semi-structured Construction Excel Data
+AI + Construction Business Backend System
 ```
 
-into:
+本專案的核心方向不是：
 
 ```text
-Structured AI-ready Business Data
-```
-
----
-
-# Core Direction｜核心方向
-
-本專案並不是：
-
-```text
-AI Chatbot Demo
+Chat AI Demo
 ```
 
 而是：
 
 ```text
-AI + Construction Business System
+Construction Business Intelligence System
 ```
 
-核心方向包括：
+目標是：
 
-- Construction Cost Analysis
-- Bid Excel Processing
-- Data Normalization
-- AI-assisted Cost Analysis
-- Backend Engineering
-- Business Data Engineering
+> 將中國建築行業中大量混亂、半結構化的 Excel / 招標清單資料，
+> 轉換為可分析、可管理、可 AI 化的結構化業務系統。
 
 ---
 
-# Current Technical Stack｜目前技術棧
+# 2. Core Direction｜核心方向
+
+本專案聚焦於：
+
+- Construction Cost Analysis
+- Excel Bid Processing
+- Data Engineering
+- Backend Engineering
+- AI-assisted Cost Analysis
+- Rule-based Business Intelligence
+
+---
+
+# 3. Current Technology Stack｜目前技術棧
 
 | Layer | Technology |
 |---|---|
@@ -62,13 +59,13 @@ AI + Construction Business System
 | Database | PostgreSQL |
 | Data Processing | Pandas |
 | AI Integration | OpenAI / DeepSeek |
-| Environment | Python 3.11 |
 | API Testing | Swagger |
+| Environment | Python 3.11 |
 | Version Control | Git + GitHub |
 
 ---
 
-# Current Architecture｜目前工程架構
+# 4. Engineering Architecture｜工程化架構
 
 ```text
 ai-construction-system/
@@ -83,6 +80,7 @@ ai-construction-system/
 │   ├── cost_service.py
 │   ├── excel_service.py
 │   ├── ai_analysis.py
+│   ├── rule_engine.py
 │
 ├── utils/
 │   ├── db.py
@@ -106,7 +104,7 @@ ai-construction-system/
 
 ---
 
-# Engineering Architecture｜工程化架構思想
+# 5. Layered Architecture｜分層架構思想
 
 ---
 
@@ -147,10 +145,11 @@ Business Logic Layer
 
 負責：
 
+- Excel processing
 - Cost analysis
-- Excel transformation
 - AI integration
-- Data processing
+- Rule Engine
+- Data transformation
 
 ---
 
@@ -162,7 +161,7 @@ Infrastructure Layer
 
 - PostgreSQL connection
 - Data normalization
-- Shared utility logic
+- Shared utilities
 
 ---
 
@@ -178,13 +177,45 @@ Schema Layer
 
 ---
 
-# Data Normalization System｜數據標準化系統
+# 6. Data Engineering Pipeline｜數據工程管線
 
-中國建築業的 Excel 文件存在大量：
+本專案核心已逐漸轉向：
+
+```text
+Business Data Engineering
+```
+
+---
+
+## ETL Pipeline
+
+```text
+Excel
+↓
+Pandas DataFrame
+↓
+dict records
+↓
+Field normalization
+↓
+Rule Engine
+↓
+Business logic
+↓
+AI analysis
+↓
+API response
+```
+
+---
+
+# 7. Data Normalization System｜數據標準化系統
+
+中國建築業 Excel 存在：
 
 - 簡繁混用
-- 命名不統一
-- 欄位格式混亂
+- 欄位名稱混亂
+- 不同軟體格式不統一
 
 例如：
 
@@ -195,7 +226,7 @@ Schema Layer
 名称
 ```
 
-系統內部會統一映射為：
+全部統一映射為：
 
 ```python
 item_name
@@ -215,27 +246,51 @@ Data Standardization Layer
 
 ---
 
-# ETL Pipeline｜Excel 數據管線
+# 8. Business Rule Engine｜業務規則引擎
+
+建立：
+
+```python
+services/rule_engine.py
+```
+
+功能：
+
+- 材料費識別
+- 人工費識別
+- 機械費識別
+
+---
+
+## Current Rule Logic
+
+例如：
 
 ```text
-Excel
-↓
-Pandas DataFrame
-↓
-dict records
-↓
-Field normalization
-↓
-Business logic
-↓
-AI analysis
-↓
-API response
+混凝土 → 材料費
+鋼筋 → 材料費
+吊車 → 機械費
+安裝 → 人工費
 ```
 
 ---
 
-# Current APIs｜目前 API
+# 9. AI Integration｜AI 分析系統
+
+目前支援：
+
+- OpenAI API
+- DeepSeek API
+
+功能：
+
+- 成本分析
+- 專案健康分析
+- AI 報告生成
+
+---
+
+# 10. Current APIs｜目前 API
 
 ---
 
@@ -249,8 +304,8 @@ GET /projects/portfolio-health/
 
 - 專案成本率分析
 - 健康評分
-- 成本結構分析
-- AI 成本分析報告
+- 成本分類分析
+- AI 分析報告
 
 ---
 
@@ -264,11 +319,12 @@ POST /upload-bid-excel
 
 - Excel upload
 - Data normalization
+- Cost type classification
 - Structured transformation
 
 ---
 
-# Environment Setup｜環境配置
+# 11. Environment Setup｜環境配置
 
 ---
 
@@ -312,7 +368,7 @@ pip install python-multipart
 
 ---
 
-# .env Example｜環境變量範例
+# 12. .env Example｜環境變量配置
 
 ```env
 DB_HOST=localhost
@@ -326,7 +382,7 @@ OPENAI_API_KEY=your_key
 
 ---
 
-# Run Project｜啟動專案
+# 13. Run Project｜啟動專案
 
 ```bash
 uvicorn main:app --reload
@@ -340,7 +396,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-# Git Ignore Strategy｜Git 忽略策略
+# 14. Git Ignore Strategy｜Git 忽略策略
 
 ```gitignore
 venv/
@@ -353,15 +409,9 @@ __pycache__/
 
 ---
 
-# Engineering Transition｜工程能力轉型
+# 15. Current Engineering Transition｜目前工程能力轉型
 
-本專案不只是：
-
-```text
-Learning Python
-```
-
-而是：
+本專案代表：
 
 ```text
 從：
@@ -372,17 +422,30 @@ Learning Python
 AI Business System Engineer
 ```
 
-核心能力方向：
+---
 
-- Construction Business Knowledge
-- Backend Engineering
-- Data Engineering
-- AI Integration
-- System Architecture
+# 16. Core Engineering Insight｜目前核心理解
+
+真正企業 AI 系統：
+
+```text
+不是：
+AI 聊天
+```
+
+而是：
+
+```text
+資料結構
++
+規則系統
++
+AI
+```
 
 ---
 
-# Future Roadmap｜未來規劃
+# 17. Future Roadmap｜未來規劃
 
 ---
 
@@ -410,22 +473,3 @@ AI Business System Engineer
 - Ubuntu Server
 - Nginx
 - CI/CD
-
----
-
-# Core Insight｜目前最大理解
-
-真正企業 AI 系統：
-
-```text
-不是：
-AI 聊天
-
-而是：
-
-資料結構
-+
-規則系統
-+
-AI
-```

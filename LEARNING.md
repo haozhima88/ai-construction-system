@@ -28,14 +28,8 @@ HTTP Interface
 資料庫本質：
 
 ```text
-Business Data Structure
+Business Relationship Structure
 ```
-
-開始理解：
-
-- Request / Response
-- SQL basics
-- Backend fundamentals
 
 ---
 
@@ -44,7 +38,7 @@ Business Data Structure
 
 ---
 
-## 建立內容
+## 建立
 
 - projects table
 - costs table
@@ -52,7 +46,7 @@ Business Data Structure
 
 ---
 
-## 學習內容
+## 學習
 
 - SQL JOIN
 - GROUP BY
@@ -63,7 +57,7 @@ Business Data Structure
 
 ## 理解
 
-資料庫並不是：
+資料庫不是：
 
 ```text
 單純存資料
@@ -109,8 +103,8 @@ Amount
 開始真正理解：
 
 - nested dict
-- data mapping
-- structured business data
+- business mapping
+- structured data
 
 ---
 
@@ -185,37 +179,7 @@ COLUMN_MAPPING
 
 ---
 
-# 2. ETL Thinking
-
-開始理解：
-
-```text
-Extract
-Transform
-Load
-```
-
----
-
-## Pipeline
-
-```text
-Excel
-↓
-DataFrame
-↓
-dict
-↓
-normalized dict
-↓
-business logic
-↓
-AI analysis
-```
-
----
-
-# 3. dict.items()
+# 2. dict.items()
 
 錯誤：
 
@@ -231,16 +195,73 @@ row.items()
 
 ---
 
-## 理解
+## AI 指導
+
+AI 指出：
+
+```text
+dict 沒有 item()
+只有 items()
+```
+
+本質：
 
 ```python
 for key, value in row.items()
 ```
 
-本質：
+代表：
 
 ```text
 遍歷 dict key-value pair
+```
+
+---
+
+# 3. Import Chain Understanding
+
+開始理解：
+
+```text
+main.py
+↓
+api
+↓
+service
+↓
+utils
+↓
+db
+```
+
+---
+
+## AI 指導
+
+AI 特別指出：
+
+```python
+import
+```
+
+不是單純引用。
+
+而是：
+
+```text
+整個文件都會執行
+```
+
+因此：
+
+```python
+from utils.db import cursor
+```
+
+會立即：
+
+```python
+psycopg2.connect()
 ```
 
 ---
@@ -259,9 +280,7 @@ Single File Script
 Layered Backend Architecture
 ```
 
----
-
-## 建立
+建立：
 
 ```text
 api/
@@ -272,86 +291,142 @@ models/
 
 ---
 
-# 5. Engineering Thinking
+# 5. Rule Engine
 
----
+建立：
 
-## main.py
-
-不是：
-
-```text
-做業務
-```
-
-而是：
-
-```text
-組裝系統
+```python
+services/rule_engine.py
 ```
 
 ---
 
-## api/
+## 第一版規則系統
 
-負責：
+```python
+classify_cost_type()
+```
+
+功能：
+
+- 材料費識別
+- 人工費識別
+- 機械費識別
+
+---
+
+## AI 指導
+
+AI 指出：
+
+真正企業 AI 系統：
 
 ```text
-HTTP Layer
+Rule First
+AI Second
+```
+
+原因：
+
+```text
+Rule：
+穩定、便宜、可控
+
+AI：
+推理、模糊理解
 ```
 
 ---
 
-## services/
+# 6. Excel Pipeline Order（重要）
 
-負責：
+---
+
+## 錯誤邏輯
+
+之前：
+
+```python
+item_name = normalized_row.get("item_name", "")
+```
+
+寫在：
+
+```python
+for key, value in row.items()
+```
+
+內部。
+
+---
+
+## 問題
+
+AI 指出：
+
+此時：
 
 ```text
-Business Logic
+normalized_row
+尚未完整建立
+```
+
+因此：
+
+```text
+分類邏輯可能提前執行
+```
+
+屬於：
+
+```text
+流程偶然正確
+```
+
+而不是：
+
+```text
+穩定工程邏輯
 ```
 
 ---
 
-## utils/
+## 正確 Pipeline
 
-負責：
+AI 指導：
+
+---
+
+### Step1
 
 ```text
-Infrastructure
+Field normalization
 ```
 
 ---
 
-# 6. Import Chain Understanding
-
-開始理解：
+### Step2
 
 ```text
-main.py
-↓
-api
-↓
-service
-↓
-utils
-↓
-db
+Rule classification
+```
+
+---
+
+### Step3
+
+```text
+Business analysis
 ```
 
 ---
 
 ## 理解
 
-```python
-import
-```
-
-不是單純引用。
-
-而是：
+開始真正理解：
 
 ```text
-整個文件都會執行
+Data Pipeline Order
 ```
 
 ---
@@ -366,12 +441,12 @@ import
 
 ---
 
-## 理解
+## AI 指導
 
 Git：
 
 ```text
-不是備份
+不是備份，
 而是版本演進系統
 ```
 
@@ -383,10 +458,11 @@ Git：
 
 - Backend Engineering
 - Data Engineering
-- AI Integration
-- Layered Architecture
-- Data Normalization
 - ETL Thinking
+- Layered Architecture
+- Business Rule Engine
+- AI Integration
+- Data Normalization
 
 ---
 
@@ -409,9 +485,11 @@ Git：
 ```text
 不是：
 AI 聊天
+```
 
 而是：
 
+```text
 資料結構
 +
 規則系統
