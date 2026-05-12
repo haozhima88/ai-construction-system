@@ -108,165 +108,21 @@ Amount
 
 ---
 
-# Day 14–15
-# AI Integration
+# Day 14–17
+# Data Engineering + Architecture Refactor
 
 ---
 
 ## 建立
 
-- OpenAI API integration
-- AI 成本分析
-
----
-
-## 學習
-
-- .env
-- API Key
-- Environment Variables
+- api/
+- services/
+- utils/
+- models/
 
 ---
 
 ## 理解
-
-真正工程：
-
-```text
-不會把秘密寫死在代碼裡
-```
-
----
-
-# Day 16–17
-# Data Engineering + Architecture Refactor
-
----
-
-## 1. Excel Data Normalization
-
-發現：
-
-中國建築業 Excel：
-
-- 簡繁混用
-- 命名混亂
-- 欄位不統一
-
-例如：
-
-```text
-清單項目
-清单项目名称
-項目名稱
-名称
-```
-
-因此建立：
-
-```python
-COLUMN_MAPPING
-```
-
----
-
-## 理解
-
-```text
-外部資料混亂，
-系統內部必須統一。
-```
-
----
-
-# 2. dict.items()
-
-錯誤：
-
-```python
-row.item()
-```
-
-正確：
-
-```python
-row.items()
-```
-
----
-
-## AI 指導
-
-AI 指出：
-
-```text
-dict 沒有 item()
-只有 items()
-```
-
-本質：
-
-```python
-for key, value in row.items()
-```
-
-代表：
-
-```text
-遍歷 dict key-value pair
-```
-
----
-
-# 3. Import Chain Understanding
-
-開始理解：
-
-```text
-main.py
-↓
-api
-↓
-service
-↓
-utils
-↓
-db
-```
-
----
-
-## AI 指導
-
-AI 特別指出：
-
-```python
-import
-```
-
-不是單純引用。
-
-而是：
-
-```text
-整個文件都會執行
-```
-
-因此：
-
-```python
-from utils.db import cursor
-```
-
-會立即：
-
-```python
-psycopg2.connect()
-```
-
----
-
-# 4. Engineering Refactor
 
 開始從：
 
@@ -280,20 +136,38 @@ Single File Script
 Layered Backend Architecture
 ```
 
-建立：
+---
 
-```text
-api/
-services/
-utils/
-models/
+# 建立
+
+```python
+COLUMN_MAPPING
 ```
 
 ---
 
-# 5. Rule Engine
+## 理解
 
-建立：
+中國建築業 Excel：
+
+- 簡繁混用
+- 欄位混亂
+- 格式不統一
+
+因此：
+
+```text
+系統內部必須建立統一資料語言
+```
+
+---
+
+# Day 18
+# Rule Engine
+
+---
+
+## 建立
 
 ```python
 services/rule_engine.py
@@ -301,23 +175,15 @@ services/rule_engine.py
 
 ---
 
-## 第一版規則系統
+## 建立
 
 ```python
 classify_cost_type()
 ```
 
-功能：
-
-- 材料費識別
-- 人工費識別
-- 機械費識別
-
 ---
 
-## AI 指導
-
-AI 指出：
+## 理解
 
 真正企業 AI 系統：
 
@@ -326,97 +192,81 @@ Rule First
 AI Second
 ```
 
-原因：
+---
+
+## 理解
+
+Rule Engine：
 
 ```text
-Rule：
-穩定、便宜、可控
-
-AI：
-推理、模糊理解
+不是處理資料
+而是：
+理解資料
 ```
 
 ---
 
-# 6. Excel Pipeline Order（重要）
+# Day 19
+# Intelligence Engine + Debugger World
 
 ---
 
-## 錯誤邏輯
+# 1. Intelligence Engine
 
-之前：
+建立：
 
 ```python
-item_name = normalized_row.get("item_name", "")
+services/intelligence_engine.py
 ```
 
-寫在：
+功能：
 
-```python
-for key, value in row.items()
-```
-
-內部。
+- 成本占比分析
+- 異常分析
+- 成本結構分析
 
 ---
 
-## 問題
+## 理解
 
-AI 指出：
-
-此時：
+開始從：
 
 ```text
-normalized_row
-尚未完整建立
+Data Processing
 ```
 
-因此：
+進入：
 
 ```text
-分類邏輯可能提前執行
-```
-
-屬於：
-
-```text
-流程偶然正確
-```
-
-而不是：
-
-```text
-穩定工程邏輯
+Business Intelligence
 ```
 
 ---
 
-## 正確 Pipeline
+# 2. 數據完整性問題（重要）
 
-AI 指導：
+第一次測試時：
 
----
-
-### Step1
-
-```text
-Field normalization
+```json
+total_amount = 0
 ```
 
 ---
 
-### Step2
+## AI 指導
+
+AI 分析指出：
+
+問題不是：
 
 ```text
-Rule classification
+代碼錯誤
 ```
 
----
-
-### Step3
+而是：
 
 ```text
-Business analysis
+Excel 缺少 unit_price
 ```
 
 ---
@@ -426,28 +276,188 @@ Business analysis
 開始真正理解：
 
 ```text
-Data Pipeline Order
+Data Completeness
+數據完整性
 ```
 
 ---
 
-# 7. Git Engineering
+## 理解
 
-學習：
+真正 BI 系統：
 
-- .gitignore
-- archive/
-- repository hygiene
+```text
+Garbage In
+Garbage Out
+```
 
 ---
 
-## AI 指導
+# 3. VS Code Engineering Workflow
 
-Git：
+建立：
+
+- Python Debugger
+- Pylance
+- Breakpoint
+- Variable Observation
+- Call Stack
+
+---
+
+# 4. launch.json
+
+建立：
+
+```json
+FastAPI Debug
+```
+
+配置。
+
+---
+
+# 5. Breakpoint Understanding（重要）
+
+第一次 breakpoint：
+
+```python
+df = pd.read_excel(file_path)
+```
+
+時：
 
 ```text
-不是備份，
-而是版本演進系統
+VARIABLES
+沒有 df
+```
+
+---
+
+## AI 指導（重要）
+
+AI 指出：
+
+```text
+Breakpoint 停下時，
+該行還沒執行。
+```
+
+因此：
+
+```python
+df
+```
+
+尚未建立。
+
+---
+
+## 理解
+
+開始真正理解：
+
+```text
+變量生命周期
+```
+
+以及：
+
+```text
+Runtime State
+```
+
+---
+
+# 6. 第一次真正觀察 Data Pipeline（重要）
+
+完整 Debug：
+
+```text
+Excel
+↓
+DataFrame
+↓
+dict records
+↓
+normalized_row
+↓
+Rule Engine
+↓
+Intelligence Engine
+↓
+FastAPI JSON response
+```
+
+---
+
+# 7. 最大突破（非常重要）
+
+之前：
+
+```text
+只能“讀代碼”
+```
+
+現在：
+
+```text
+能真正“觀察程序運行”
+```
+
+---
+
+# 8. 第一次真正理解：
+
+- DataFrame
+- row
+- dict
+- normalized_row
+- append()
+- import chain
+- Call Stack
+
+---
+
+# 9. 對 Debugger 的理解（重要）
+
+Debugger：
+
+```text
+不是：
+找 bug 工具
+```
+
+而是：
+
+```text
+程序世界觀測器
+```
+
+---
+
+# 10. 最大收穫（非常重要）
+
+第一次真正建立：
+
+```text
+數據在內存中的流動感
+```
+
+---
+
+## 理解
+
+之前：
+
+```text
+dict 是抽象概念
+```
+
+現在：
+
+```text
+dict 開始“活起來”
 ```
 
 ---
@@ -459,10 +469,11 @@ Git：
 - Backend Engineering
 - Data Engineering
 - ETL Thinking
-- Layered Architecture
-- Business Rule Engine
-- AI Integration
-- Data Normalization
+- Rule Engine
+- Business Intelligence
+- Debug Workflow
+- Runtime State
+- Data Flow Thinking
 
 ---
 
@@ -470,31 +481,28 @@ Git：
 
 仍需加強：
 
-- dict intuition
+- Python syntax fluency
 - async understanding
-- SQL optimization
 - deployment engineering
-- Python fluency
+- SQL optimization
+- advanced pandas
 
 ---
 
 # Most Important Insight｜目前最大收穫
 
-真正企業 AI 系統：
+真正工程能力：
 
 ```text
 不是：
-AI 聊天
+背語法
 ```
 
 而是：
 
 ```text
-資料結構
-+
-規則系統
-+
-AI
+觀察：
+數據如何在程序世界中流動
 ```
 
 ---
@@ -510,12 +518,12 @@ AI
 而是：
 
 ```text
-懂建築業務的 AI 系統工程方向
+Construction Business Intelligence Engineer
 ```
 
-核心能力：
+核心方向：
 
-- Construction Business
 - Backend Engineering
 - Data Engineering
-- AI Business System
+- Business Intelligence
+- AI System Architecture

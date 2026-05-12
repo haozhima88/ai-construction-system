@@ -1,6 +1,9 @@
 from fastapi import APIRouter, UploadFile, File
 
 from services.excel_service import process_excel
+from services.intelligence_engine import (
+    analyze_cost_structure
+)
 
 router = APIRouter()
 
@@ -17,8 +20,10 @@ async def upload_bid_excel(
         f.write(await file.read())
 
     results = process_excel(file_path)
+    analysis_result = analyze_cost_structure(results)
 
     return {
         "count": len(results),
-        "data": results
+        "data": results,
+        "analysis": analysis_result
     }
