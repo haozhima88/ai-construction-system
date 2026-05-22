@@ -1,71 +1,30 @@
 # AI Construction System
-# AI 建築管理與成本分析系統
 
----
+AI Construction System 是一個面向中國建築招標清單的：
 
-# 1. Project Overview｜專案概覽
+- AI × ETL × FastAPI
+- Construction Document Parsing
+- 半結構化數據工程
+- 招標清單標準化
+- AI 成本分析
 
-AI Construction System 是一套基於：
+工程化系統。
 
-- FastAPI
-- PostgreSQL
-- Pandas
-- OpenAI / DeepSeek API
-- Python 3.11
+本項目目前的核心方向：
 
-建立的：
-
-```text
-AI + Construction Business Backend System
-```
-
-本專案的核心方向不是：
-
-```text
-Chat AI Demo
-```
+不是普通 CRUD 系統，
 
 而是：
 
-```text
-Construction Business Intelligence System
-```
+# Construction Document Semantic Parsing Engine
 
-目標是：
+即：
 
-> 將中國建築行業中大量混亂、半結構化的 Excel / 招標清單資料，
-> 轉換為可分析、可管理、可 AI 化的結構化業務系統。
+中國建築招標清單語義解析引擎。
 
 ---
 
-# 2. Core Direction｜核心方向
-
-本專案聚焦於：
-
-- Construction Cost Analysis
-- Excel Bid Processing
-- Data Engineering
-- Backend Engineering
-- AI-assisted Cost Analysis
-- Rule-based Business Intelligence
-
----
-
-# 3. Current Technology Stack｜目前技術棧
-
-| Layer | Technology |
-|---|---|
-| Backend Framework | FastAPI |
-| Database | PostgreSQL |
-| Data Processing | Pandas |
-| AI Integration | OpenAI / DeepSeek |
-| API Testing | Swagger |
-| Environment | Python 3.11 |
-| Version Control | Git + GitHub |
-
----
-
-# 4. Engineering Architecture｜工程化架構
+# 一、當前工程結構
 
 ```text
 ai-construction-system/
@@ -73,280 +32,262 @@ ai-construction-system/
 ├── main.py
 │
 ├── api/
-│   ├── project_api.py
+│   ├── cost_api.py
 │   ├── bid_api.py
 │
 ├── services/
-│   ├── cost_service.py
 │   ├── excel_service.py
+│   ├── cost_service.py
 │   ├── ai_analysis.py
-│   ├── rule_engine.py
+│   ├── excel_row_parser.py
+│   ├── excel_row_pipeline.py
 │
 ├── utils/
-│   ├── db.py
 │   ├── column_mapping.py
-│
-├── models/
-│   ├── schemas.py
+│   ├── mappings/
+│   │   ├── basic_mapping.py
+│   │   ├── bid_mapping.py
+│   │   ├── cost_mapping.py
+│   │   ├── material_mapping.py
+│   │   ├── tax_mapping.py
+│   │
+│   ├── db.py
+│   ├── helpers.py
 │
 ├── uploads/
 │
 ├── archive/
 │
-├── .env
+├── models/
+│   ├── schemas.py
 │
 ├── requirements.txt
-│
+├── .env
 ├── README.md
-│
 └── LEARNING.md
 ```
 
 ---
 
-# 5. Layered Architecture｜分層架構思想
+# 二、當前核心能力
+
+## 1. Excel 多 Sheet 解析
+
+支持：
+
+- sheet_name 指定
+- 真實招標清單解析
+- 中國建築業常見格式
 
 ---
 
-## main.py
+## 2. Row Semantic Parsing
 
-System Entry Point
+已建立：
 
-只負責：
-
-- FastAPI initialization
-- Router registration
-- Global configuration
-
-不負責：
-
-- SQL
-- AI
-- Excel logic
-- Business logic
-
----
-
-## api/
-
-HTTP Layer
-
-負責：
-
-- API endpoint
-- Request / Response
-- Router management
+| Row Type | 說明 |
+|---|---|
+| document_title_row | 文檔標題 |
+| page_info_row | 頁碼/工程信息 |
+| real_header_row | 真實表頭 |
+| header_sub_row | 表頭補充 |
+| category_row | 分部工程分類 |
+| main_row | 主數據行 |
+| continuation_row | 補充描述行 |
+| subtotal_row | 小計行 |
+| empty_row | 空行 |
+| unknown_row | 未識別行 |
 
 ---
 
-## services/
+# 三、核心數據流
 
-Business Logic Layer
-
-負責：
-
-- Excel processing
-- Cost analysis
-- AI integration
-- Rule Engine
-- Data transformation
-
----
-
-## utils/
-
-Infrastructure Layer
-
-負責：
-
-- PostgreSQL connection
-- Data normalization
-- Shared utilities
-
----
-
-## models/
-
-Schema Layer
-
-負責：
-
-- Pydantic schema
-- Response validation
-- Data structure definition
-
----
-
-# 6. Data Engineering Pipeline｜數據工程管線
-
-本專案核心已逐漸轉向：
-
-```text
-Business Data Engineering
-```
-
----
-
-## ETL Pipeline
+目前系統：
 
 ```text
 Excel
 ↓
 Pandas DataFrame
 ↓
-dict records
+records(list)
 ↓
-Field normalization
+row_dict(dict)
 ↓
-Rule Engine
+normalize_values()
 ↓
-Business logic
+classify_rows()
 ↓
-AI analysis
+clean_rows()
 ↓
-API response
+attach_metadata()
+↓
+merge_continuation_rows()
+↓
+logical_records
+↓
+API Response
 ```
 
 ---
 
-# 7. Data Normalization System｜數據標準化系統
+# 四、Parser Engineering 核心思想
 
-中國建築業 Excel 存在：
+本系統：
 
-- 簡繁混用
-- 欄位名稱混亂
-- 不同軟體格式不統一
+不是：
+
+```text
+Excel CRUD
+```
+
+而是：
+
+# 半結構化文檔語義解析
+
+核心思想：
+
+- 物理行 ≠ 邏輯行
+- 表格 ≠ 真實數據
+- continuation row 需要 merge
+- category row 是 metadata
+- parser 的核心是 semantic pattern
+
+---
+
+# 五、目前已完成
+
+## FastAPI 工程化
+
+- API 拆分
+- service 拆分
+- utils 拆分
+- mapping 模塊化
+- .env 管理
+- PostgreSQL 接入
+
+---
+
+## ETL 能力
+
+- Excel 讀取
+- 多 Sheet 支持
+- column mapping
+- row semantic parsing
+- continuation row detection
+- category row detection
+- real header detection
+- subtotal detection
+
+---
+
+## Parser 架構
+
+已建立：
+
+- Rule-based Parser
+- Semantic Row Classification
+- Context-aware Parsing
+- Metadata State
+- Parser Pipeline
+
+---
+
+# 六、當前 Parser Pipeline
+
+## excel_row_parser.py
+
+負責：
+
+```text
+“這是什麼 row”
+```
+
+包括：
+
+- semantic detection
+- row classification
+- row pattern recognition
+
+---
+
+## excel_row_pipeline.py
+
+負責：
+
+```text
+“如何處理 row”
+```
+
+包括：
+
+- clean rows
+- metadata attach
+- continuation merge
+- logical record reconstruction
+
+---
+
+# 七、目前重要工程能力
+
+## 1. continuation merge
+
+支持：
+
+```text
+多個 physical rows
+↓
+一個 logical record
+```
+
+---
+
+## 2. category metadata
 
 例如：
 
 ```text
-清單項目
-清单项目名称
-項目名稱
-名称
+土石方工程
 ```
 
-全部統一映射為：
+將作為：
 
 ```python
-item_name
+row["category"]
 ```
 
-透過：
+掛載到後續 main_row。
 
-```python
-COLUMN_MAPPING
-```
+---
 
-建立：
+## 3. Rule-based Semantic Detection
+
+Parser：
+
+不是：
 
 ```text
-Data Standardization Layer
+字段越多越準
 ```
 
----
-
-# 8. Business Rule Engine｜業務規則引擎
-
-建立：
-
-```python
-services/rule_engine.py
-```
-
-功能：
-
-- 材料費識別
-- 人工費識別
-- 機械費識別
-
----
-
-## Current Rule Logic
-
-例如：
+而是：
 
 ```text
-混凝土 → 材料費
-鋼筋 → 材料費
-吊車 → 機械費
-安裝 → 人工費
+哪些字段最具區分性
 ```
 
 ---
 
-# 9. AI Integration｜AI 分析系統
+# 八、啟動方式
 
-目前支援：
-
-- OpenAI API
-- DeepSeek API
-
-功能：
-
-- 成本分析
-- 專案健康分析
-- AI 報告生成
-
----
-
-# 10. Current APIs｜目前 API
-
----
-
-## Portfolio Health API
-
-```text
-GET /projects/portfolio-health/
-```
-
-功能：
-
-- 專案成本率分析
-- 健康評分
-- 成本分類分析
-- AI 分析報告
-
----
-
-## Upload Bid Excel API
-
-```text
-POST /upload-bid-excel
-```
-
-功能：
-
-- Excel upload
-- Data normalization
-- Cost type classification
-- Structured transformation
-
----
-
-# 11. Environment Setup｜環境配置
-
----
-
-## Python Version
-
-Recommended:
-
-```text
-Python 3.11
-```
-
----
-
-## Create Virtual Environment
+## 1. 進入工程根目錄
 
 ```bash
-py -3.11 -m venv venv
+cd ai-construction-system
 ```
 
 ---
 
-## Activate
+## 2. 啟動虛擬環境
 
 ```bash
 venv\Scripts\activate
@@ -354,122 +295,121 @@ venv\Scripts\activate
 
 ---
 
-## Install Dependencies
-
-```bash
-pip install fastapi[standard]
-pip install psycopg2-binary
-pip install pandas
-pip install openpyxl
-pip install python-dotenv
-pip install openai
-pip install python-multipart
-```
-
----
-
-# 12. .env Example｜環境變量配置
-
-```env
-DB_HOST=localhost
-DB_NAME=construction_db
-DB_USER=postgres
-DB_PASSWORD=your_password
-DB_PORT=5432
-
-OPENAI_API_KEY=your_key
-```
-
----
-
-# 13. Run Project｜啟動專案
+## 3. 啟動 FastAPI
 
 ```bash
 uvicorn main:app --reload
 ```
 
-Swagger:
+---
 
-```text
-http://127.0.0.1:8000/docs
+# 九、重要工程化原則
+
+## 1. 永遠從工程根目錄啟動
+
+不要：
+
+```bash
+cd services
+python xxx.py
+```
+
+應：
+
+```bash
+uvicorn main:app --reload
 ```
 
 ---
 
-# 14. Git Ignore Strategy｜Git 忽略策略
+## 2. classify 與 pipeline 分離
 
-```gitignore
-venv/
-.env
-uploads/
-archive/
-.vscode/
-__pycache__/
+### excel_row_parser.py
+
+只負責：
+
+```text
+這是什麼 row
 ```
 
 ---
 
-# 15. Current Engineering Transition｜目前工程能力轉型
+### excel_row_pipeline.py
 
-本專案代表：
+負責：
 
 ```text
-從：
-低代碼平台使用者
-
-轉向：
-
-AI Business System Engineer
+如何處理 row
 ```
 
 ---
 
-# 16. Core Engineering Insight｜目前核心理解
+## 3. Parser Rule 原則
 
-真正企業 AI 系統：
+Parser：
+
+- 使用最少的穩定特徵
+- 使用最強的語義特徵
+- 不依賴完整字段
+- 不假設數據完整
+
+---
+
+# 十、Git 建議
+
+## 每日提交
+
+```bash
+git add .
+git commit -m "feat(parser): add semantic row classification"
+```
+
+---
+
+## Parser 類提交建議
+
+```bash
+feat(parser): add continuation row merge
+
+feat(parser): improve main row detection
+
+refactor(parser): split parser and pipeline
+
+fix(parser): fix header row conflict
+```
+
+---
+
+# 十一、下一階段方向
+
+## ETL 強化
+
+- dynamic schema inference
+- multi-header reconstruction
+- repeated header clean
+- logical record reconstruction
+
+---
+
+## AI 分析
+
+- 成本結構分析
+- 材料價格風險
+- 歷史價格比對
+- AI 招標分析
+
+---
+
+# 十二、當前項目定位
+
+目前本項目：
+
+已不再是：
 
 ```text
-不是：
-AI 聊天
+Python 練習
 ```
 
 而是：
 
-```text
-資料結構
-+
-規則系統
-+
-AI
-```
-
----
-
-# 17. Future Roadmap｜未來規劃
-
----
-
-## Backend
-
-- SQLAlchemy
-- Async PostgreSQL
-- JWT Authentication
-- Redis
-
----
-
-## AI
-
-- DeepSeek Integration
-- OpenAI Integration
-- RAG Knowledge Base
-- AI Bid Strategy
-
----
-
-## Deployment
-
-- Docker
-- Ubuntu Server
-- Nginx
-- CI/CD
+# Construction Document Semantic Parsing Engine

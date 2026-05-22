@@ -8,6 +8,7 @@ from services.ai_analysis import (
     generate_ai_report
 )
 
+
 router = APIRouter()
 
 

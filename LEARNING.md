@@ -1,529 +1,414 @@
 # LEARNING.md
-# AI Construction System Learning Journey
+
+# Day 26 - Construction Parser Engineering
+
+今天正式進入：
+
+# Construction Document Semantic Parsing
+
+階段。
+
+這是整個 AI Construction System 真正開始具備工程價值的重要節點。
 
 ---
 
-# Day 1–5
-# FastAPI + PostgreSQL 基礎
+# 一、今天最大的認知升級
 
----
-
-## 學習內容
-
-- FastAPI basics
-- PostgreSQL basics
-- CRUD API
-- Swagger testing
-
----
-
-## 理解
-
-API 本質：
+以前：
 
 ```text
-HTTP Interface
+Excel = 表格
 ```
 
-資料庫本質：
+現在：
 
 ```text
-Business Relationship Structure
+Excel = 半結構化文檔
+```
+
+這是本質級差異。
+
+---
+
+# 二、真正理解：
+
+# 物理行 ≠ 邏輯行
+
+例如：
+
+main_row：
+
+```text
+挖基坑土方
+```
+
+continuation_row：
+
+```text
+400kN...
+```
+
+在 Excel 中：
+
+它們是：
+
+```text
+兩個 physical rows
+```
+
+但：
+
+在業務語義中：
+
+它們其實是：
+
+```text
+一個 logical record
 ```
 
 ---
 
-# Day 6–10
-# 成本分析系統
+# 三、真正開始建立：
 
----
+# Row Semantic Parsing
 
-## 建立
-
-- projects table
-- costs table
-- 成本分析 API
-
----
-
-## 學習
-
-- SQL JOIN
-- GROUP BY
-- SUM()
-- COALESCE()
-
----
-
-## 理解
-
-資料庫不是：
+不再只是：
 
 ```text
-單純存資料
+遍歷 DataFrame
 ```
 
 而是：
 
 ```text
-業務關係模型
+理解 row 的語義
 ```
 
 ---
 
-# Day 11–13
-# Portfolio Health System
+# 四、建立的 Row Types
+
+目前已建立：
+
+- document_title_row
+- page_info_row
+- real_header_row
+- header_sub_row
+- category_row
+- main_row
+- continuation_row
+- subtotal_row
+- empty_row
+- unknown_row
 
 ---
 
-## 建立
+# 五、真正理解：
 
-- 成本率分析
-- 健康評分
-- 成本分類映射
+# Parser 的核心：
 
----
-
-## 關鍵理解
-
-```python
-cost_map[pid][ctype] = amount
-```
-
-本質：
+不是：
 
 ```text
-Project ID
-↓
-Cost Type
-↓
-Amount
-```
-
-開始真正理解：
-
-- nested dict
-- business mapping
-- structured data
-
----
-
-# Day 14–17
-# Data Engineering + Architecture Refactor
-
----
-
-## 建立
-
-- api/
-- services/
-- utils/
-- models/
-
----
-
-## 理解
-
-開始從：
-
-```text
-Single File Script
-```
-
-轉向：
-
-```text
-Layered Backend Architecture
-```
-
----
-
-# 建立
-
-```python
-COLUMN_MAPPING
-```
-
----
-
-## 理解
-
-中國建築業 Excel：
-
-- 簡繁混用
-- 欄位混亂
-- 格式不統一
-
-因此：
-
-```text
-系統內部必須建立統一資料語言
-```
-
----
-
-# Day 18
-# Rule Engine
-
----
-
-## 建立
-
-```python
-services/rule_engine.py
-```
-
----
-
-## 建立
-
-```python
-classify_cost_type()
-```
-
----
-
-## 理解
-
-真正企業 AI 系統：
-
-```text
-Rule First
-AI Second
-```
-
----
-
-## 理解
-
-Rule Engine：
-
-```text
-不是處理資料
-而是：
-理解資料
-```
-
----
-
-# Day 19
-# Intelligence Engine + Debugger World
-
----
-
-# 1. Intelligence Engine
-
-建立：
-
-```python
-services/intelligence_engine.py
-```
-
-功能：
-
-- 成本占比分析
-- 異常分析
-- 成本結構分析
-
----
-
-## 理解
-
-開始從：
-
-```text
-Data Processing
-```
-
-進入：
-
-```text
-Business Intelligence
-```
-
----
-
-# 2. 數據完整性問題（重要）
-
-第一次測試時：
-
-```json
-total_amount = 0
-```
-
----
-
-## AI 指導
-
-AI 分析指出：
-
-問題不是：
-
-```text
-代碼錯誤
+字段越多越準
 ```
 
 而是：
 
 ```text
-Excel 缺少 unit_price
+哪些字段最具區分性
 ```
 
 ---
 
-## 理解
+# 六、main_row 的重要認知
 
-開始真正理解：
-
-```text
-Data Completeness
-數據完整性
-```
-
----
-
-## 理解
-
-真正 BI 系統：
-
-```text
-Garbage In
-Garbage Out
-```
-
----
-
-# 3. VS Code Engineering Workflow
-
-建立：
-
-- Python Debugger
-- Pylance
-- Breakpoint
-- Variable Observation
-- Call Stack
-
----
-
-# 4. launch.json
-
-建立：
-
-```json
-FastAPI Debug
-```
-
-配置。
-
----
-
-# 5. Breakpoint Understanding（重要）
-
-第一次 breakpoint：
+曾經錯誤：
 
 ```python
-df = pd.read_excel(file_path)
+pd.isna(...)
 ```
 
-時：
+判斷 main_row。
+
+導致：
+
+真正數據行：
+
+被誤判。
+
+---
+
+後來真正理解：
+
+Parser：
+
+應該：
 
 ```text
-VARIABLES
-沒有 df
+尋找存在的特徵
+```
+
+而不是：
+
+```text
+檢查所有字段是否為空
 ```
 
 ---
 
-## AI 指導（重要）
+# 七、真正理解：
 
-AI 指出：
+# Parser Rule ≠ 理論正確
+
+而是：
 
 ```text
-Breakpoint 停下時，
-該行還沒執行。
+對真實數據穩定
 ```
 
-因此：
+例如：
+
+加入：
 
 ```python
-df
+total_price
 ```
 
-尚未建立。
+之後：
+
+main_row 與 header_row：
+
+真正被區分。
+
+這是：
+
+# 真實數據驅動 Parser
+
+的重要認知。
 
 ---
 
-## 理解
+# 八、真正理解：
 
-開始真正理解：
+# Data Structure Layer
 
-```text
-變量生命周期
-```
-
-以及：
-
-```text
-Runtime State
-```
-
----
-
-# 6. 第一次真正觀察 Data Pipeline（重要）
-
-完整 Debug：
+建立了：
 
 ```text
 Excel
 ↓
 DataFrame
 ↓
-dict records
+records(list)
 ↓
-normalized_row
+row_dict(dict)
 ↓
-Rule Engine
-↓
-Intelligence Engine
-↓
-FastAPI JSON response
+values(list)
+```
+
+的數據結構理解。
+
+---
+
+# 九、真正理解：
+
+# Python Import Root
+
+曾經：
+
+```bash
+cd services
+uvicorn main:app
+```
+
+導致：
+
+```text
+Could not import module "main"
 ```
 
 ---
 
-# 7. 最大突破（非常重要）
+後來真正理解：
 
-之前：
+Python import：
+
+不是：
 
 ```text
-只能“讀代碼”
+文件在哪
 ```
+
+而是：
+
+```text
+從哪裡啟動
+```
+
+---
+
+# 十、真正理解：
+
+# classify 與 pipeline 分離
+
+以前：
+
+```python
+classify_row()
+```
+
+試圖做所有事情。
 
 現在：
 
+真正理解：
+
+---
+
+excel_row_parser.py：
+
 ```text
-能真正“觀察程序運行”
+只負責：
+這是什麼 row
 ```
 
 ---
 
-# 8. 第一次真正理解：
+excel_row_pipeline.py：
 
-- DataFrame
-- row
-- dict
-- normalized_row
-- append()
-- import chain
-- Call Stack
+```text
+負責：
+如何處理 row
+```
 
 ---
 
-# 9. 對 Debugger 的理解（重要）
+# 十一、真正理解：
 
-Debugger：
+# Metadata Context
+
+例如：
 
 ```text
+土石方工程
+```
+
 不是：
-找 bug 工具
+
+```text
+普通數據
 ```
 
 而是：
 
 ```text
-程序世界觀測器
+metadata context
+```
+
+後續：
+
+所有 main_row：
+
+都應：
+
+```python
+row["category"] = current_category
 ```
 
 ---
 
-# 10. 最大收穫（非常重要）
+# 十二、真正理解：
 
-第一次真正建立：
+# continuation merge
 
-```text
-數據在內存中的流動感
-```
+continuation_row：
 
----
-
-## 理解
-
-之前：
-
-```text
-dict 是抽象概念
-```
-
-現在：
-
-```text
-dict 開始“活起來”
-```
-
----
-
-# Current Understanding｜目前理解層級
-
-目前已開始接觸：
-
-- Backend Engineering
-- Data Engineering
-- ETL Thinking
-- Rule Engine
-- Business Intelligence
-- Debug Workflow
-- Runtime State
-- Data Flow Thinking
-
----
-
-# Current Weaknesses｜目前弱點
-
-仍需加強：
-
-- Python syntax fluency
-- async understanding
-- deployment engineering
-- SQL optimization
-- advanced pandas
-
----
-
-# Most Important Insight｜目前最大收穫
-
-真正工程能力：
-
-```text
 不是：
-背語法
+
+```text
+獨立 row
 ```
 
 而是：
 
 ```text
-觀察：
-數據如何在程序世界中流動
+上一個 main_row 的補充
 ```
 
 ---
 
-# Long-term Direction｜長期方向
+# 十三、真正開始接近：
 
-目標不是：
+# ETL Engineering
+
+目前已開始涉及：
+
+- Rule-based Parser
+- Semantic Detection
+- Metadata Attachment
+- Context-aware Parsing
+- Logical Record Reconstruction
+
+---
+
+# 十四、真正開始 Debug Parser Rule
+
+不再只是：
 
 ```text
-普通 Python 程式員
+讓代碼跑
 ```
 
 而是：
 
 ```text
-Construction Business Intelligence Engineer
+讓 Parser 穩定
 ```
 
-核心方向：
+這是非常大的工程化提升。
 
-- Backend Engineering
-- Data Engineering
-- Business Intelligence
-- AI System Architecture
+---
+
+# 十五、目前真正進入的能力區
+
+不是：
+
+```text
+普通 Python CRUD
+```
+
+而是：
+
+# Semi-structured Data Engineering
+
+方向。
+
+---
+
+# 十六、下一步方向
+
+接下來：
+
+將正式進入：
+
+- clean_rows
+- metadata attach
+- continuation merge
+- logical_records
+
+完整 Parser Pipeline。
+
+---
+
+# 十七、目前真正建立的是：
+
+# Construction Document Semantic Parsing Engine
+
+而不是：
+
+```text
+普通 Web API
+```
+
+這是目前整個項目最重要的方向。

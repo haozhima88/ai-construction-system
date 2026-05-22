@@ -16,3 +16,6 @@ venv/
  
 # Archive files
 archive/
+
+# ipynb test files
+ipynb/

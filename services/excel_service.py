@@ -2,13 +2,31 @@ import pandas as pd
 
 from utils.column_mapping import COLUMN_MAPPING
 
-from services.rule_engine import classify_cost_type
+from services.rule_engine import (
+    classify_cost_type
+)
 
 
-def process_excel(file_path):
+def process_excel(
+        file_path, 
+        sheet_name=0
+        ):
 
-    df = pd.read_excel(file_path)
+    # ==========================================
+    # 讀取 Excel Sheet
+    # ==========================================
+    df = pd.read_excel(
+        file_path,
+        sheet_name=sheet_name,
+        header=None
+        )
+    
+    # Debug
+    print(df.columns)
 
+    # ==========================================
+    # DataFrame → dict records
+    # ==========================================
     records = df.to_dict(orient="records")
 
     normalized_records = []
