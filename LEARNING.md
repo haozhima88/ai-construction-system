@@ -1,14 +1,23 @@
 # LEARNING.md
 
-# Day 26 - Construction Parser Engineering
+# Day 27-28
+# Construction ETL Pipeline Engineering
 
-今天正式進入：
+今天正式完成：
 
-# Construction Document Semantic Parsing
+# Construction Bid ETL Engine v1
 
-階段。
+這是整個 AI Construction System：
 
-這是整個 AI Construction System 真正開始具備工程價值的重要節點。
+第一次真正完成：
+
+```text
+Excel
+↓
+Business Entity
+```
+
+完整轉換。
 
 ---
 
@@ -26,7 +35,13 @@ Excel = 表格
 Excel = 半結構化文檔
 ```
 
-這是本質級差異。
+而：
+
+真正業務數據：
+
+其實需要：
+
+# 重建。
 
 ---
 
@@ -36,11 +51,15 @@ Excel = 半結構化文檔
 
 例如：
 
+---
+
 main_row：
 
 ```text
 挖基坑土方
 ```
+
+---
 
 continuation_row：
 
@@ -48,7 +67,9 @@ continuation_row：
 400kN...
 ```
 
-在 Excel 中：
+---
+
+在 Excel：
 
 它們是：
 
@@ -58,7 +79,7 @@ continuation_row：
 
 但：
 
-在業務語義中：
+在業務語義：
 
 它們其實是：
 
@@ -68,7 +89,7 @@ continuation_row：
 
 ---
 
-# 三、真正開始建立：
+# 三、真正建立：
 
 # Row Semantic Parsing
 
@@ -81,7 +102,7 @@ continuation_row：
 而是：
 
 ```text
-理解 row 的語義
+理解 row 的業務語義
 ```
 
 ---
@@ -103,7 +124,273 @@ continuation_row：
 
 ---
 
-# 五、真正理解：
+# 五、今天最重要的認知
+
+# ETL：
+
+不是：
+
+```text
+函數堆砌
+```
+
+而是：
+
+# 數據狀態逐步演化
+
+---
+
+# 六、真正建立：
+
+# Pipeline State Model
+
+```text
+classified_rows
+↓
+cleaned_rows
+↓
+metadata_attached_rows
+↓
+merged_rows
+↓
+logical_records
+↓
+normalized_records
+↓
+quality_report
+```
+
+---
+
+# 七、真正理解：
+
+# classify 與 pipeline 分離
+
+---
+
+# parser
+
+負責：
+
+```text
+這是什麼 row
+```
+
+---
+
+# pipeline
+
+負責：
+
+```text
+如何處理 row
+```
+
+---
+
+# 八、真正理解：
+
+# clean_row_data()
+
+作用：
+
+```text
+清理 useless rows
+```
+
+包括：
+
+- empty_row
+- header_row
+- subtotal_row
+- unknown_row
+
+---
+
+# 九、真正理解：
+
+# attach_category()
+
+作用：
+
+```text
+將 category metadata
+掛載到後續 main_row
+```
+
+例如：
+
+```text
+土石方工程
+```
+
+↓
+
+```python
+row["category"]
+```
+
+---
+
+# 十、真正理解：
+
+# merge_continuation_rows()
+
+作用：
+
+```text
+補充描述行
+↓
+merge 到上一個 main_row
+```
+
+---
+
+# 十一、真正理解：
+
+# build_logical_records()
+
+作用：
+
+```text
+row_data
+↓
+Business Entity
+```
+
+即：
+
+```python
+{
+    "item_code": "...",
+    "item_name": "...",
+    "quantity": ...
+}
+```
+
+---
+
+# 十二、真正理解：
+
+# Business Entity Reconstruction
+
+以前：
+
+```text
+操作 Excel
+```
+
+現在：
+
+```text
+重建業務數據
+```
+
+這是本質級提升。
+
+---
+
+# 十三、真正理解：
+
+# Data Normalization
+
+建立：
+
+---
+
+# safe_float()
+
+作用：
+
+```text
+字符串
+↓
+float
+```
+
+支持：
+
+- None
+- NaN
+- 空格
+- 1,234.56
+
+---
+
+# clean_text()
+
+作用：
+
+```text
+清理 feature 文本
+```
+
+包括：
+
+- \n
+- \t
+- 空格
+- None
+
+---
+
+# 十四、真正理解：
+
+# normalize_records
+
+作用：
+
+```text
+統一數據類型
+```
+
+例如：
+
+```python
+"quantity": 26.914
+```
+
+而不是：
+
+```python
+"quantity": "26.914"
+```
+
+---
+
+# 十五、真正理解：
+
+# Data Quality Engine
+
+建立：
+
+---
+
+# validate_record()
+
+檢查：
+
+- item_name
+- quantity
+- unit_price
+- total_price
+
+---
+
+# build_quality_report()
+
+輸出：
+
+```json
+{
+  "quality_score": 1.0,
+  "warnings": []
+}
+```
+
+---
+
+# 十六、真正理解：
 
 # Parser 的核心：
 
@@ -121,45 +408,15 @@ continuation_row：
 
 ---
 
-# 六、main_row 的重要認知
+# 十七、真正理解：
 
-曾經錯誤：
+# Parser Rule：
 
-```python
-pd.isna(...)
-```
-
-判斷 main_row。
-
-導致：
-
-真正數據行：
-
-被誤判。
-
----
-
-後來真正理解：
-
-Parser：
-
-應該：
+不是：
 
 ```text
-尋找存在的特徵
+理論正確
 ```
-
-而不是：
-
-```text
-檢查所有字段是否為空
-```
-
----
-
-# 七、真正理解：
-
-# Parser Rule ≠ 理論正確
 
 而是：
 
@@ -167,210 +424,49 @@ Parser：
 對真實數據穩定
 ```
 
-例如：
+---
 
-加入：
+# 十八、真正理解：
+
+# 固定列索引
+
+目前：
 
 ```python
-total_price
+row_data.get(11)
 ```
 
-之後：
+屬：
 
-main_row 與 header_row：
+# 技術債。
 
-真正被區分。
+下一步：
 
-這是：
+將建立：
 
-# 真實數據驅動 Parser
-
-的重要認知。
+# Dynamic Header Mapping Engine
 
 ---
 
-# 八、真正理解：
+# 十九、真正理解：
 
-# Data Structure Layer
-
-建立了：
-
-```text
-Excel
-↓
-DataFrame
-↓
-records(list)
-↓
-row_dict(dict)
-↓
-values(list)
-```
-
-的數據結構理解。
-
----
-
-# 九、真正理解：
-
-# Python Import Root
-
-曾經：
-
-```bash
-cd services
-uvicorn main:app
-```
-
-導致：
-
-```text
-Could not import module "main"
-```
-
----
-
-後來真正理解：
-
-Python import：
+# ETL 的真正價值
 
 不是：
 
 ```text
-文件在哪
+Excel 轉 JSON
 ```
 
 而是：
 
-```text
-從哪裡啟動
-```
+# 半結構化文檔
+↓
+標準化業務數據
 
 ---
 
-# 十、真正理解：
-
-# classify 與 pipeline 分離
-
-以前：
-
-```python
-classify_row()
-```
-
-試圖做所有事情。
-
-現在：
-
-真正理解：
-
----
-
-excel_row_parser.py：
-
-```text
-只負責：
-這是什麼 row
-```
-
----
-
-excel_row_pipeline.py：
-
-```text
-負責：
-如何處理 row
-```
-
----
-
-# 十一、真正理解：
-
-# Metadata Context
-
-例如：
-
-```text
-土石方工程
-```
-
-不是：
-
-```text
-普通數據
-```
-
-而是：
-
-```text
-metadata context
-```
-
-後續：
-
-所有 main_row：
-
-都應：
-
-```python
-row["category"] = current_category
-```
-
----
-
-# 十二、真正理解：
-
-# continuation merge
-
-continuation_row：
-
-不是：
-
-```text
-獨立 row
-```
-
-而是：
-
-```text
-上一個 main_row 的補充
-```
-
----
-
-# 十三、真正開始接近：
-
-# ETL Engineering
-
-目前已開始涉及：
-
-- Rule-based Parser
-- Semantic Detection
-- Metadata Attachment
-- Context-aware Parsing
-- Logical Record Reconstruction
-
----
-
-# 十四、真正開始 Debug Parser Rule
-
-不再只是：
-
-```text
-讓代碼跑
-```
-
-而是：
-
-```text
-讓 Parser 穩定
-```
-
-這是非常大的工程化提升。
-
----
-
-# 十五、目前真正進入的能力區
+# 二十、目前真正進入的能力區
 
 不是：
 
@@ -380,30 +476,21 @@ continuation_row：
 
 而是：
 
-# Semi-structured Data Engineering
+# ETL Engineering
 
-方向。
+包括：
 
----
-
-# 十六、下一步方向
-
-接下來：
-
-將正式進入：
-
-- clean_rows
-- metadata attach
-- continuation merge
-- logical_records
-
-完整 Parser Pipeline。
+- Semantic Parsing
+- Data Normalization
+- Business Reconstruction
+- Data Governance
+- Parser Engineering
 
 ---
 
-# 十七、目前真正建立的是：
+# 二十一、目前真正建立的是：
 
-# Construction Document Semantic Parsing Engine
+# Construction ETL Engine
 
 而不是：
 

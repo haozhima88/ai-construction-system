@@ -26,6 +26,7 @@ def is_empty(value):
     return value == ""
 
 
+
 def normalize_values(row_dict):
 
     values = []
@@ -44,11 +45,59 @@ def normalize_values(row_dict):
 
     return values
 
+
+
 def is_empty_row(values):
 
     return len(values) == 0
 
 
+
+def safe_float(value):
+
+    if value is None:
+        return None
+
+    if pd.isna(value):
+        return None
+
+    value = str(value).strip()
+
+    value = value.replace(",", "")
+
+    if value == "":
+        return None
+
+    try:
+
+        return float(value)
+
+    except:
+
+        return None
+    
+
+
+def clean_text(value):
+
+    if value is None:
+        return None
+    
+    if pd.isna(value):
+        return None
+    
+    value = str(value)
+
+    value = value.replace("\n", "")
+
+    value = value.replace("\t", "")
+
+    value = value.strip()
+
+    return value
+    
+
+    
 def is_document_title_row(values):
 
     if len(values) != 1:
@@ -70,6 +119,8 @@ def is_document_title_row(values):
 
     return hit >= 2
 
+
+
 def is_page_info_row(values):
 
     row_text = " ".join(values)
@@ -90,6 +141,8 @@ def is_page_info_row(values):
 
     return hit >= 2
 
+
+
 def is_real_header_row(values):
 
     row_text = " ".join(values)
@@ -102,6 +155,8 @@ def is_real_header_row(values):
             hit += 1
 
     return hit >= 5
+
+
 
 def is_header_sub_row(values):
 
@@ -122,6 +177,8 @@ def is_header_sub_row(values):
 
     return hit >= 2
 
+
+
 def is_category_row(row_dict):
 
     item_code = row_dict.get(1)
@@ -141,6 +198,8 @@ def is_category_row(row_dict):
         return True
 
     return False
+
+
 
 def is_main_row(row_dict):
 
@@ -166,6 +225,8 @@ def is_main_row(row_dict):
 
     return False
 
+
+
 def is_continuation_row(row_dict):
 
     item_code = row_dict.get(1)
@@ -185,6 +246,8 @@ def is_continuation_row(row_dict):
 
     return False
 
+
+
 def is_subtotal_row(values):
 
     row_text = " ".join(values)
@@ -202,8 +265,6 @@ def is_subtotal_row(values):
             return True
 
     return False
-
-
 
 
 
@@ -270,4 +331,5 @@ def classify_rows(path, sheet_name=0):
         })
 
     return classified_rows
+
 
