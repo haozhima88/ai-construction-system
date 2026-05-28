@@ -1,0 +1,24 @@
+{
+    "editor.fontSize": 15,
+
+    "editor.fontFamily":
+        "JetBrains Mono",
+
+    "editor.minimap.enabled": false,
+
+    "editor.formatOnSave": true,
+
+    "editor.wordWrap": "on",
+
+    "editor.guides.indentation": true,
+
+    "editor.bracketPairColorization.enabled": true,
+
+    "files.autoSave": "afterDelay",
+
+    "python.analysis.typeCheckingMode":
+        "basic",
+
+    "python.analysis.autoImportCompletions":
+        true
+}

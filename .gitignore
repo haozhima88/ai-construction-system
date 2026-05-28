@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 
 # Virtual env
-venv/
+.venv/
 
 # Environment variables
 .env
@@ -19,3 +19,6 @@ archive/
 
 # ipynb test files
 ipynb/
+
+# Uploaded files
+uploads/

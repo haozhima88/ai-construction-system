@@ -20,3 +20,4 @@ conn = psycopg2.connect(
 )
 
 cursor = conn.cursor()
+print("PostgreSQL connected.")

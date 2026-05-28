@@ -1,7 +1,13 @@
 from fastapi import APIRouter, UploadFile, File
 import pandas as pd
 
+from services.db_service import (
+
+    insert_many_records
+)
+
 from services.excel_row_pipeline import (
+
     attach_category,
     build_logical_records,
     clean_row_data,
@@ -11,20 +17,26 @@ from services.excel_row_pipeline import (
 )
 
 from services.excel_service import (
+
     process_excel
 )
 
 from services.intelligence_engine import (
+
     analyze_cost_structure
 )
 
 from services.excel_row_parser import  (
+
     classify_rows
 )   
 
 from services.data_quality import (
+
     validate_records
 )
+
+
 
 router = APIRouter()
 
@@ -58,6 +70,8 @@ async def upload_bid_excel(
     normalized_records = build_normalized_records(logical_records)
 
     quality_result = build_quality_report(normalized_records)
+
+    insert_many_records(normalized_records)
 
 
 
