@@ -22,3 +22,6 @@ ipynb/
 
 # Uploaded files
 uploads/
+
+# services/tests
+services/tests/

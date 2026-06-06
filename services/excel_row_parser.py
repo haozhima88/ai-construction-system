@@ -4,8 +4,7 @@
 # ==========================================
 
 import pandas as pd
-import os
-import sys
+
 
 from utils.column_mapping import (
 
@@ -154,7 +153,7 @@ def is_real_header_row(values):
         if keyword in row_text:
             hit += 1
 
-    return hit >= 5
+    return hit >= 6
 
 
 
@@ -179,20 +178,28 @@ def is_header_sub_row(values):
 
 
 
-def is_category_row(row_dict):
+def is_category_row(
+        row_dict,
+        schema
+    ):
 
-    item_code = row_dict.get(1)
+    serial_number = row_dict.get(
+        schema["serial_number"])
 
-    item_name = row_dict.get(3)
+    item_code = row_dict.get(schema["item_code"])
 
-    total_price = row_dict.get(11)
+    item_name = row_dict.get(schema["item_name"])
+
+    feature = row_dict.get(schema["feature"])
 
     if (
+        pd.isna(serial_number)
+        and
         pd.isna(item_code)
         and
         not pd.isna(item_name)
         and
-        not pd.isna(total_price)
+        pd.isna(feature)
     ):
 
         return True
@@ -201,15 +208,16 @@ def is_category_row(row_dict):
 
 
 
-def is_main_row(row_dict):
+def is_main_row(
+        row_dict,
+        schema
+    ):
 
-    serial_number = row_dict.get(0)
+    serial_number = row_dict.get(schema["serial_number"])
 
-    item_code = row_dict.get(1)
+    item_code = row_dict.get(schema["item_code"])
 
-    item_name = row_dict.get(3)
-
-    total_price = row_dict.get(11)
+    item_name = row_dict.get(schema["item_name"])
 
     if (
         not pd.isna(serial_number)
@@ -217,8 +225,7 @@ def is_main_row(row_dict):
         not pd.isna(item_code)
         and
         not pd.isna(item_name)
-        and
-        not pd.isna(total_price)
+
     ):
 
         return True
@@ -227,18 +234,22 @@ def is_main_row(row_dict):
 
 
 
-def is_continuation_row(row_dict):
+def is_continuation_row(
+    row_dict,
+    schema
+):
 
-    item_code = row_dict.get(1)
+    serial_number = row_dict.get(schema["serial_number"])
 
-    feature = row_dict.get(4)
+    item_code = row_dict.get(schema["item_code"])
 
-    total_price = row_dict.get(11)
+    feature = row_dict.get(schema["feature"])
+
 
     if (
-        pd.isna(item_code)
+        pd.isna(serial_number)
         and
-        pd.isna(total_price)
+        pd.isna(item_code)
         and
         not pd.isna(feature)
     ):
@@ -268,7 +279,58 @@ def is_subtotal_row(values):
 
 
 
-def classify_rows(path, sheet_name=0):
+def find_header_rows(path, sheet_name=0):
+
+    df = pd.read_excel(
+        path,
+        sheet_name=sheet_name,
+        header=None
+    )
+
+    records = df.to_dict(orient="records")
+
+    header_rows = []
+    skip_rows = set()
+
+    for row_index, row_dict in enumerate(records):
+
+        values = normalize_values(row_dict)
+
+        if is_real_header_row(values):
+
+            header_rows.append({
+                "row_index": row_index,
+                "row_type": "real_header_row",
+                "row_data": {
+                    key: value
+                    for key, value in row_dict.items()
+                    if not pd.isna(value)
+                }
+            })
+            skip_rows.add(row_index)
+
+        if is_header_sub_row(values):
+
+            header_rows.append({
+                "row_index": row_index,
+                "row_type": "header_sub_row",
+                "row_data": {
+                    key: value
+                    for key, value in row_dict.items()
+                    if not pd.isna(value)
+                }
+            })
+            skip_rows.add(row_index)
+
+    return header_rows, skip_rows
+
+
+def classify_rows(
+        path,
+        sheet_name=0,
+        schema=None,
+        skip_rows=set()
+    ):
 
     # ==========================================
     # 讀取 Excel Sheet
@@ -286,9 +348,11 @@ def classify_rows(path, sheet_name=0):
 
     classified_rows = []
 
-    # print(f"----------------->Total rows: {len(records)}")
+    print(f"----------------->Total rows: {len(records)}")
 
     for row_index, row_dict in enumerate(records):
+        if row_index in skip_rows:
+            continue
 
         values = normalize_values(row_dict)
 
@@ -299,29 +363,22 @@ def classify_rows(path, sheet_name=0):
         if is_empty_row(values):
             row_type = "empty_row"
             
-
         if is_document_title_row(values):
             row_type = "document_title_row"
 
         if is_page_info_row(values):
             row_type = "page_info_row"
 
-        if is_real_header_row(values):
-            row_type = "real_header_row"
-
-        if is_header_sub_row(values):
-            row_type = "header_sub_row"
-
         if is_subtotal_row(values):
             row_type = "subtotal_row"
 
-        if is_category_row(row_dict):
+        if is_category_row(row_dict, schema):
             row_type = "category_row"
 
-        if is_main_row(row_dict):
+        if is_main_row(row_dict, schema):
             row_type = "main_row"
 
-        if is_continuation_row(row_dict):
+        if is_continuation_row(row_dict, schema):
             row_type = "continuation_row"
 
         classified_rows.append({
@@ -329,7 +386,6 @@ def classify_rows(path, sheet_name=0):
             "row_type": row_type,
             "row_data": {key: value for key, value in row_dict.items() if not pd.isna(value)}
         })
+        # print(f"Row {row_index} classified as {row_type} with values: {values}")
 
     return classified_rows
-
-

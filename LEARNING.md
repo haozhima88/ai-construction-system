@@ -1,501 +1,498 @@
 # LEARNING.md
 
-# Day 27-28
-# Construction ETL Pipeline Engineering
+# Learning Notes
 
-今天正式完成：
+# 學習記錄
 
-# Construction Bid ETL Engine v1
+## Day Topic
 
-這是整個 AI Construction System：
+## 今日主題
 
-第一次真正完成：
+```text
+Parser V2 - Dynamic Schema Driven Excel Parser
+```
+
+```text
+Parser V2 - 動態 Schema 驅動 Excel 解析器
+```
+
+---
+
+## 1. Main Realization / 核心認知
+
+The biggest issue in real construction Excel files is not row classification first.
+
+The real issue is:
+
+```text
+Column positions are unstable.
+```
+
+真實建築招標清單中，最大問題不是先判斷哪一行是數據行，而是：
+
+```text
+欄位位置不穩定。
+```
+
+Earlier parser logic used:
+
+```python
+row_dict.get(3)
+row_dict.get(8)
+row_dict.get(11)
+```
+
+This worked only for one format.
+
+之前的解析器依賴固定列號，只能處理某一種模板。
+
+---
+
+## 2. Old Parser Problem / 舊解析器問題
+
+Old logic:
+
+```text
+Assume item_name is always column 3
+Assume quantity is always column 8
+Assume total_price is always column 11
+```
+
+Problem:
+
+```text
+Different Excel files have different layouts.
+```
+
+舊邏輯問題：
+
+```text
+想當然認為欄位位置固定。
+```
+
+但真實清單中：
+
+```text
+第一份清單 item_name 在第 3 列
+第二份清單 item_name 在第 2 列
+```
+
+所以固定列號不可長期維護。
+
+---
+
+## 3. New Parser Thinking / 新解析思路
+
+New flow:
+
+```text
+Do not parse data rows first.
+First parse header.
+```
+
+新思路：
+
+```text
+不要先解析數據行。
+先解析表頭。
+```
+
+Full logic:
 
 ```text
 Excel
-↓
-Business Entity
-```
-
-完整轉換。
-
----
-
-# 一、今天最大的認知升級
-
-以前：
-
-```text
-Excel = 表格
-```
-
-現在：
-
-```text
-Excel = 半結構化文檔
-```
-
-而：
-
-真正業務數據：
-
-其實需要：
-
-# 重建。
-
----
-
-# 二、真正理解：
-
-# 物理行 ≠ 邏輯行
-
-例如：
-
----
-
-main_row：
-
-```text
-挖基坑土方
+    ↓
+Find header rows
+    ↓
+Merge main header and sub header
+    ↓
+Build schema
+    ↓
+Use schema to classify rows
 ```
 
 ---
 
-continuation_row：
+## 4. Header Merge / 表頭合併
+
+Some Excel files split headers into two rows:
 
 ```text
-400kN...
+Main header:
+序号 | 项目编码 | 项目名称 | 项目特征描述 | 计量单位 | 工程量
+
+Sub header:
+综合单价 | 合价
 ```
 
----
-
-在 Excel：
-
-它們是：
-
-```text
-兩個 physical rows
-```
-
-但：
-
-在業務語義：
-
-它們其實是：
-
-```text
-一個 logical record
-```
-
----
-
-# 三、真正建立：
-
-# Row Semantic Parsing
-
-不再只是：
-
-```text
-遍歷 DataFrame
-```
-
-而是：
-
-```text
-理解 row 的業務語義
-```
-
----
-
-# 四、建立的 Row Types
-
-目前已建立：
-
-- document_title_row
-- page_info_row
-- real_header_row
-- header_sub_row
-- category_row
-- main_row
-- continuation_row
-- subtotal_row
-- empty_row
-- unknown_row
-
----
-
-# 五、今天最重要的認知
-
-# ETL：
-
-不是：
-
-```text
-函數堆砌
-```
-
-而是：
-
-# 數據狀態逐步演化
-
----
-
-# 六、真正建立：
-
-# Pipeline State Model
-
-```text
-classified_rows
-↓
-cleaned_rows
-↓
-metadata_attached_rows
-↓
-merged_rows
-↓
-logical_records
-↓
-normalized_records
-↓
-quality_report
-```
-
----
-
-# 七、真正理解：
-
-# classify 與 pipeline 分離
-
----
-
-# parser
-
-負責：
-
-```text
-這是什麼 row
-```
-
----
-
-# pipeline
-
-負責：
-
-```text
-如何處理 row
-```
-
----
-
-# 八、真正理解：
-
-# clean_row_data()
-
-作用：
-
-```text
-清理 useless rows
-```
-
-包括：
-
-- empty_row
-- header_row
-- subtotal_row
-- unknown_row
-
----
-
-# 九、真正理解：
-
-# attach_category()
-
-作用：
-
-```text
-將 category metadata
-掛載到後續 main_row
-```
-
-例如：
-
-```text
-土石方工程
-```
-
-↓
-
-```python
-row["category"]
-```
-
----
-
-# 十、真正理解：
-
-# merge_continuation_rows()
-
-作用：
-
-```text
-補充描述行
-↓
-merge 到上一個 main_row
-```
-
----
-
-# 十一、真正理解：
-
-# build_logical_records()
-
-作用：
-
-```text
-row_data
-↓
-Business Entity
-```
-
-即：
+After merge:
 
 ```python
 {
-    "item_code": "...",
-    "item_name": "...",
-    "quantity": ...
+    "0": "序号",
+    "1": "项目编码",
+    "3": "项目名称",
+    "4": "项目特征描述",
+    "7": "计量单位",
+    "8": "工程量",
+    "9": "综合单价",
+    "11": "合价"
 }
 ```
 
----
-
-# 十二、真正理解：
-
-# Business Entity Reconstruction
-
-以前：
+這一步的本質是：
 
 ```text
-操作 Excel
+physical header rows
+        ↓
+logical header row
 ```
-
-現在：
-
-```text
-重建業務數據
-```
-
-這是本質級提升。
 
 ---
 
-# 十三、真正理解：
+## 5. Schema Builder / Schema 建立
 
-# Data Normalization
-
-建立：
-
----
-
-# safe_float()
-
-作用：
-
-```text
-字符串
-↓
-float
-```
-
-支持：
-
-- None
-- NaN
-- 空格
-- 1,234.56
-
----
-
-# clean_text()
-
-作用：
-
-```text
-清理 feature 文本
-```
-
-包括：
-
-- \n
-- \t
-- 空格
-- None
-
----
-
-# 十四、真正理解：
-
-# normalize_records
-
-作用：
-
-```text
-統一數據類型
-```
-
-例如：
+After header merge, build schema:
 
 ```python
-"quantity": 26.914
-```
-
-而不是：
-
-```python
-"quantity": "26.914"
-```
-
----
-
-# 十五、真正理解：
-
-# Data Quality Engine
-
-建立：
-
----
-
-# validate_record()
-
-檢查：
-
-- item_name
-- quantity
-- unit_price
-- total_price
-
----
-
-# build_quality_report()
-
-輸出：
-
-```json
-{
-  "quality_score": 1.0,
-  "warnings": []
+schema = {
+    "serial_number": 0,
+    "item_code": 1,
+    "item_name": 3,
+    "feature": 4,
+    "unit": 7,
+    "quantity": 8,
+    "unit_price": 9,
+    "total_price": 11
 }
 ```
 
----
-
-# 十六、真正理解：
-
-# Parser 的核心：
-
-不是：
+Schema means:
 
 ```text
-字段越多越準
+standard field name → actual Excel column index
 ```
 
-而是：
+Schema 的意義是：
 
 ```text
-哪些字段最具區分性
+標準字段名 → 實際 Excel 列號
 ```
+
+這是 Parser V2 的核心。
 
 ---
 
-# 十七、真正理解：
+## 6. Parser V2 Mental Model / Parser V2 心智模型
 
-# Parser Rule：
-
-不是：
+Old:
 
 ```text
-理論正確
+row_dict.get(3)
 ```
 
-而是：
-
-```text
-對真實數據穩定
-```
-
----
-
-# 十八、真正理解：
-
-# 固定列索引
-
-目前：
+New:
 
 ```python
-row_data.get(11)
+row_dict.get(schema["item_name"])
 ```
 
-屬：
+Old:
 
-# 技術債。
+```text
+fixed column parser
+```
 
-下一步：
+New:
 
-將建立：
+```text
+schema driven parser
+```
 
-# Dynamic Header Mapping Engine
+舊版：
+
+```text
+固定列解析器
+```
+
+新版：
+
+```text
+Schema 驅動解析器
+```
 
 ---
 
-# 十九、真正理解：
+## 7. Skip Header Rows / 剔除表頭行
 
-# ETL 的真正價值
+After headers are used to build schema, they should not enter row classification.
 
-不是：
+表頭完成使命後，不應再進入數據行分類。
+
+Flow:
 
 ```text
-Excel 轉 JSON
+Header rows
+    ↓
+Build schema
+    ↓
+Add to skip_rows
+    ↓
+classify_rows skips them
 ```
 
-而是：
+Example:
 
-# 半結構化文檔
-↓
-標準化業務數據
+```python
+skip_rows = {2, 3, 17, 18, 29, 30}
+```
+
+This prevents:
+
+```text
+header row being classified as main_row
+```
+
+這可以避免：
+
+```text
+表頭被誤判為主數據行。
+```
 
 ---
 
-# 二十、目前真正進入的能力區
+## 8. Data Structure Learning / 數據結構學習
 
-不是：
+Today exposed the importance of:
 
 ```text
-普通 Python CRUD
+list
+dict
+set
+state management
 ```
 
-而是：
+今日真正練到的是：
 
-# ETL Engineering
+```text
+list / dict / set / 狀態管理
+```
 
-包括：
+Examples:
 
-- Semantic Parsing
-- Data Normalization
-- Business Reconstruction
-- Data Governance
-- Parser Engineering
+```python
+merged_rows = []
+skip_rows = set()
+schema = {}
+```
+
+These are not syntax details.
+
+They are engineering models.
+
+這些不是語法細節，而是工程建模方式。
 
 ---
 
-# 二十一、目前真正建立的是：
-
-# Construction ETL Engine
-
-而不是：
+## 9. Key Engineering Principle / 工程原則
 
 ```text
-普通 Web API
+Build once, pass downward.
 ```
 
-這是目前整個項目最重要的方向。
+Schema should be created once in the API flow, then passed to parser and pipeline.
+
+```text
+Schema 只建立一次，向下傳遞。
+```
+
+Avoid:
+
+```text
+bid_api.py builds schema
+excel_row_parser.py builds schema again
+excel_row_pipeline.py builds schema again
+```
+
+That would create inconsistency.
+
+---
+
+## 10. Current Temporary Files / 當前臨時副本文件
+
+Current temporary files:
+
+```text
+excel_row_parser_copy.py
+excel_row_pipeline_copy.py
+```
+
+Purpose:
+
+```text
+Protect working code during Parser V2 validation.
+```
+
+目前保留 `_copy.py` 是合理的，因為目前仍在驗證階段。
+
+Recommendation:
+
+```text
+Keep copies during validation.
+After testing multiple Excel formats:
+    merge useful logic
+    delete temporary copies
+```
+
+---
+
+## 11. Current Known Issues / 當前已知問題
+
+1. `unit_price ` has a trailing space.
+   `unit_price ` 有尾部空格，應修正為 `unit_price`。
+
+2. Some files may not contain price columns.
+   部分清單可能沒有單價與合價，需要允許缺失。
+
+3. `合   计` should be recognized as final total row.
+   `合   计` 應識別為 final_total_row。
+
+4. Need to stabilize `attach_category()`.
+   需要穩定 category 掛載邏輯。
+
+5. Need to confirm continuation row merge under multiple formats.
+   需要驗證不同格式下的補充行合併。
+
+---
+
+## 12. Next Tasks / 下一步任務
+
+### Task 1
+
+Fix mapping:
+
+```python
+"综合单价": "unit_price"
+```
+
+Do not allow:
+
+```python
+"unit_price "
+```
+
+---
+
+### Task 2
+
+Make parser schema-driven:
+
+```python
+item_name = row_dict.get(schema["item_name"])
+quantity = row_dict.get(schema["quantity"])
+```
+
+---
+
+### Task 3
+
+Clean temporary copies after validation:
+
+```text
+excel_row_parser_copy.py
+excel_row_pipeline_copy.py
+```
+
+---
+
+### Task 4
+
+Add import staging table:
+
+```text
+import_bid_records
+```
+
+---
+
+### Task 5
+
+Build export API:
+
+```text
+PostgreSQL
+    ↓
+DataFrame
+    ↓
+Excel
+```
+
+---
+
+## 13. Personal Learning Reflection / 個人學習反思
+
+The most important learning today:
+
+```text
+Code ability is not only writing syntax.
+It is the ability to convert business logic into data structures.
+```
+
+今天最重要的收穫：
+
+```text
+代碼能力不是單純寫語法。
+而是把業務邏輯轉換成數據結構的能力。
+```
+
+For AI era learning:
+
+```text
+Do not only let AI generate code.
+Use AI to verify thinking, architecture, and edge cases.
+```
+
+AI 時代不應只是讓 AI 生成代碼，而應讓 AI 幫助檢查：
+
+```text
+架構
+數據結構
+邊界條件
+工程流程
+```
+
+---
+
+## 14. Current Milestone / 當前里程碑
+
+```text
+Parser V2 Core Validation Passed
+```
+
+```text
+Parser V2 核心驗證已通過
+```
+
+The project has moved from:
+
+```text
+Excel script
+```
+
+toward:
+
+```text
+Construction Data Engineering System
+```
+
+本專案已從：
+
+```text
+Excel 小腳本
+```
+
+進入：
+
+```text
+建築工程數據工程系統
+```

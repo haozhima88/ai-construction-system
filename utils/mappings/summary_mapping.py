@@ -21,5 +21,11 @@ SUMMARY_MAPPING={
 
     "稅前總價":"before_tax_total",
 
-    "稅後總價":"after_tax_total"
+    "稅後總價":"after_tax_total",
+
+    "综合单价":"unit_price",
+    "綜合單價":"unit_price",
+
+    "合價":"total_price",
+    "合价":"total_price"
 }

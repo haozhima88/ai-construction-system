@@ -1,151 +1,7 @@
 
 import pandas as pd
 
-def clean_row_data(classified_rows):
-
-    useless_row_types = [
-
-        "empty_row",
-
-        "document_title_row",
-
-        "page_info_row",
-
-        "real_header_row",
-
-        "header_sub_row",
-
-        "subtotal_row",
-
-        "unknown_row"
-    ]
-
-    cleaned_rows = []
-
-    for row in classified_rows:
-
-        if row["row_type"] in useless_row_types:
-            continue
-
-        cleaned_rows.append(row)
-
-    return cleaned_rows
-
-
-
-
-def attach_category(cleaned_rows):
-
-    current_category = None
-
-    result_rows = []
-
-    for row in cleaned_rows:
-
-        row_type = row["row_type"]
-
-        row_data = row["row_data"]
-
-        if row_type == "category_row":
-
-            current_category = row_data.get(3)
-
-            continue
-
-        if row_type == "main_row":
-
-            new_row = row.copy()
-
-            new_row["category"] = current_category
-
-            result_rows.append(new_row)
-
-    return result_rows
-    
-
-
-def merge_continuation_rows(rows):
-
-    logical_records = []
-
-    current_main_row = None
-
-    for row in rows:
-
-        row_type = row["row_type"]
-
-        row_data = row["row_data"] 
-
-        # =========================
-        # main row
-        # =========================
-        if row_type == "main_row":
-
-            current_main_row = row
-
-            logical_records.append(current_main_row)
-
-        # =========================
-        # continuation row
-        # =========================
-        elif row_type == "continuation_row":
-
-            if current_main_row is not None:
-
-                continuation_text = row_data.get(4)
-
-                old_feature_text = current_main_row[
-                    "row_data"
-                    ].get(4, "")
-                
-                new_feature = (
-                    str(old_feature_text)
-                    + "\n"
-                    + str(continuation_text)
-                )
-
-                current_main_row[
-                    "row_data"
-                ][4] = new_feature
-
-    return logical_records
-
-                    
-def build_logical_records(rows):
-
-    logical_records = []
-
-    for row in rows:
-
-        if row["row_type"] != "main_row":
-            continue
-
-        row_data = row["row_data"]
-
-        logical_record = {
-
-            "category": row.get("category"),
-
-            "serial_number": row_data.get(0),
-
-            "item_code": row_data.get(1),
-
-            "item_name": row_data.get(3),
-
-            "feature": row_data.get(4),
-
-            "unit": row_data.get(7),
-
-            "quantity": row_data.get(8),
-
-            "unit_price": row_data.get(9),
-
-            "total_price": row_data.get(11)
-        }
-
-        logical_records.append(logical_record)
-
-    return logical_records
+from utils.column_mapping import COLUMN_MAPPING
 
 
 
@@ -191,6 +47,278 @@ def clean_text(value):
     value = value.strip()
 
     return value
+
+
+
+
+def clean_row_data(classified_rows):
+
+    print(f"----------------->Original rows count: {len(classified_rows)}")
+
+    useless_row_types = [
+
+        "empty_row",
+
+        "document_title_row",
+
+        "page_info_row",
+
+        "real_header_row",
+
+        "header_sub_row",
+
+        "subtotal_row",
+
+        "unknown_row"
+    ]
+
+    cleaned_rows = []
+
+    for row in classified_rows:
+
+        if row["row_type"] in useless_row_types:
+            continue
+
+        cleaned_rows.append(row)
+
+    # print(f"----------------->Cleaned rows count: {len(cleaned_rows)}")
+
+    return cleaned_rows
+
+   
+
+def extract_project_name(row_data):
+
+    # print(f"Extracting project name from row data: {row_data}")
+
+    for value in row_data.values():
+
+        # print(f"Checking value for project name extraction: '{value}'")
+
+        text = clean_text(value)
+
+        # print(f"Cleaned text: '{text}'")
+
+        if "工程名称" in text:
+
+            parts = text.split("：")
+            # print(f"Split text into parts: {parts}")
+
+            if len(parts) == 2:
+
+                # print(f"Found project name: '{parts[1].strip()}'")
+                return parts[1].strip()
+        else:
+
+            return text
+
+
+            
+
+    return None
+
+
+
+def attach_category(cleaned_rows,schema):
+
+    current_category = None
+    current_page_info = None
+
+    result_rows = []
+
+    for row in cleaned_rows:
+
+        row_type = row["row_type"]
+
+        row_data = row["row_data"]
+
+        if row_type == "category_row":
+
+            current_category = row_data.get(schema.get("item_name"))
+
+            continue
+
+        if row_type == "page_info_row":
+
+            current_page_info = row_data
+
+            current_project_name = extract_project_name(row_data)
+
+            continue
+
+        if row_type == "main_row":
+
+            new_row = row.copy()
+
+            new_row["category"] = current_category
+
+            new_row["page_info"] = current_project_name
+
+            result_rows.append(new_row)
+
+    return result_rows
+    
+
+
+
+def attach_context_to_main_rows(rows, schema):
+
+    result = []
+
+    current_project_name = None
+    current_page_info = None
+    current_category = None
+
+    for row in rows:
+
+        row_type = row["row_type"]
+        row_data = row["row_data"]
+
+        if row_type == "page_info_row":
+            current_page_info = row_data
+            current_project_name = extract_project_name(row_data)
+            continue
+
+        if row_type == "category_row":
+            category_col = schema.get("item_name")
+            current_category = row_data.get(category_col)
+            continue
+
+        if row_type == "main_row":
+            new_row = row.copy()
+            new_row["context"] = {
+                "project_name": current_project_name,
+                "page_info": current_page_info,
+                "category": current_category,
+                "source_row_index": row["row_index"]
+            }
+            result.append(new_row)
+
+    return result
+
+
+def build_schema(header_rows):
+
+    schema = {}
+
+    for row in header_rows:  
+
+        header_row = row
+        # print(f"Found header row: {header_row['row_data']}")
+        row_data = header_row["row_data"]
+
+        break
+
+    for col_index, col_value in row_data.items():
+
+        header_text = clean_text(
+            col_value
+            )
+
+        if header_text in COLUMN_MAPPING:
+
+            standard_name = COLUMN_MAPPING[
+                header_text
+            ]
+            # print(f"Mapping column '{header_text}' to standard name '{standard_name}' at index {col_index}")
+
+            schema[
+                standard_name
+            ] = int(col_index)
+
+    return schema
+
+
+
+def merge_header_rows(rows):
+
+    merged_headers = []
+    current_header_row = None
+    for row in rows:
+
+        row_type = row["row_type"]
+        row_data = row["row_data"]
+
+        if row_type == "real_header_row":
+
+            current_header_row = row.copy()
+            current_header_row["row_data"] = row_data.copy()
+
+        elif row_type == "header_sub_row":
+
+            if current_header_row is None:
+                continue
+
+            merged_data = current_header_row["row_data"].copy()
+            merged_data.update(row_data)
+
+            current_header_row["row_data"] = merged_data
+
+            merged_headers.append(current_header_row)
+            current_header_row = None
+            
+
+
+    return merged_headers
+
+
+
+
+
+                    
+def build_logical_records(rows, schema):
+
+    logical_records = []
+
+
+    for row in rows:
+
+        if row["row_type"] != "main_row":
+            continue
+
+        row_data = row["row_data"]
+
+        logical_record = {
+
+            "category": row.get("category"),
+
+            "serial_number": row_data.get(
+                schema["serial_number"]
+            ),
+
+            "item_code": row_data.get(
+                schema["item_code"]
+            ),
+
+            "item_name": row_data.get(
+                schema["item_name"]
+            ),
+
+            "feature": row_data.get(
+                schema["feature"]
+            ),
+
+            "unit": row_data.get(
+                schema["unit"]
+            ),
+
+            "quantity": row_data.get(
+                schema["quantity"]
+            ),
+
+            "unit_price": row_data.get(
+                schema["unit_price"]
+            ),
+
+            "total_price": row_data.get(
+                schema["total_price"]
+            )
+        }
+
+        logical_records.append(logical_record)
+
+    return logical_records
+
 
 
 
