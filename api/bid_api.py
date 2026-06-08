@@ -20,6 +20,7 @@ from services.excel_row_pipeline import (
     attach_context_to_main_rows,
     build_logical_records,
     clean_row_data,
+    merge_continuation_rows,
     merge_header_rows,
     build_schema,
     attach_category,
@@ -81,41 +82,30 @@ async def upload_bid_excel(
     # 分類行類型
     records = classify_rows(file_path, sheet_name, schema, skip_rows)
 
-    # attached_records = attach_context_to_main_rows(records, schema)
+    # 合并續行
+    merged_rows = merge_continuation_rows(records,schema)
 
+    
     # 附加類別信息
     attach_records = attach_category(records, schema)
 
-    # 生成邏輯記錄
+    # # 生成邏輯記錄
     logical_records = build_logical_records(attach_records, schema)
 
+    # 標準化記錄數據
+    normalized_records = build_normalized_records(logical_records)
 
+    # quality_result = build_quality_report(normalized_records)
 
-
-    # cleaned_rows = clean_row_data2(records)
-
-    # attached_rows = attach_category2(cleaned_rows)
-
-    # logical_records = build_logical_records2(merged_rows)
-
-    # normalized_records = build_normalized_records2(logical_records)
-
-    # quality_result = build_quality_report2(normalized_records)
-
-    # insert_many_records(normalized_records)
+    # 
+    insert_many_records(normalized_records)
 
 
 
     return {
-        # "count": len(records),
-        # "data": records,
-        # "merged_rows": merged_rows,
-        # "skip_rows": list(skip_rows),
-        # "records": records,
+
         "schema": schema,
-        "attached_records": attach_records,
-        "logical_records": logical_records,
-        # "schema": schema
+        "normalized_records": normalized_records
         # "quality": quality_result
         # "analysis": analysis_result,
         # "quality": quality_result

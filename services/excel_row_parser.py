@@ -293,7 +293,7 @@ def find_header_rows(path, sheet_name=0):
     skip_rows = set()
 
     for row_index, row_dict in enumerate(records):
-
+        
         values = normalize_values(row_dict)
 
         if is_real_header_row(values):

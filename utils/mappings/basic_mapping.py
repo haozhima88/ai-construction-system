@@ -91,6 +91,9 @@ BASIC_MAPPING={
 "單位名稱":"unit",
 "单位名称":"unit",
 
+"计量 单位": "unit",
+"計量 單位":"unit",
+
 "計價單位":"unit",
 
 "工程單位":"unit",

@@ -34,26 +34,22 @@ def clean_text(value):
 
     if value is None:
         return ""
-    
-    if pd.isna(value):
-        return ""
-    
-    value = str(value)
 
-    value = value.replace("\n", " ")
+    text = str(value).strip()
 
-    value = value.replace("\t", " ")
+    text = text.replace("\n", "")
+    text = text.replace("\r", "")
+    text = text.replace("\t", "")
+    text = text.replace(" ", "")
 
-    value = value.strip()
-
-    return value
+    return text
 
 
 
 
 def clean_row_data(classified_rows):
 
-    print(f"----------------->Original rows count: {len(classified_rows)}")
+    # print(f"----------------->Original rows count: {len(classified_rows)}")
 
     useless_row_types = [
 
@@ -201,11 +197,22 @@ def build_schema(header_rows):
 
     schema = {}
 
-    for row in header_rows:  
+    for row in header_rows:
 
         header_row = row
         # print(f"Found header row: {header_row['row_data']}")
         row_data = header_row["row_data"]
+
+        for col_index, col_value in row_data.items():
+
+            header_text = clean_text(
+                col_value
+    )
+
+            # print(
+            #     f"HEADER = [{header_text}]"
+            # )  
+
 
         break
 
@@ -225,7 +232,8 @@ def build_schema(header_rows):
             schema[
                 standard_name
             ] = int(col_index)
-
+    
+    # print(f"Constructed schema: {schema}")
     return schema
 
 
@@ -257,11 +265,7 @@ def merge_header_rows(rows):
             merged_headers.append(current_header_row)
             current_header_row = None
             
-
-
     return merged_headers
-
-
 
 
 
@@ -270,7 +274,6 @@ def build_logical_records(rows, schema):
 
     logical_records = []
 
-
     for row in rows:
 
         if row["row_type"] != "main_row":
@@ -278,47 +281,119 @@ def build_logical_records(rows, schema):
 
         row_data = row["row_data"]
 
+        serial_number_col = schema.get("serial_number")
+        item_code_col = schema.get("item_code")
+        item_name_col = schema.get("item_name")
+        feature_col = schema.get("feature")
+        unit_col = schema.get("unit")
+        quantity_col = schema.get("quantity")
+        unit_price_col = schema.get("unit_price")
+        total_price_col = schema.get("total_price")
+
         logical_record = {
+
+            "page_info": row.get("page_info"),
 
             "category": row.get("category"),
 
-            "serial_number": row_data.get(
-                schema["serial_number"]
-            ),
+            "serial_number":
+                row_data.get(serial_number_col)
+                if serial_number_col is not None
+                else None,
 
-            "item_code": row_data.get(
-                schema["item_code"]
-            ),
+            "item_code":
+                row_data.get(item_code_col)
+                if item_code_col is not None
+                else None,
 
-            "item_name": row_data.get(
-                schema["item_name"]
-            ),
+            "item_name":
+                row_data.get(item_name_col)
+                if item_name_col is not None
+                else None,
 
-            "feature": row_data.get(
-                schema["feature"]
-            ),
+            "feature":
+                row_data.get(feature_col)
+                if feature_col is not None
+                else None,
 
-            "unit": row_data.get(
-                schema["unit"]
-            ),
+            "unit":
+                row_data.get(unit_col)
+                if unit_col is not None
+                else None,
 
-            "quantity": row_data.get(
-                schema["quantity"]
-            ),
+            "quantity":
+                row_data.get(quantity_col)
+                if quantity_col is not None
+                else None,
 
-            "unit_price": row_data.get(
-                schema["unit_price"]
-            ),
+            "unit_price":
+                row_data.get(unit_price_col)
+                if unit_price_col is not None
+                else None,
 
-            "total_price": row_data.get(
-                schema["total_price"]
-            )
+            "total_price":
+                row_data.get(total_price_col)
+                if total_price_col is not None
+                else None
         }
 
-        logical_records.append(logical_record)
+        logical_records.append(
+            logical_record
+        )
 
     return logical_records
 
+
+def merge_continuation_rows(rows, schema):
+
+    logical_records = []
+
+    current_main_row = None
+
+    for row in rows:
+
+        row_type = row["row_type"]
+
+        row_data = row["row_data"] 
+
+        # =========================
+        # main row
+        # =========================
+        if row_type == "main_row":
+
+            current_main_row = row
+
+            logical_records.append(current_main_row)
+
+        # =========================
+        # continuation row
+        # =========================
+        elif row_type == "continuation_row":
+
+            if current_main_row is not None:
+
+                continuation_text = row_data.get(
+                    schema["feature"]
+                )   
+
+                old_feature_text = current_main_row[
+                    "row_data"
+                    ].get(
+                        schema["feature"],
+                        ""
+                    )
+                
+                new_feature = (
+                    str(old_feature_text)
+                    + "\n"
+                    + str(continuation_text)
+                )
+
+                current_main_row[
+                    "row_data"
+                ][schema["feature"]] = new_feature
+
+    return logical_records
 
 
 
@@ -329,6 +404,12 @@ def build_normalized_records(logical_records):
     for record in logical_records:
 
         normalized_record = {
+
+            "page_info": 
+            
+                clean_text(record.get(
+                "page_info"
+            )),
 
             "category":
 
