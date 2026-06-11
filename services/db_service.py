@@ -1,3 +1,5 @@
+import uuid
+
 from utils.db import (
 
     conn,
@@ -12,7 +14,7 @@ def insert_bid_record(record):
 
         INSERT INTO bid_records (
 
-            page_info,
+            project_name,
 
             category,
 
@@ -44,7 +46,7 @@ def insert_bid_record(record):
 
     values = (
 
-        record.get("page_info"),
+        record.get("project_name"),
 
         record.get("category"),
 
@@ -75,8 +77,18 @@ def insert_import_bid_records(record):
     sql = """
 
         INSERT INTO import_bid_records (
+        
+            batch_id,
 
-            page_info,
+            source_file_name,
+
+            source_sheet_name,
+
+            source_row_index,
+
+            mapping_version,
+
+            project_name,
 
             category,
 
@@ -102,13 +114,24 @@ def insert_import_bid_records(record):
 
             %s, %s, %s, %s, %s, %s,
 
-            %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s,
+
+            %s, %s, %s
         )
     """
 
     values = (
+        record.get("batch_id"),
 
-        record.get("page_info"),
+        record.get("source_file_name"),
+
+        record.get("source_sheet_name"),
+
+        record.get("source_row_index"),
+
+        record.get("mapping_version"),
+
+        record.get("project_name"),
 
         record.get("category"),
 
@@ -140,3 +163,108 @@ def insert_many_records(records):
     for record in records:
 
         insert_import_bid_records(record)
+
+
+
+
+def query_import_bid_records():
+
+    sql = """
+        SELECT id, review_status
+        FROM import_bid_records
+        ORDER BY id DESC
+    """
+
+    cursor.execute(sql)
+
+    return cursor.fetchall()
+
+
+def update_review_status(batch_id, new_status):
+
+    sql = """
+        UPDATE import_bid_records
+        SET review_status = %s
+        WHERE batch_id  = %s
+    """
+
+    cursor.execute(
+        sql, 
+        (
+            new_status, 
+            batch_id
+        )
+    )
+
+    conn.commit()
+
+    return {
+        "message": "Success"
+    }
+
+
+def approved_to_bid_records(batch_id):
+
+    sql = """
+        INSERT INTO bid_records (
+            import_record_id,
+            batch_id,
+            category,
+            serial_number,
+            item_code,
+            item_name,
+            feature,
+            unit,
+            quantity,
+            unit_price,
+            total_price,
+            project_name
+        )
+        SELECT
+            id,
+            batch_id,
+            category,
+            serial_number,
+            item_code,
+            item_name,
+            feature,
+            unit,
+            quantity,
+            unit_price,
+            total_price,
+            project_name
+        FROM import_bid_records
+        WHERE review_status = 'approved'
+        AND batch_id = %s
+        AND id NOT IN (
+            SELECT import_record_id
+            FROM bid_records
+            WHERE import_record_id IS NOT NULL
+        );
+    """
+
+    cursor.execute(sql, (batch_id,))
+
+    inserted_count = cursor.rowcount
+
+    update_sql = """
+        UPDATE import_bid_records
+        SET review_status = 'synced'
+        WHERE review_status = 'approved'
+        AND batch_id = %s
+        AND id IN (
+            SELECT import_record_id
+            FROM bid_records
+            WHERE batch_id = %s
+        );
+    """
+
+    cursor.execute(update_sql, (batch_id, batch_id))
+
+    conn.commit()
+
+    return {
+        "message": "approved records synced to bid_records",
+        "batch_id": batch_id,
+        "inserted_count": inserted_count
+    }

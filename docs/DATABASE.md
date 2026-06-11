@@ -2,6 +2,18 @@
 
 # Database Design
 
+## Architecture
+
+```text
+Excel
+↓
+import_bid_records
+↓
+Review
+↓
+bid_records
+```
+
 ---
 
 # import_bid_records
@@ -10,35 +22,35 @@ Purpose:
 
 Import staging table.
 
-Workflow:
+Status:
 
 ```text
-Excel
- ↓
-Parser
- ↓
-import_bid_records
+pending
+approved
+rejected
+synced
 ```
 
-Fields:
+---
 
-* id
-* batch_id
-* source_file_name
-* source_sheet_name
-* source_row_index
-* review_status
-* page_info
-* category
-* serial_number
-* item_code
-* item_name
-* feature
-* unit
-* quantity
-* unit_price
-* total_price
-* created_at
+## Main Fields
+
+| Field             | Description     |
+| ----------------- | --------------- |
+| id                | PK              |
+| batch_id          | Import batch    |
+| source_file_name  | Source file     |
+| source_sheet_name | Source sheet    |
+| source_row_index  | Original row    |
+| mapping_version   | Schema version  |
+| review_status     | Workflow status |
+| project_name      | Project         |
+| category          | Category        |
+| item_code         | BOQ code        |
+| item_name         | Item name       |
+| quantity          | Quantity        |
+| unit_price        | Unit price      |
+| total_price       | Total price     |
 
 ---
 
@@ -48,43 +60,35 @@ Purpose:
 
 Formal business records.
 
-Workflow:
-
-```text
-import_bid_records
- ↓
-review
- ↓
-sync
- ↓
-bid_records
-```
-
-Fields:
-
-* id
-* import_record_id
-* batch_id
-* page_info
-* category
-* serial_number
-* item_code
-* item_name
-* feature
-* unit
-* quantity
-* unit_price
-* total_price
-* created_at
+Only approved data enters this table.
 
 ---
 
-# Review Status
+## Main Fields
 
+| Field            | Description   |
+| ---------------- | ------------- |
+| id               | PK            |
+| import_record_id | Source record |
+| batch_id         | Batch         |
+| project_name     | Project       |
+| category         | Category      |
+| item_code        | BOQ code      |
+| item_name        | Item name     |
+| quantity         | Quantity      |
+| unit_price       | Unit price    |
+| total_price      | Total price   |
+
+---
+
+# Data Flow
+
+```text
 pending
-
+↓
 approved
-
-rejected
-
+↓
 synced
+↓
+bid_records
+```

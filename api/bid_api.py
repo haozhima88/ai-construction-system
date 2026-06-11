@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 import pandas as pd
 from utils.db import conn
+import uuid
 
 from fastapi.responses import FileResponse
 
@@ -10,7 +11,10 @@ from services.export_service import (
 
 from services.db_service import (
 
-    insert_many_records
+    insert_many_records,
+    query_import_bid_records,
+    update_review_status,
+    approved_to_bid_records
 )
 
 
@@ -54,7 +58,8 @@ from services.data_quality import (
 
 router = APIRouter()
 
-
+# Bid Records API
+# ==========================================
 @router.post("/upload-bid-excel/")
 async def upload_bid_excel(
 
@@ -63,7 +68,8 @@ async def upload_bid_excel(
     sheet_name: int = 0
 ):
 
-    # 保存上傳文件到本地
+    # 讀取文件
+    # Read File
     file_path = f"uploads/{file.filename}"
 
     with open(file_path, "wb") as f:
@@ -71,34 +77,52 @@ async def upload_bid_excel(
         f.write(await file.read())
 
     # 找到表頭行
+    # Find the header row
     header_rows, skip_rows = find_header_rows(file_path, sheet_name)
 
     # 合并表頭行
+    # merge header rows
     merged_rows = merge_header_rows(header_rows)
 
     # 構建 schema
+    # Build schema
     schema = build_schema(merged_rows)
 
-    # 分類行類型
+    # 建立行分類
+    # Create row categories
     records = classify_rows(file_path, sheet_name, schema, skip_rows)
 
     # 合并續行
+    # Merge consecutive lines
     merged_rows = merge_continuation_rows(records,schema)
 
-    
     # 附加類別信息
+    # Attachment category info
     attach_records = attach_category(records, schema)
 
-    # # 生成邏輯記錄
-    logical_records = build_logical_records(attach_records, schema)
+    # 生成邏輯記錄
+    # Generate logical records
+    batch_id = str(uuid.uuid4())
+    logical_records = build_logical_records(
+        attach_records,
+        schema,
+    )
 
     # 標準化記錄數據
-    normalized_records = build_normalized_records(logical_records)
+    # Standardize records
+    normalized_records = build_normalized_records(
+        logical_records,
+        batch_id=batch_id,
+        source_file_name=file.filename,
+        source_sheet_name=str(sheet_name),
+        mapping_version="v1.0"
+    )
+
+    # 寫入到import_bid_records表
+    # Write into the import_bid_records table
+    insert_many_records(normalized_records)
 
     # quality_result = build_quality_report(normalized_records)
-
-    # 
-    insert_many_records(normalized_records)
 
 
 
@@ -106,11 +130,14 @@ async def upload_bid_excel(
 
         "schema": schema,
         "normalized_records": normalized_records
-        # "quality": quality_result
-        # "analysis": analysis_result,
-        # "quality": quality_result
+        # "quality": quality_result,
+        # "analysis": analysis_result
     }
 
+
+
+# Read Excel Sheet Names API
+# ==========================================
 @router.post("/excel-sheet-names/")
 async def get_excel_sheet_names(
 
@@ -130,7 +157,11 @@ async def get_excel_sheet_names(
         "sheet_names": excel_file.sheet_names
     }
 
-@router.get("/export-bid-records")
+
+
+# Export Bid Records API
+# ==========================================
+@router.get("/export-bid-records/")
 def export_bid():
 
     file_path = export_bid_records()
@@ -139,3 +170,44 @@ def export_bid():
         file_path,
         filename="bid_records.xlsx"
     )
+
+
+
+# Review Import Bid Records API
+# ==========================================
+@router.get("/review-import-bid-records/")
+def import_records():
+
+    result = query_import_bid_records()
+
+    return {
+
+        "records": result
+    }
+
+
+
+# Update Review Status API
+# ==========================================
+@router.get("/update-review-status/")
+def review_status(batch_id: str, new_status: str):
+
+    
+    # review_status: pending / approved / rejected
+    update_review_status(batch_id, new_status)
+
+    return {
+
+        "message": "Review status updated successfully"
+    }
+
+
+
+# Approved records to bid_records table
+# ==========================================
+@router.post("/sync-approved-records/")
+def sync_approved_records(batch_id: str):
+
+    result = approved_to_bid_records(batch_id)
+
+    return result

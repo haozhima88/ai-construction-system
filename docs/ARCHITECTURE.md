@@ -1,118 +1,90 @@
 # ARCHITECTURE.md
 
-# AI Construction System Architecture
-
-## Project Position
-
-AI Construction System is a Construction Data Engineering Platform Prototype.
-
-Core Goal:
-
-```text
-Construction Excel
-        ↓
-Parser
-        ↓
-Schema
-        ↓
-Logical Records
-        ↓
-Database
-        ↓
-BI / AI Analysis
-```
-
----
-
 # System Architecture
 
+## V1.0 Architecture
+
 ```text
-┌──────────────────────┐
-│ Construction Excel   │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Construction Excel  │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Header Detector      │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Header Detector     │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Schema Builder       │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Schema Builder      │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Row Parser           │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Row Classifier      │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Context Engine       │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Context Engine      │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ Logical Records      │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Logical Records     │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ PostgreSQL           │
-└──────────┬───────────┘
+┌─────────────────────┐
+│ Normalized Records  │
+└──────────┬──────────┘
            │
            ▼
-┌──────────────────────┐
-│ BI / AI Layer        │
-└──────────────────────┘
+┌─────────────────────┐
+│ import_bid_records  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Review Workflow     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ bid_records         │
+└─────────────────────┘
 ```
 
 ---
 
-# Current Modules
+## Core Engines
 
-## Parser Layer
-
-Responsible for:
-
-* Header detection
-* Schema generation
-* Row classification
-
-## Context Layer
+### Parser Engine
 
 Responsible for:
 
-* Category attachment
-* Page information attachment
+* Header Detection
+* Schema Building
+* Row Classification
 
-## Record Layer
-
-Responsible for:
-
-* Logical record generation
-
-## Database Layer
+### Context Engine
 
 Responsible for:
 
-* Import staging
-* Formal storage
+* Category Attachment
+* Project Attachment
 
----
+### Workflow Engine
 
-# Future Architecture
+Responsible for:
 
-```text
-Excel
- ↓
-Parser
- ↓
-Database
- ↓
-Power BI
- ↓
-AI Cost Analysis
- ↓
-AI Tender Assistant
-```
+* Review
+* Approval
+* Sync
+
+### Database Engine
+
+Responsible for:
+
+* Import Storage
+* Business Storage

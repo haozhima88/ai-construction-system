@@ -2,11 +2,15 @@
 
 # API Specification
 
+## Version
+
+V1.0
+
 ---
 
 # Upload Bid Excel
 
-POST
+## POST
 
 ```text
 /upload-bid-excel
@@ -14,13 +18,27 @@ POST
 
 Purpose:
 
-Upload Excel and parse bid records.
+Upload construction BOQ Excel files and parse them into logical records.
+
+Workflow:
+
+```text
+Excel
+↓
+Parser
+↓
+Logical Records
+↓
+Normalized Records
+↓
+import_bid_records
+```
 
 ---
 
-# Import Records
+# Query Import Records
 
-GET
+## GET
 
 ```text
 /import-records
@@ -28,46 +46,86 @@ GET
 
 Purpose:
 
-Query staging records.
+Query imported staging records.
+
+Returns:
+
+```json
+[
+  {
+    "id":1,
+    "review_status":"pending"
+  }
+]
+```
 
 ---
 
-# Export Records
+# Review Record
 
-GET
+## POST
 
 ```text
-/export-import-records
+/review-record
 ```
 
 Purpose:
 
-Export records to Excel.
+Approve or reject imported records.
+
+Request:
+
+```json
+{
+  "record_id":123,
+  "review_status":"approved"
+}
+```
 
 ---
 
-# Review Records
+# Sync Approved Records
 
-POST
+## POST
 
 ```text
-/review-import-records
+/sync-approved-records
 ```
 
 Purpose:
 
-Approve or reject records.
+Move approved records into business table.
+
+Workflow:
+
+```text
+import_bid_records
+↓
+approved
+↓
+bid_records
+↓
+synced
+```
 
 ---
 
-# Sync Records
+# Future APIs
 
-POST
+## Export Records
 
 ```text
-/sync-import-records
+/export-records
 ```
 
-Purpose:
+## Cost Analysis
 
-Sync approved records into bid_records.
+```text
+/cost-analysis
+```
+
+## AI Suggestions
+
+```text
+/ai-cost-analysis
+```

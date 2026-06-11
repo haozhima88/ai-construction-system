@@ -1,4 +1,6 @@
 
+import uuid
+
 import pandas as pd
 
 from utils.column_mapping import COLUMN_MAPPING
@@ -270,7 +272,10 @@ def merge_header_rows(rows):
 
 
                     
-def build_logical_records(rows, schema):
+def build_logical_records(
+    rows,
+    schema,
+):
 
     logical_records = []
 
@@ -280,6 +285,7 @@ def build_logical_records(rows, schema):
             continue
 
         row_data = row["row_data"]
+        row_index = row["row_index"]
 
         serial_number_col = schema.get("serial_number")
         item_code_col = schema.get("item_code")
@@ -292,9 +298,11 @@ def build_logical_records(rows, schema):
 
         logical_record = {
 
-            "page_info": row.get("page_info"),
+            "project_name": row.get("page_info"),
 
             "category": row.get("category"),
+
+            "source_row_index":row_index,
 
             "serial_number":
                 row_data.get(serial_number_col)
@@ -337,12 +345,9 @@ def build_logical_records(rows, schema):
                 else None
         }
 
-        logical_records.append(
-            logical_record
-        )
+        logical_records.append(logical_record)
 
     return logical_records
-
 
 def merge_continuation_rows(rows, schema):
 
@@ -397,7 +402,13 @@ def merge_continuation_rows(rows, schema):
 
 
 
-def build_normalized_records(logical_records):
+def build_normalized_records(
+    logical_records,
+    batch_id,
+    source_file_name=None,
+    source_sheet_name=None,
+    mapping_version="v1.0"
+):
 
     normalized_records = []
 
@@ -405,70 +416,51 @@ def build_normalized_records(logical_records):
 
         normalized_record = {
 
-            "page_info": 
-            
-                clean_text(record.get(
-                "page_info"
-            )),
+            "batch_id": batch_id,
+
+            "source_file_name":
+                clean_text(source_file_name),
+
+            "source_sheet_name":
+                clean_text(source_sheet_name),
+
+            "source_row_index":
+                record.get("source_row_index"),
+
+            "mapping_version":
+                clean_text(mapping_version),
+
+            "project_name":
+                clean_text(record.get("project_name")),
 
             "category":
-
-                clean_text(
-                    record.get("category")
-                ),
+                clean_text(record.get("category")),
 
             "serial_number":
-
-                clean_text(
-                    record.get("serial_number")
-                ),
+                clean_text(record.get("serial_number")),
 
             "item_code":
-
-                clean_text(
-                    record.get("item_code")
-                ),
+                clean_text(record.get("item_code")),
 
             "item_name":
+                clean_text(record.get("item_name")),
 
-                clean_text(
-                    record.get("item_name")
-                ),
-
-            "feature":
-
-                clean_text(
-                    record.get("feature")
-                ),
+            "feature":record.get("feature"),
 
             "unit":
-
-                clean_text(
-                    record.get("unit")
-                ),
+                clean_text(record.get("unit")),
 
             "quantity":
-
-                safe_float(
-                    record.get("quantity")
-                ),
+                safe_float(record.get("quantity")),
 
             "unit_price":
-
-                safe_float(
-                    record.get("unit_price")
-                ),
+                safe_float(record.get("unit_price")),
 
             "total_price":
-
-                safe_float(
-                    record.get("total_price")
-                )
+                safe_float(record.get("total_price")),
         }
 
-        normalized_records.append(
-            normalized_record
-        )
+        normalized_records.append(normalized_record)
 
     return normalized_records
 

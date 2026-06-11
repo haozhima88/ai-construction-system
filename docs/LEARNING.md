@@ -1,37 +1,72 @@
 # LEARNING.md
 
-# Learning Journey
-
-## AI × Construction × Data Engineering
+# AI × Construction × Data Engineering Learning Journal
 
 ---
 
-# Project Background
+# Project Mission
 
-I have worked in the construction industry for over 10 years.
+## English
 
-My experience includes:
+This project is not intended to become a commercial ERP system.
 
-* Construction project management
-* Enterprise informatization
-* Low-code platforms
-* Power BI
-* ERP-related systems
-
-This project is my transition path from:
+Its primary purpose is:
 
 ```text
-Construction IT Support
+Skill Growth
+        +
+Portfolio Project
+        +
+Data Engineering Practice
+```
+
+The project serves as a bridge from:
+
+```text
+Construction IT
 ```
 
 to:
 
 ```text
-Data Engineering
 ERP
 BI
-AI Application
+Data Engineering
+AI Applications
 ```
+
+---
+
+## 繁體中文
+
+本專案並非以商業 ERP 為第一目標。
+
+其核心價值：
+
+```text
+技能升維
++
+作品展示
++
+數據工程實踐
+```
+
+作為從：
+
+```text
+建築信息化
+```
+
+轉向：
+
+```text
+ERP
+BI
+數據工程
+AI應用
+```
+
+的重要轉型載體。
 
 ---
 
@@ -39,13 +74,7 @@ AI Application
 
 ## Realization 001
 
-The real problem is not data rows.
-
-The real problem is:
-
-```text
-Header Detection
-```
+Headers are more important than rows.
 
 Before:
 
@@ -57,9 +86,9 @@ After:
 
 ```text
 Find headers
- ↓
+↓
 Build schema
- ↓
+↓
 Parse rows
 ```
 
@@ -67,7 +96,7 @@ Parse rows
 
 ## Realization 002
 
-Fixed column parsing is technical debt.
+Schema Driven Parsing
 
 Old:
 
@@ -78,16 +107,24 @@ row_dict.get(3)
 New:
 
 ```python
-row_dict.get(
+row_data.get(
     schema["item_name"]
 )
+```
+
+Meaning:
+
+```text
+Dynamic Structure
+>
+Fixed Columns
 ```
 
 ---
 
 ## Realization 003
 
-Excel Row is not Business Record.
+Excel Row ≠ Business Record
 
 Before:
 
@@ -98,16 +135,15 @@ Excel Row
 After:
 
 ```text
-Business Record
+Logical Record
 ```
 
 Example:
 
 ```json
 {
-  "category": "天棚工程",
-  "item_name": "天棚抹灰",
-  "quantity": "789.95"
+  "item_code":"010506001008",
+  "item_name":"现浇混凝土基础及联系梁钢筋"
 }
 ```
 
@@ -115,7 +151,7 @@ Example:
 
 ## Realization 004
 
-Context is more important than data.
+Context Is Data
 
 Rows like:
 
@@ -124,54 +160,88 @@ category_row
 page_info_row
 ```
 
-do not contain quantities.
+contain no quantity.
 
-But they contain business meaning.
+Yet they carry:
+
+```text
+Business Meaning
+```
 
 ---
 
 ## Realization 005
 
-The value of AI is not writing code.
+Import Database ≠ Business Database
 
-The value of AI is helping with:
+New understanding:
 
-* Architecture
-* Data structures
-* Design decisions
-* Edge cases
+```text
+Excel
+↓
+Import Staging
+↓
+Review
+↓
+Business Database
+```
+
+This is the first enterprise-grade workflow inside the project.
 
 ---
 
 # Technical Growth
 
-Current Skills
-
 ## Python
 
+Current Understanding:
+
 * Functions
-* Modules
 * Dictionaries
 * Lists
-* Pandas
+* Schema Mapping
+* Data Cleaning
+
+---
 
 ## FastAPI
 
-* Routing
-* Upload APIs
-* JSON Responses
+Current Understanding:
+
+* Router
+* Upload API
+* Review API
+* Sync API
+
+---
 
 ## PostgreSQL
+
+Current Understanding:
 
 * Table Design
 * Insert
 * Query
+* Update
+* Review Workflow
+
+---
 
 ## Data Engineering
 
-* ETL
-* Schema Design
-* Data Pipeline
+Current Understanding:
+
+```text
+Parser
+↓
+Normalize
+↓
+Import
+↓
+Review
+↓
+Sync
+```
 
 ---
 
@@ -182,79 +252,135 @@ Environment
 ██████████ 100%
 
 Parser
-█████████░ 90%
+██████████ 100%
 
-Database
-██████░░░░ 60%
-
-Export
-███░░░░░░░ 30%
-
-BI
-░░░░░░░░░░ 0%
-
-AI
-░░░░░░░░░░ 0%
-```
-
----
-
-# Current Design Philosophy
-
-Priority Order:
-
-```text
-Correctness
- >
-Reusability
- >
-Performance
- >
-Beauty
-```
-
-For this project:
-
-```text
-A parser that works
- >
-A parser that looks elegant
-```
-
----
-
-# Next Learning Target
-
-Milestone 5
+Import Workflow
+██████████ 100%
 
 Review Workflow
+██████████ 100%
 
-Goals:
+Sync Workflow
+██████████ 100%
 
-* review_status
-* approve records
-* reject records
-* sync records
+Export Workflow
+████░░░░░░ 40%
+
+Cost Analysis
+░░░░░░░░░░ 0%
+
+AI Analysis
+░░░░░░░░░░ 0%
+```
 
 ---
 
-# Long-Term Career Goal
+# Human-AI Collaboration Model
 
-Build capability in:
+Current Model:
 
 ```text
-ERP
-BI
-Data Engineering
-AI Applications
+Mahahao
+=
+Business Expert
++
+Junior Architect
++
+Data Engineering Learner
+
+ChatGPT
+=
+Chief Architect
++
+Career Coach
+
+Codex
+=
+Senior Engineer
++
+Coding Mentor
 ```
 
-rather than becoming a traditional software developer.
-
-The objective is:
+Workflow:
 
 ```text
-Business + Data + AI
+Business Requirement
+        ↓
+Architecture Design
+        ↓
+Codex Implementation
+        ↓
+Testing
+        ↓
+Learning
+        ↓
+Git Commit
+```
+
+---
+
+# Future Branches
+
+After V1.0:
+
+## Branch A
+
+AI Bid Cost Analyzer
+
+```text
+Tender BOQ
+↓
+Cost Library
+↓
+Manual Adjustment
+↓
+Budget
+↓
+AI Suggestions
+```
+
+---
+
+## Branch B
+
+Construction Project Management System
+
+```text
+Form Engine
+Workflow Engine
+Report Engine
+```
+
+---
+
+## Branch C
+
+Construction Data Platform
+
+```text
+Documents
+↓
+Parser
+↓
+Database
+↓
+BI
+↓
+AI
+```
+
+---
+
+# Long-Term Goal
+
+Become:
+
+```text
+Business
++
+Data
++
+AI
 ```
 
 instead of:
@@ -262,3 +388,12 @@ instead of:
 ```text
 Code Only
 ```
+
+Build capability in:
+
+* ERP
+* BI
+* Data Engineering
+* AI Applications
+
+while maintaining deep construction industry expertise.
