@@ -1,0 +1,101 @@
+body {
+    margin: 0;
+    font-family: Arial, "Microsoft YaHei", sans-serif;
+    background: #f5f6f8;
+    color: #222;
+}
+
+header {
+    background: #1f2937;
+    color: white;
+    padding: 24px 40px;
+}
+
+main {
+    padding: 24px 40px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+button {
+    padding: 10px 16px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 14px;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 16px 24px;
+    border-radius: 10px;
+    min-width: 120px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.stat-title {
+    font-size: 14px;
+    color: #666;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-synced {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.action-button {
+    margin-right: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+}

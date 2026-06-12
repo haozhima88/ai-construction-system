@@ -12,7 +12,7 @@ from services.export_service import (
 from services.db_service import (
 
     insert_many_records,
-    query_import_bid_records,
+    query_import_records_for_review,
     update_review_status,
     approved_to_bid_records
 )
@@ -176,13 +176,14 @@ def export_bid():
 # Review Import Bid Records API
 # ==========================================
 @router.get("/review-import-bid-records/")
-def import_records():
+def get_review_import_bid_records():
 
-    result = query_import_bid_records()
+    records = query_import_records_for_review()
 
     return {
-
-        "records": result
+        "success": True,
+        "count": len(records),
+        "records": records
     }
 
 

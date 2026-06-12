@@ -167,17 +167,44 @@ def insert_many_records(records):
 
 
 
-def query_import_bid_records():
+def query_import_records_for_review():
 
     sql = """
-        SELECT id, review_status
+        SELECT
+            id,
+            review_status,
+            project_name,
+            category,
+            item_name,
+            quantity,
+            unit_price,
+            total_price
         FROM import_bid_records
-        ORDER BY id DESC
+        ORDER BY id ASC;
     """
 
     cursor.execute(sql)
 
-    return cursor.fetchall()
+    rows = cursor.fetchall()
+
+    records = []
+
+    for row in rows:
+
+        record = {
+            "id": row[0],
+            "review_status": row[1],
+            "project_name": row[2],
+            "category": row[3],
+            "item_name": row[4],
+            "quantity": row[5],
+            "unit_price": row[6],
+            "total_price": row[7],
+        }
+
+        records.append(record)
+
+    return records
 
 
 def update_review_status(batch_id, new_status):

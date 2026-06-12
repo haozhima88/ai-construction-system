@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Bid Cost Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico">
+</head>
+<body>
+    <header>
+        <h1>AI Bid Cost Analyzer</h1>
+        <p>投標成本測算 AI 工具 - Web UI Prototype</p>
+        <p>澎瑞建设 - 专用投标辅助工具</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>1. 導入記錄查看</h2>
+            <button onclick="loadImportRecords()">載入 import records</button>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-title">Total</div>
+                <div id="total-count" class="stat-number">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Pending</div>
+                <div id="pending-count" class="stat-number">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Approved</div>
+                <div id="approved-count" class="stat-number">0</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Synced</div>
+                <div id="synced-count" class="stat-number">0</div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>2. 數據表格</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>操作</th>
+                        <th>ID</th>
+                        <th>狀態</th>
+                        <th>項目名稱</th>
+                        <th>分類</th>
+                        <th>清單名稱</th>
+                        <th>工程量</th>
+                        <th>綜合單價</th>
+                        <th>合價</th>
+                    </tr>
+                </thead>
+                <tbody id="records-body"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
