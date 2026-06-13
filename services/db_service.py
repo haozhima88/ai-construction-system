@@ -176,6 +176,7 @@ def query_import_records_for_review():
             project_name,
             category,
             item_name,
+            feature,
             quantity,
             unit_price,
             total_price
@@ -197,9 +198,10 @@ def query_import_records_for_review():
             "project_name": row[2],
             "category": row[3],
             "item_name": row[4],
-            "quantity": row[5],
-            "unit_price": row[6],
-            "total_price": row[7],
+            "feature":row[5],
+            "quantity": row[6],
+            "unit_price": row[7],
+            "total_price": row[8],
         }
 
         records.append(record)
@@ -207,19 +209,19 @@ def query_import_records_for_review():
     return records
 
 
-def update_review_status(batch_id, new_status):
+def update_review_status_service(id, new_status):
 
     sql = """
         UPDATE import_bid_records
         SET review_status = %s
-        WHERE batch_id  = %s
+        WHERE id  = %s
     """
 
     cursor.execute(
         sql, 
         (
             new_status, 
-            batch_id
+            id
         )
     )
 

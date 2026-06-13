@@ -53,6 +53,7 @@ function renderTable(records) {
             <td>${record.project_name ?? ""}</td>
             <td>${record.category ?? ""}</td>
             <td>${record.item_name ?? ""}</td>
+            <td>${record.feature ?? ""}</td>
             <td>${record.quantity ?? ""}</td>
             <td>${record.unit_price ?? ""}</td>
             <td>${record.total_price ?? ""}</td>
@@ -93,6 +94,7 @@ function getStatusClass(status) {
 }
 
 async function reviewRecord(recordId, newStatus) {
+    // console.log("Review:", recordId, newStatus);
     const response = await fetch(
         `/review-record?record_id=${recordId}&new_status=${newStatus}`,
         {

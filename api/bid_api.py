@@ -13,8 +13,9 @@ from services.db_service import (
 
     insert_many_records,
     query_import_records_for_review,
-    update_review_status,
-    approved_to_bid_records
+    update_review_status_service,
+    approved_to_bid_records,
+    update_review_status_service
 )
 
 
@@ -195,12 +196,9 @@ def review_status(batch_id: str, new_status: str):
 
     
     # review_status: pending / approved / rejected
-    update_review_status(batch_id, new_status)
+    result = update_review_status_service(id, new_status)
 
-    return {
-
-        "message": "Review status updated successfully"
-    }
+    return result
 
 
 
