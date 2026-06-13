@@ -347,11 +347,13 @@ def build_logical_records(
 
         logical_records.append(logical_record)
 
+    # print(f"----------------->logical_records: {logical_records[0]}")
+    
     return logical_records
 
 def merge_continuation_rows(rows, schema):
 
-    logical_records = []
+    feature_records = []
 
     current_main_row = None
 
@@ -368,7 +370,7 @@ def merge_continuation_rows(rows, schema):
 
             current_main_row = row
 
-            logical_records.append(current_main_row)
+            feature_records.append(current_main_row)
 
         # =========================
         # continuation row
@@ -397,8 +399,9 @@ def merge_continuation_rows(rows, schema):
                 current_main_row[
                     "row_data"
                 ][schema["feature"]] = new_feature
+    # print(f"----------------->feature_records: {feature_records[0]}")
 
-    return logical_records
+    return feature_records
 
 
 
@@ -461,6 +464,8 @@ def build_normalized_records(
         }
 
         normalized_records.append(normalized_record)
+
+    # print(f"----------------->normalized_records: {normalized_records[0]}")
 
     return normalized_records
 

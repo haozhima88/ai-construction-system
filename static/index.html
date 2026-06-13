@@ -20,6 +20,38 @@
         </section>
 
         <section class="stats">
+            <div class="filter-panel">
+                <input
+                    type="text"
+                    id="search-keyword"
+                    placeholder="搜索項目名稱或分類..."
+                >
+
+                <select id="status-filter">
+
+                    <option value="">
+                        全部狀態
+                    </option>
+
+                    <option value="pending">
+                        Pending
+                    </option>
+
+                    <option value="approved">
+                        Approved
+                    </option>
+
+                    <option value="rejected">
+                        Rejected
+                    </option>
+
+                </select>
+
+                <button onclick="applyFilters()">
+                    Search
+                </button>
+
+            </div>
             <div class="stat-card">
                 <div class="stat-title">Total</div>
                 <div id="total-count" class="stat-number">0</div>

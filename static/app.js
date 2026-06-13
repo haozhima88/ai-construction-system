@@ -1,11 +1,14 @@
+
+let allRecords = [];
+
 async function loadImportRecords() {
     const response = await fetch("/review-import-bid-records/");
     const result = await response.json();
 
-    const records = result.records || [];
+    allRecords = result.records || [];
 
-    renderStats(records);
-    renderTable(records);
+    renderStats(allRecords);
+    renderTable(allRecords);
 }
 
 function renderStats(records) {
@@ -53,7 +56,7 @@ function renderTable(records) {
             <td>${record.project_name ?? ""}</td>
             <td>${record.category ?? ""}</td>
             <td>${record.item_name ?? ""}</td>
-            <td>${record.feature ?? ""}</td>
+            <td class="feature-cell">${record.feature ?? ""}</td>
             <td>${record.quantity ?? ""}</td>
             <td>${record.unit_price ?? ""}</td>
             <td>${record.total_price ?? ""}</td>
@@ -71,6 +74,56 @@ function renderTable(records) {
 
         tbody.appendChild(tr);
     });
+}
+
+function applyFilters() {
+
+    const keyword =
+        document
+            .getElementById("search-keyword")
+            .value
+            .toLowerCase();
+
+    const status =
+        document
+            .getElementById("status-filter")
+            .value;
+
+    const filteredRecords =
+        allRecords.filter(record => {
+
+            const keywordMatch =
+
+                record.item_name
+                    ?.toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                record.category
+                    ?.toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                record.project_name
+                    ?.toLowerCase()
+                    .includes(keyword);
+
+            const statusMatch =
+
+                status === ""
+
+                ||
+
+                record.review_status === status;
+
+            return keywordMatch && statusMatch;
+        });
+
+    renderStats(filteredRecords);
+
+    renderTable(filteredRecords);
 }
 
 function getStatusClass(status) {

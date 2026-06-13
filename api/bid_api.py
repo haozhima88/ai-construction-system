@@ -123,9 +123,9 @@ async def upload_bid_excel(
     # Write into the import_bid_records table
     insert_many_records(normalized_records)
 
+
+    # quality_result_test
     # quality_result = build_quality_report(normalized_records)
-
-
 
     return {
 
@@ -192,12 +192,9 @@ def get_review_import_bid_records():
 # Update Review Status API
 # ==========================================
 @router.get("/update-review-status/")
-def review_status(batch_id: str, new_status: str):
-
-    
-    # review_status: pending / approved / rejected
-    result = update_review_status_service(id, new_status)
-
+@router.post("/review-record")
+def review_record(record_id: int, new_status: str):
+    result = update_review_status_service(record_id, new_status)
     return result
 
 
