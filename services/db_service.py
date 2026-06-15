@@ -176,6 +176,7 @@ def query_import_records_for_review():
             project_name,
             category,
             item_name,
+            item_code,
             feature,
             quantity,
             unit_price,
@@ -198,10 +199,11 @@ def query_import_records_for_review():
             "project_name": row[2],
             "category": row[3],
             "item_name": row[4],
-            "feature":row[5],
-            "quantity": row[6],
-            "unit_price": row[7],
-            "total_price": row[8],
+            "item_code":row[5],
+            "feature":row[6],
+            "quantity": row[7],
+            "unit_price": row[8],
+            "total_price": row[9],
         }
 
         records.append(record)

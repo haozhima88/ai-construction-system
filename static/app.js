@@ -56,10 +56,17 @@ function renderTable(records) {
             <td>${record.project_name ?? ""}</td>
             <td>${record.category ?? ""}</td>
             <td>${record.item_name ?? ""}</td>
-            <td class="feature-cell">${record.feature ?? ""}</td>
             <td>${record.quantity ?? ""}</td>
             <td>${record.unit_price ?? ""}</td>
             <td>${record.total_price ?? ""}</td>
+            <td>
+                <button
+                    class="detail-button"
+                    onclick="showFeatureDetailById(${record.id})"
+                >
+                    Detail
+                </button>
+            </td>
 
             <td>
                 <button class="action-button" onclick="reviewRecord(${record.id}, 'approved')">
@@ -160,4 +167,72 @@ async function reviewRecord(recordId, newStatus) {
     console.log("Review result:", result);
 
     await loadImportRecords();
+}
+
+
+
+function showFeatureDetail(
+    feature
+) {
+
+    document
+        .getElementById(
+            "feature-text"
+        )
+        .innerText = feature;
+
+    document
+        .getElementById(
+            "feature-modal"
+        )
+        .style
+        .display = "block";
+}
+
+
+
+function closeFeatureModal() {
+
+    document
+        .getElementById(
+            "feature-modal"
+        )
+        .style
+        .display = "none";
+}
+
+
+function getFeatureSummary(feature) {
+    if (!feature) {
+        return "";
+    }
+
+    if (feature.length <= 40) {
+        return feature;
+    }
+
+    return feature.substring(0, 40) + "...";
+}
+
+function showFeatureDetailById(recordId) {
+    const record = allRecords.find(
+        item => item.id === recordId
+    );
+
+    if (!record) {
+        alert("Record not found");
+        return;
+    }
+
+    document.getElementById("modal-item-name").innerText =
+        record.item_name ?? "";
+
+    document.getElementById("modal-item-code").innerText =
+        record.item_code ?? "";
+
+    document.getElementById("modal-feature-text").innerText =
+        record.feature ?? "";
+
+    document.getElementById("feature-modal").style.display =
+        "block";
 }

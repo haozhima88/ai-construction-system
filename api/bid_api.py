@@ -194,7 +194,9 @@ def get_review_import_bid_records():
 @router.get("/update-review-status/")
 @router.post("/review-record")
 def review_record(record_id: int, new_status: str):
+
     result = update_review_status_service(record_id, new_status)
+    
     return result
 
 

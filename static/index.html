@@ -9,13 +9,13 @@
 <body>
     <header>
         <h1>AI Bid Cost Analyzer</h1>
-        <p>投標成本測算 AI 工具 - Web UI Prototype</p>
+        <p>投标成本测算 AI 工具 - Web UI Prototype</p>
         <p>澎瑞建设 - 专用投标辅助工具</p>
     </header>
 
     <main>
         <section class="card">
-            <h2>1. 導入記錄查看</h2>
+            <h2>1. 导入记录查看</h2>
             <button onclick="loadImportRecords()">載入 import records</button>
         </section>
 
@@ -30,7 +30,7 @@
                 <select id="status-filter">
 
                     <option value="">
-                        全部狀態
+                        全部状态
                     </option>
 
                     <option value="pending">
@@ -72,26 +72,56 @@
                 <div id="synced-count" class="stat-number">0</div>
             </div>
         </section>
+        </div>
 
         <section class="card">
-            <h2>2. 數據表格</h2>
+            <h2>2. 数据表格</h2>
             <table>
                 <thead>
                     <tr>
+                        <th>
+                            <input
+                                type="checkbox"
+                                id="select-all"
+                            >
+                        </th>
                         <th>ID</th>
-                        <th>狀態</th>
-                        <th>項目名稱</th>
-                        <th>分類</th>
-                        <th>清單名稱</th>
-                        <th>項目描述</th>
+                        <th>状态</th>
+                        <th>项目名称</th>
+                        <th>分类</th>
+                        <th>清单名称</th>
                         <th>工程量</th>
-                        <th>綜合單價</th>
-                        <th>合價</th>
+                        <th>综合单价</th>
+                        <th>合价</th>
+                        <th>查看详情</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="records-body"></tbody>
             </table>
+            <div id="feature-modal" class="modal">
+                <div class="modal-content">
+                    <h3>Feature Detail</h3>
+                    <div class="modal-row">
+                        <strong>Item Name:</strong>
+                        <span id="modal-item-name"></span>
+                    </div>
+                    <div class="modal-row">
+                        <strong>Item Code:</strong>
+                        <span id="modal-item-code"></span>
+                    </div>
+                    <div class="modal-row">
+                        <strong>Feature:</strong>
+                        <pre id="modal-feature-text"></pre>
+                    </div>
+                    <button onclick="closeFeatureModal()">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+
+
         </section>
     </main>
 
