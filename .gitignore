@@ -1,27 +1,49 @@
-# Python
+# virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
 __pycache__/
 *.pyc
 
-# Virtual env
-.venv/
+# Codex / workspace metadata
+.stubs/
+.vfsmeta/
+.work-folder-info
 
-# Environment variables
+# upload / export generated files
+uploads/
+exports/
+
+# private company data
+data/private/
+**/data/private/
+
+# databases
+*.sqlite
+*.sqlite3
+*.db
+
+# real Excel files
+*.xls
+*.xlsx
+
+# allow mock Excel samples only
+!data/mock/*.xlsx
+!**/data/mock/*.xlsx
+!samples/*.xlsx
+!**/samples/*.xlsx
+
+# generated reports from real data
+import_report.md
+**/import_report.md
+
+# environment secrets
 .env
 
-# VS Code
+# IDE / OS
 .vscode/
-
-# OS
+.idea/
 .DS_Store
- 
-# Archive files
-archive/
-
-# ipynb test files
-ipynb/
-
-# Uploaded files
-uploads/
-
-# services/tests
-services/tests/
+Thumbs.db
