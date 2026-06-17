@@ -47,3 +47,10 @@ import_report.md
 .idea/
 .DS_Store
 Thumbs.db
+
+
+# local archive and notebooks
+archive/
+services/ipynb/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
