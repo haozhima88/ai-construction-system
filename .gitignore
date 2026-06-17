@@ -54,3 +54,4 @@ archive/
 services/ipynb/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
+services/tests/
