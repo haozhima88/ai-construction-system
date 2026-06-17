@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Private company cost data and derived real-data artifacts
+data/private/*
+!data/private/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+
+# Local generated outputs
+data/private/converted/
