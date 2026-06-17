@@ -56,6 +56,11 @@ from services.data_quality import (
 )
 
 
+from services.cost_match_service import (
+    insert_cost_matches,
+    match_import_records_with_price_library
+)
+
 
 router = APIRouter()
 
@@ -207,5 +212,15 @@ def review_record(record_id: int, new_status: str):
 def sync_approved_records(batch_id: str):
 
     result = approved_to_bid_records(batch_id)
+
+    return result
+
+
+@router.post("/match-import-records-cost/")
+def match_import_records_cost():
+
+    matched_records = match_import_records_with_price_library()
+
+    result = insert_cost_matches(matched_records)
 
     return result
