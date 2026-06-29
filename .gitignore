@@ -55,3 +55,17 @@ services/ipynb/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
 services/tests/
+# Python cache
+**/__pycache__/
+**/.pytest_cache/
+**/*.pyc
+
+# Local database / private data
+**/*.sqlite
+**/*.db
+construction_cost_knowledge_engine/data/private/
+construction-cost-knowledge-engine/data/private/
+
+# IDE / build artifacts
+**/.vscode/
+**/*.egg-info/
