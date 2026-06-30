@@ -69,3 +69,11 @@ construction-cost-knowledge-engine/data/private/
 # IDE / build artifacts
 **/.vscode/
 **/*.egg-info/
+
+# Local pytest restart logs
+docs/pytest_restart_*.log
+construction_cost_knowledge_engine/docs/pytest_restart_*.log
+
+# Local pytest restart logs
+docs/pytest_restart_*.log
+construction_cost_knowledge_engine/docs/pytest_restart_*.log
