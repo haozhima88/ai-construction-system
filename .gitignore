@@ -1,79 +1,32 @@
-# virtual environments
+# Python virtual environments
 venv/
 .venv/
-env/
 
 # Python cache
 __pycache__/
 *.pyc
+.pytest_cache/
 
-# Codex / workspace metadata
+# Environment files
+.env
+.env.local
+
+# Local uploads / exports
+uploads/
+exports/
+
+# Excel / temporary data files
+*.tmp
+~$*.xlsx
+~$*.xls
+
+# Codex / workspace temp files
 .stubs/
 .vfsmeta/
 .work-folder-info
 
-# upload / export generated files
-uploads/
-exports/
-
-# private company data
-data/private/
-**/data/private/
-
-# databases
-*.sqlite
-*.sqlite3
-*.db
-
-# real Excel files
-*.xls
-*.xlsx
-
-# allow mock Excel samples only
-!data/mock/*.xlsx
-!**/data/mock/*.xlsx
-!samples/*.xlsx
-!**/samples/*.xlsx
-
-# generated reports from real data
-import_report.md
-**/import_report.md
-
-# environment secrets
-.env
-
-# IDE / OS
-.vscode/
-.idea/
+# OS / editor files
 .DS_Store
 Thumbs.db
-
-
-# local archive and notebooks
-archive/
-services/ipynb/
-.ipynb_checkpoints/
-**/.ipynb_checkpoints/
-services/tests/
-# Python cache
-**/__pycache__/
-**/.pytest_cache/
-**/*.pyc
-
-# Local database / private data
-**/*.sqlite
-**/*.db
-construction_cost_knowledge_engine/data/private/
-construction-cost-knowledge-engine/data/private/
-
-# IDE / build artifacts
-**/.vscode/
-**/*.egg-info/
-
-# Local pytest restart logs
-docs/pytest_restart_*.log
-construction_cost_knowledge_engine/docs/pytest_restart_*.log
-
-# Local pytest restart logs
-docs/pytest_restart_*.log
-construction_cost_knowledge_engine/docs/pytest_restart_*.log
+.vscode/
+.idea/
