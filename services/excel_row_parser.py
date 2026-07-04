@@ -77,6 +77,20 @@ def safe_float(value):
     
 
 
+def _read_excel_sheet(path, sheet_name=0):
+
+    return pd.read_excel(
+
+        path,
+
+        sheet_name=sheet_name,
+
+        header=None,
+
+        dtype=object
+    )
+
+
 def clean_text(value):
 
     if value is None:
@@ -146,6 +160,26 @@ def is_real_header_row(values):
 
     row_text = " ".join(values)
 
+    required_keywords = [
+        "序号",
+        "项目编码",
+        "项目名称",
+        "计量单位",
+        "工程量",
+    ]
+
+    required_hit = 0
+
+    for keyword in required_keywords:
+
+        if keyword in row_text:
+
+            required_hit += 1
+
+    if required_hit >= 4:
+
+        return True
+
     hit = 0
 
     for keyword in ALL_MAPPING_KEYWORDS:
@@ -153,11 +187,15 @@ def is_real_header_row(values):
         if keyword in row_text:
             hit += 1
 
-    return hit >= 6
+    return hit >= 6 and "序号" in row_text and ("项目编码" in row_text or "清单编码" in row_text)
 
 
 
 def is_header_sub_row(values):
+
+    if len(values) > 4:
+
+        return False
 
     row_text = " ".join(values)
 
@@ -219,12 +257,20 @@ def is_main_row(
 
     item_name = row_dict.get(schema["item_name"])
 
+    unit = row_dict.get(schema["unit"])
+
+    quantity = row_dict.get(schema["quantity"])
+
     if (
-        not pd.isna(serial_number)
+        safe_float(serial_number) is not None
         and
-        not pd.isna(item_code)
+        not is_empty(item_code)
         and
-        not pd.isna(item_name)
+        not is_empty(item_name)
+        and
+        not is_empty(unit)
+        and
+        safe_float(quantity) is not None
 
     ):
 
@@ -281,11 +327,7 @@ def is_subtotal_row(values):
 
 def find_header_rows(path, sheet_name=0):
 
-    df = pd.read_excel(
-        path,
-        sheet_name=sheet_name,
-        header=None
-    )
+    df = _read_excel_sheet(path, sheet_name)
 
     records = df.to_dict(orient="records")
 
@@ -335,50 +377,43 @@ def classify_rows(
     # ==========================================
     # 讀取 Excel Sheet
     # ==========================================
-    df = pd.read_excel(
-
-        path,
-
-        sheet_name=sheet_name,
-
-        header=None
-    )
+    df = _read_excel_sheet(path, sheet_name)
 
     records = df.to_dict(orient="records")
 
     classified_rows = []
 
-    print(f"----------------->Total rows: {len(records)}")
+    # print(f"----------------->Total rows: {len(records)}")
 
     for row_index, row_dict in enumerate(records):
-        if row_index in skip_rows:
-            continue
-
         values = normalize_values(row_dict)
 
         # print(f"----------------->Row values: {values}")
 
         row_type = "unknown_row"
 
-        if is_empty_row(values):
-            row_type = "empty_row"
-            
-        if is_document_title_row(values):
-            row_type = "document_title_row"
-
-        if is_page_info_row(values):
-            row_type = "page_info_row"
-
-        if is_subtotal_row(values):
-            row_type = "subtotal_row"
-
-        if is_category_row(row_dict, schema):
-            row_type = "category_row"
-
         if is_main_row(row_dict, schema):
             row_type = "main_row"
 
-        if is_continuation_row(row_dict, schema):
+        elif row_index in skip_rows:
+            continue
+
+        elif is_empty_row(values):
+            row_type = "empty_row"
+            
+        elif is_document_title_row(values):
+            row_type = "document_title_row"
+
+        elif is_page_info_row(values):
+            row_type = "page_info_row"
+
+        elif is_subtotal_row(values):
+            row_type = "subtotal_row"
+
+        elif is_category_row(row_dict, schema):
+            row_type = "category_row"
+
+        elif is_continuation_row(row_dict, schema):
             row_type = "continuation_row"
 
         classified_rows.append({

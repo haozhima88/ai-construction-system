@@ -12,9 +12,10 @@ from services.export_service import (
 from services.db_service import (
 
     insert_many_records,
-    query_import_bid_records,
-    update_review_status,
-    approved_to_bid_records
+    query_import_records_for_review,
+    update_review_status_service,
+    approved_to_bid_records,
+    update_review_status_service
 )
 
 
@@ -55,6 +56,11 @@ from services.data_quality import (
 )
 
 
+from services.cost_match_service import (
+    insert_cost_matches,
+    match_import_records_with_price_library
+)
+
 
 router = APIRouter()
 
@@ -75,6 +81,10 @@ async def upload_bid_excel(
     with open(file_path, "wb") as f:
 
         f.write(await file.read())
+
+    source_sheet_index = sheet_name
+    excel_file = pd.ExcelFile(file_path)
+    actual_sheet_name = excel_file.sheet_names[source_sheet_index]
 
     # 找到表頭行
     # Find the header row
@@ -114,7 +124,8 @@ async def upload_bid_excel(
         logical_records,
         batch_id=batch_id,
         source_file_name=file.filename,
-        source_sheet_name=str(sheet_name),
+        source_sheet_index=source_sheet_index,
+        source_sheet_name=actual_sheet_name,
         mapping_version="v1.0"
     )
 
@@ -122,9 +133,9 @@ async def upload_bid_excel(
     # Write into the import_bid_records table
     insert_many_records(normalized_records)
 
+
+    # quality_result_test
     # quality_result = build_quality_report(normalized_records)
-
-
 
     return {
 
@@ -176,13 +187,14 @@ def export_bid():
 # Review Import Bid Records API
 # ==========================================
 @router.get("/review-import-bid-records/")
-def import_records():
+def get_review_import_bid_records():
 
-    result = query_import_bid_records()
+    records = query_import_records_for_review()
 
     return {
-
-        "records": result
+        "success": True,
+        "count": len(records),
+        "records": records
     }
 
 
@@ -190,16 +202,12 @@ def import_records():
 # Update Review Status API
 # ==========================================
 @router.get("/update-review-status/")
-def review_status(batch_id: str, new_status: str):
+@router.post("/review-record")
+def review_record(record_id: int, new_status: str):
 
+    result = update_review_status_service(record_id, new_status)
     
-    # review_status: pending / approved / rejected
-    update_review_status(batch_id, new_status)
-
-    return {
-
-        "message": "Review status updated successfully"
-    }
+    return result
 
 
 
@@ -209,5 +217,15 @@ def review_status(batch_id: str, new_status: str):
 def sync_approved_records(batch_id: str):
 
     result = approved_to_bid_records(batch_id)
+
+    return result
+
+
+@router.post("/match-import-records-cost/")
+def match_import_records_cost():
+
+    matched_records = match_import_records_with_price_library()
+
+    result = insert_cost_matches(matched_records)
 
     return result
