@@ -84,9 +84,17 @@ def insert_import_bid_records(record):
 
             source_sheet_name,
 
+            source_sheet_index,
+
             source_row_index,
 
+            source_excel_row_no,
+
             mapping_version,
+
+            parse_status,
+
+            parse_warnings,
 
             project_name,
 
@@ -116,7 +124,7 @@ def insert_import_bid_records(record):
 
             %s, %s, %s, %s, %s, %s,
 
-            %s, %s, %s
+            %s, %s, %s, %s, %s, %s, %s
         )
     """
 
@@ -127,9 +135,17 @@ def insert_import_bid_records(record):
 
         record.get("source_sheet_name"),
 
+        record.get("source_sheet_index"),
+
         record.get("source_row_index"),
 
+        record.get("source_excel_row_no"),
+
         record.get("mapping_version"),
+
+        record.get("parse_status"),
+
+        record.get("parse_warnings"),
 
         record.get("project_name"),
 
@@ -173,6 +189,12 @@ def query_import_records_for_review():
         SELECT
             id,
             review_status,
+            parse_status,
+            parse_warnings,
+            source_sheet_name,
+            source_sheet_index,
+            source_row_index,
+            source_excel_row_no,
             project_name,
             category,
             item_name,
@@ -196,14 +218,20 @@ def query_import_records_for_review():
         record = {
             "id": row[0],
             "review_status": row[1],
-            "project_name": row[2],
-            "category": row[3],
-            "item_name": row[4],
-            "item_code":row[5],
-            "feature":row[6],
-            "quantity": row[7],
-            "unit_price": row[8],
-            "total_price": row[9],
+            "parse_status": row[2],
+            "parse_warnings": row[3],
+            "source_sheet_name": row[4],
+            "source_sheet_index": row[5],
+            "source_row_index": row[6],
+            "source_excel_row_no": row[7],
+            "project_name": row[8],
+            "category": row[9],
+            "item_name": row[10],
+            "item_code":row[11],
+            "feature":row[12],
+            "quantity": row[13],
+            "unit_price": row[14],
+            "total_price": row[15],
         }
 
         records.append(record)

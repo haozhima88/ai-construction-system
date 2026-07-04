@@ -82,6 +82,10 @@ async def upload_bid_excel(
 
         f.write(await file.read())
 
+    source_sheet_index = sheet_name
+    excel_file = pd.ExcelFile(file_path)
+    actual_sheet_name = excel_file.sheet_names[source_sheet_index]
+
     # 找到表頭行
     # Find the header row
     header_rows, skip_rows = find_header_rows(file_path, sheet_name)
@@ -120,7 +124,8 @@ async def upload_bid_excel(
         logical_records,
         batch_id=batch_id,
         source_file_name=file.filename,
-        source_sheet_name=str(sheet_name),
+        source_sheet_index=source_sheet_index,
+        source_sheet_name=actual_sheet_name,
         mapping_version="v1.0"
     )
 

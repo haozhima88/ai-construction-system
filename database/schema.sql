@@ -3,9 +3,14 @@ CREATE TABLE IF NOT EXISTS import_bid_records (
     batch_id TEXT,
     source_file_name TEXT,
     source_sheet_name TEXT,
+    source_sheet_index INTEGER,
     source_row_index INTEGER,
+    source_excel_row_no INTEGER,
     mapping_version TEXT,
+    parser_confidence NUMERIC DEFAULT 1.0,
     review_status TEXT DEFAULT 'pending',
+    parse_status TEXT DEFAULT 'parsed',
+    parse_warnings TEXT,
     project_name TEXT,
     category TEXT,
     serial_number TEXT,
@@ -16,7 +21,7 @@ CREATE TABLE IF NOT EXISTS import_bid_records (
     quantity NUMERIC,
     unit_price NUMERIC,
     total_price NUMERIC,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    imported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 

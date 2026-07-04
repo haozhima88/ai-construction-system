@@ -2,6 +2,7 @@
 import uuid
 
 import pandas as pd
+from decimal import Decimal, InvalidOperation
 
 from utils.column_mapping import COLUMN_MAPPING
 
@@ -45,6 +46,70 @@ def clean_text(value):
     text = text.replace(" ", "")
 
     return text
+
+
+def clean_text_preserve_spaces(value):
+
+    if value is None:
+        return ""
+
+    if pd.isna(value):
+        return ""
+
+    text = str(value).strip()
+
+    text = text.replace("\r", "")
+    text = text.replace("\t", " ")
+
+    lines = [line.strip() for line in text.split("\n")]
+
+    text = "\n".join(line for line in lines if line != "")
+
+    return text
+
+
+def clean_code_preserve_text(value):
+
+    if value is None:
+        return ""
+
+    if pd.isna(value):
+        return ""
+
+    text = str(value).strip()
+
+    text = text.replace("\r", "")
+    text = text.replace("\n", "")
+    text = text.replace("\t", "")
+
+    if text == "":
+        return ""
+
+    if text.isdigit() and len(text) > 1 and text.startswith("0"):
+        return text
+
+    try:
+        decimal_value = Decimal(text.replace(",", ""))
+    except (InvalidOperation, ValueError):
+        return text
+
+    if decimal_value == decimal_value.to_integral_value():
+        return str(decimal_value.quantize(Decimal("1")))
+
+    return text
+
+
+def build_parse_warnings(record):
+
+    warnings = []
+
+    if safe_float(record.get("unit_price")) is None:
+        warnings.append("缺少 unit_price")
+
+    if safe_float(record.get("total_price")) is None:
+        warnings.append("缺少 total_price")
+
+    return "; ".join(warnings)
 
 
 
@@ -117,10 +182,11 @@ def extract_project_name(row_data):
 
 
 
-def attach_category(cleaned_rows,schema):
+def attach_category(cleaned_rows, schema, default_page_info=""):
 
-    current_category = None
+    current_category = ""
     current_page_info = None
+    current_project_name = default_page_info or ""
 
     result_rows = []
 
@@ -140,7 +206,7 @@ def attach_category(cleaned_rows,schema):
 
             current_page_info = row_data
 
-            current_project_name = extract_project_name(row_data)
+            current_project_name = extract_project_name(row_data) or default_page_info or ""
 
             continue
 
@@ -150,7 +216,7 @@ def attach_category(cleaned_rows,schema):
 
             new_row["category"] = current_category
 
-            new_row["page_info"] = current_project_name
+            new_row["page_info"] = current_project_name or row.get("page_info", "")
 
             result_rows.append(new_row)
 
@@ -304,6 +370,8 @@ def build_logical_records(
 
             "source_row_index":row_index,
 
+            "source_excel_row_no": row_index + 1,
+
             "serial_number":
                 row_data.get(serial_number_col)
                 if serial_number_col is not None
@@ -409,6 +477,7 @@ def build_normalized_records(
     logical_records,
     batch_id,
     source_file_name=None,
+    source_sheet_index=None,
     source_sheet_name=None,
     mapping_version="v1.0"
 ):
@@ -416,6 +485,8 @@ def build_normalized_records(
     normalized_records = []
 
     for record in logical_records:
+
+        parse_warnings = build_parse_warnings(record)
 
         normalized_record = {
 
@@ -427,8 +498,14 @@ def build_normalized_records(
             "source_sheet_name":
                 clean_text(source_sheet_name),
 
+            "source_sheet_index":
+                source_sheet_index,
+
             "source_row_index":
                 record.get("source_row_index"),
+
+            "source_excel_row_no":
+                record.get("source_excel_row_no"),
 
             "mapping_version":
                 clean_text(mapping_version),
@@ -443,12 +520,13 @@ def build_normalized_records(
                 clean_text(record.get("serial_number")),
 
             "item_code":
-                clean_text(record.get("item_code")),
+                clean_code_preserve_text(record.get("item_code")),
 
             "item_name":
-                clean_text(record.get("item_name")),
+                clean_text_preserve_spaces(record.get("item_name")),
 
-            "feature":record.get("feature"),
+            "feature":
+                clean_text_preserve_spaces(record.get("feature")),
 
             "unit":
                 clean_text(record.get("unit")),
@@ -461,6 +539,12 @@ def build_normalized_records(
 
             "total_price":
                 safe_float(record.get("total_price")),
+
+            "parse_status":
+                "warning" if parse_warnings else "parsed",
+
+            "parse_warnings":
+                parse_warnings,
         }
 
         normalized_records.append(normalized_record)
