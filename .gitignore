@@ -25,3 +25,24 @@ uploads/
 
 # services/tests
 services/tests/
+
+# Python virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Codex / workspace temp files
+.stubs/
+.vfsmeta/
+.work-folder-info
+
+# Local uploads / exports
+uploads/
+exports/
+
+# Environment files
+.env
