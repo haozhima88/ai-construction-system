@@ -15,10 +15,21 @@ __pycache__/
 uploads/
 exports/
 
-# Excel / temporary data files
-*.tmp
-~$*.xlsx
-~$*.xls
+# Local archive / private data
+archive/
+construction_cost_knowledge_engine/data/private/
+
+# Logs
+*.log
+construction_cost_knowledge_engine/docs/*.log
+
+# Python package build artifacts
+*.egg-info/
+construction_cost_knowledge_engine/src/*.egg-info/
+
+# Local notebooks / scratch tests
+services/ipynb/
+services/tests/
 
 # Codex / workspace temp files
 .stubs/
@@ -30,3 +41,8 @@ exports/
 Thumbs.db
 .vscode/
 .idea/
+
+# Excel temporary files
+~$*.xlsx
+~$*.xls
+*.tmp
