@@ -8,7 +8,7 @@ from pathlib import Path
 
 from cost_engine.db import init_db
 from cost_engine.etl.excel_reader import read_price_rows
-from cost_engine.etl.normalizer import normalize_row
+from cost_engine.etl.normalizer import KNOWLEDGE_VERSION, normalize_row
 from cost_engine.etl.validator import flag_duplicates
 from cost_engine.matching.feature_extractor import extract_features
 from cost_engine.schemas import NormalizedRow
@@ -45,6 +45,7 @@ def import_price_table(
         "component_count": 0,
         "category_count": 0,
         "unit_count": 0,
+        "review_record_count": 0,
         "quality_counts": {},
         "review_rows": [],
     }
@@ -52,6 +53,8 @@ def import_price_table(
         _insert_raw_row(conn, batch_id, row)
         item_id = _upsert_cost_item(conn, batch_id, row)
         stats["item_count"] += 1
+        _insert_review_record(conn, item_id, row)
+        stats["review_record_count"] += 1
         for component_type, price in row.prices.items():
             if price is None:
                 continue
@@ -91,10 +94,10 @@ def _create_batch(conn: sqlite3.Connection, input_path: str | Path, sheet_name: 
     cursor = conn.execute(
         """
         INSERT INTO source_import_batches
-        (source_file_name, source_file_hash, source_sheet_name, imported_at, row_count, note)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (source_file_name, source_file_hash, source_sheet_name, imported_at, row_count, knowledge_version, note)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (Path(input_path).name, file_hash(input_path), sheet_name, now_iso(), row_count, note),
+        (Path(input_path).name, file_hash(input_path), sheet_name, now_iso(), row_count, KNOWLEDGE_VERSION, note),
     )
     return int(cursor.lastrowid)
 
@@ -130,11 +133,11 @@ def _upsert_unit(conn: sqlite3.Connection, raw_unit: str, normalized_unit: str, 
     unit_type = "unknown" if "UNKNOWN_UNIT" in flags else None
     conn.execute(
         """
-        INSERT INTO unit_dictionary (raw_unit, normalized_unit, unit_type, note)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO unit_dictionary (raw_unit, normalized_unit, unit_type, note, created_at)
+        VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(raw_unit) DO UPDATE SET normalized_unit = excluded.normalized_unit
         """,
-        (raw_unit or normalized_unit, normalized_unit or raw_unit, unit_type, ",".join(flags)),
+        (raw_unit or normalized_unit, normalized_unit or raw_unit, unit_type, ",".join(flags), now_iso()),
     )
     return conn.execute("SELECT id FROM unit_dictionary WHERE raw_unit = ?", (raw_unit or normalized_unit,)).fetchone()[0]
 
@@ -144,10 +147,10 @@ def _upsert_category(conn: sqlite3.Connection, name: str, level: int, parent_id:
         return None
     conn.execute(
         """
-        INSERT OR IGNORE INTO cost_categories (parent_id, category_name, category_level)
-        VALUES (?, ?, ?)
+        INSERT OR IGNORE INTO cost_categories (parent_id, category_name, category_level, created_at)
+        VALUES (?, ?, ?, ?)
         """,
-        (parent_id, name, level),
+        (parent_id, name, level, now_iso()),
     )
     row = conn.execute(
         "SELECT id FROM cost_categories WHERE parent_id IS ? AND category_name = ? AND category_level = ?",
@@ -164,25 +167,54 @@ def _upsert_cost_item(conn: sqlite3.Connection, batch_id: int, row: NormalizedRo
     cursor = conn.execute(
         """
         INSERT INTO cost_items
-        (category_level_1_id, category_level_2_id, item_name, normalized_item_name,
-         unit_id, remark, source_row_no, source_batch_id, quality_flags, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (category_level_1_id, category_level_2_id, original_name, normalized_name,
+         standard_name, keywords, unit_id, remark, original_remark, needs_review,
+         review_status, confidence, source_row_no, source_batch_id, quality_flags,
+         knowledge_version, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             category_1_id,
             category_2_id,
-            row.item_name,
-            row.normalized_item_name,
+            row.original_name,
+            row.normalized_name,
+            row.standard_name,
+            row.keywords,
             unit_id,
             row.remark,
+            row.original_remark,
+            row.needs_review,
+            row.review_status,
+            row.confidence,
             row.raw.source_row_no,
             batch_id,
             flags_json,
+            row.knowledge_version,
             now_iso(),
             now_iso(),
         ),
     )
     return int(cursor.lastrowid)
+
+
+def _insert_review_record(conn: sqlite3.Connection, item_id: int, row: NormalizedRow) -> None:
+    conn.execute(
+        """
+        INSERT INTO knowledge_review_records
+        (cost_item_id, suggested_standard_name, reviewed_standard_name,
+         suggested_keywords, reviewed_keywords, suggested_remark, reviewed_remark,
+         review_status, reviewer, review_comment, reviewed_at, created_at)
+        VALUES (?, ?, NULL, ?, NULL, ?, NULL, ?, NULL, NULL, NULL, ?)
+        """,
+        (
+            item_id,
+            row.standard_name,
+            row.keywords,
+            row.remark,
+            row.review_status,
+            now_iso(),
+        ),
+    )
 
 
 def _insert_component(

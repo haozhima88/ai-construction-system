@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS source_import_batches (
     success_count INTEGER,
     warning_count INTEGER,
     error_count INTEGER,
+    knowledge_version TEXT,
     note TEXT
 );
 
@@ -18,9 +19,9 @@ CREATE TABLE IF NOT EXISTS raw_cost_price_rows (
     raw_category_1 TEXT,
     raw_category_2 TEXT,
     raw_item_name TEXT,
-    raw_labor_price TEXT,
-    raw_material_price TEXT,
-    raw_machine_price TEXT,
+    raw_labor_price REAL,
+    raw_material_price REAL,
+    raw_machine_price REAL,
     raw_unit TEXT,
     raw_remark TEXT,
     created_at TEXT NOT NULL
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS unit_dictionary (
     normalized_unit TEXT NOT NULL,
     unit_type TEXT,
     note TEXT,
+    created_at TEXT NOT NULL,
     UNIQUE(raw_unit)
 );
 
@@ -40,6 +42,7 @@ CREATE TABLE IF NOT EXISTS cost_categories (
     parent_id INTEGER REFERENCES cost_categories(id),
     category_name TEXT NOT NULL,
     category_level INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
     sort_order INTEGER,
     is_active INTEGER DEFAULT 1
 );
@@ -51,19 +54,27 @@ CREATE TABLE IF NOT EXISTS cost_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     category_level_1_id INTEGER REFERENCES cost_categories(id),
     category_level_2_id INTEGER REFERENCES cost_categories(id),
-    item_name TEXT NOT NULL,
-    normalized_item_name TEXT NOT NULL,
+    original_name TEXT,
+    normalized_name TEXT,
+    standard_name TEXT,
+    keywords TEXT,
     unit_id INTEGER REFERENCES unit_dictionary(id),
     remark TEXT,
+    original_remark TEXT,
+    needs_review INTEGER DEFAULT 1,
+    review_status TEXT DEFAULT 'pending' CHECK(review_status IN ('pending', 'approved', 'rejected', 'needs_fix')),
+    confidence REAL,
     source_row_no INTEGER,
     source_batch_id INTEGER REFERENCES source_import_batches(id),
-    item_status TEXT DEFAULT 'active',
     quality_flags TEXT,
+    knowledge_version TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS ix_cost_items_normalized_name ON cost_items(normalized_item_name);
+CREATE INDEX IF NOT EXISTS ix_cost_items_normalized_name ON cost_items(normalized_name);
+CREATE INDEX IF NOT EXISTS ix_cost_items_standard_name ON cost_items(standard_name);
+CREATE INDEX IF NOT EXISTS ix_cost_items_review_status ON cost_items(review_status);
 CREATE INDEX IF NOT EXISTS ix_cost_items_source ON cost_items(source_batch_id, source_row_no);
 
 CREATE TABLE IF NOT EXISTS cost_price_components (
@@ -71,11 +82,6 @@ CREATE TABLE IF NOT EXISTS cost_price_components (
     cost_item_id INTEGER NOT NULL REFERENCES cost_items(id),
     component_type TEXT NOT NULL CHECK(component_type IN ('labor', 'material', 'machine')),
     unit_price REAL,
-    currency TEXT DEFAULT 'CNY',
-    tax_included INTEGER,
-    tax_rate REAL,
-    effective_from TEXT,
-    effective_to TEXT,
     source_row_no INTEGER,
     source_batch_id INTEGER REFERENCES source_import_batches(id),
     quality_flags TEXT,
@@ -94,6 +100,48 @@ CREATE TABLE IF NOT EXISTS cost_item_features (
     created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS knowledge_review_records (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cost_item_id INTEGER NOT NULL REFERENCES cost_items(id),
+    suggested_standard_name TEXT,
+    reviewed_standard_name TEXT,
+    suggested_keywords TEXT,
+    reviewed_keywords TEXT,
+    suggested_remark TEXT,
+    reviewed_remark TEXT,
+    review_status TEXT DEFAULT 'pending' CHECK(review_status IN ('pending', 'approved', 'rejected', 'needs_fix')),
+    reviewer TEXT,
+    review_comment TEXT,
+    reviewed_at TEXT,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ix_review_records_cost_item ON knowledge_review_records(cost_item_id);
+CREATE INDEX IF NOT EXISTS ix_review_records_status ON knowledge_review_records(review_status);
+
+CREATE TABLE IF NOT EXISTS internal_price_library (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cost_item_id INTEGER NOT NULL REFERENCES cost_items(id),
+    standard_name TEXT,
+    keywords TEXT,
+    unit TEXT,
+    labor_price REAL,
+    material_price REAL,
+    machine_price REAL,
+    unit_cost REAL,
+    remark TEXT,
+    knowledge_version TEXT,
+    active INTEGER DEFAULT 1,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ix_internal_price_library_cost_item ON internal_price_library(cost_item_id);
+CREATE INDEX IF NOT EXISTS ix_internal_price_library_standard_name ON internal_price_library(standard_name);
+CREATE INDEX IF NOT EXISTS ix_internal_price_library_active ON internal_price_library(active);
+
+-- Prototype / future matching support. These tables are retained for the
+-- earlier BOQ matcher prototype and are not V0.1 core knowledge tables.
 CREATE TABLE IF NOT EXISTS boq_match_rules (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cost_item_id INTEGER NOT NULL REFERENCES cost_items(id),
@@ -106,6 +154,8 @@ CREATE TABLE IF NOT EXISTS boq_match_rules (
     created_at TEXT NOT NULL
 );
 
+-- Prototype / future matching support. This log is not part of the V0.1
+-- approved internal price library workflow.
 CREATE TABLE IF NOT EXISTS boq_match_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     boq_line_id TEXT,
@@ -123,7 +173,10 @@ SELECT
     ci.id AS cost_item_id,
     cc1.category_name AS category_level_1,
     cc2.category_name AS category_level_2,
-    ci.item_name,
+    ci.original_name,
+    ci.normalized_name,
+    ci.standard_name,
+    ci.keywords,
     ud.normalized_unit AS unit,
     COALESCE(MAX(CASE WHEN cpc.component_type = 'labor' THEN cpc.unit_price END), 0) AS labor_unit_price,
     COALESCE(MAX(CASE WHEN cpc.component_type = 'material' THEN cpc.unit_price END), 0) AS material_unit_price,
@@ -132,7 +185,12 @@ SELECT
       + COALESCE(MAX(CASE WHEN cpc.component_type = 'material' THEN cpc.unit_price END), 0)
       + COALESCE(MAX(CASE WHEN cpc.component_type = 'machine' THEN cpc.unit_price END), 0) AS total_unit_cost,
     ci.remark,
+    ci.original_remark,
+    ci.needs_review,
+    ci.review_status,
+    ci.confidence,
     ci.quality_flags,
+    ci.knowledge_version,
     ci.source_row_no,
     ci.source_batch_id
 FROM cost_items ci

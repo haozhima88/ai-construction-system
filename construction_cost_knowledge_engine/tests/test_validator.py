@@ -9,7 +9,7 @@ def test_duplicate_item_name_unit_is_flagged():
         normalize_row(PriceRow(3, "土建", "土建", "C30混凝土", "", "2", "", "m³", "")),
     ]
     flag_duplicates(rows)
-    assert all("DUPLICATE_ITEM_NAME_UNIT" in row.quality_flags for row in rows)
+    assert all("DUPLICATE_NORMALIZED_NAME" in row.quality_flags for row in rows)
 
 
 def test_category_level_2_defaults_to_level_1():

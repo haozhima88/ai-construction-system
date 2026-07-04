@@ -32,16 +32,60 @@ def test_importer_splits_components_and_flags_quality(tmp_path):
     assert conn.execute("SELECT COUNT(*) FROM raw_cost_price_rows").fetchone()[0] == 4
     assert conn.execute("SELECT COUNT(*) FROM cost_items").fetchone()[0] == 4
     assert conn.execute("SELECT COUNT(*) FROM cost_price_components").fetchone()[0] == 4
-    assert stats["quality_counts"]["NO_PRICE_COMPONENT"] == 2
+    assert conn.execute("SELECT COUNT(*) FROM knowledge_review_records").fetchone()[0] == 4
+    assert conn.execute("SELECT COUNT(*) FROM internal_price_library").fetchone()[0] == 0
+    assert stats["quality_counts"]["MISSING_PRICE"] == 2
     assert stats["quality_counts"]["ZERO_PRICE_COMPONENT"] == 1
     assert stats["quality_counts"]["INVALID_PRICE"] == 1
     assert stats["quality_counts"]["MISSING_UNIT"] == 1
 
     total = conn.execute(
-        "SELECT total_unit_cost FROM v_cost_item_unit_prices WHERE item_name = ?",
+        "SELECT total_unit_cost FROM v_cost_item_unit_prices WHERE original_name = ?",
         ("C30混凝土",),
     ).fetchone()[0]
     assert total == 60
+
+    item = conn.execute(
+        """
+        SELECT original_name, normalized_name, standard_name, keywords,
+               original_remark, remark, needs_review, review_status,
+               confidence, knowledge_version
+        FROM cost_items
+        WHERE original_name = ?
+        """,
+        ("C30混凝土",),
+    ).fetchone()
+    assert item["normalized_name"] == "C30混凝土"
+    assert item["standard_name"] == "C30混凝土"
+    assert item["keywords"] == "C30;混凝土"
+    assert item["original_remark"] == "含税"
+    assert item["remark"] == "含税"
+    assert item["needs_review"] == 1
+    assert item["review_status"] == "pending"
+    assert item["confidence"] == 0.5
+    assert item["knowledge_version"] == "V0.1"
+
+    review = conn.execute(
+        """
+        SELECT suggested_standard_name, reviewed_standard_name,
+               suggested_keywords, reviewed_keywords, suggested_remark,
+               reviewed_remark, review_status, reviewer, review_comment
+        FROM knowledge_review_records
+        WHERE cost_item_id = (
+            SELECT id FROM cost_items WHERE original_name = ?
+        )
+        """,
+        ("C30混凝土",),
+    ).fetchone()
+    assert review["suggested_standard_name"] == "C30混凝土"
+    assert review["reviewed_standard_name"] is None
+    assert review["suggested_keywords"] == "C30;混凝土"
+    assert review["reviewed_keywords"] is None
+    assert review["suggested_remark"] == "含税"
+    assert review["reviewed_remark"] is None
+    assert review["review_status"] == "pending"
+    assert review["reviewer"] is None
+    assert review["review_comment"] is None
 
 
 def test_empty_price_does_not_create_component(tmp_path):
@@ -53,5 +97,5 @@ def test_empty_price_does_not_create_component(tmp_path):
 
     import_price_table(conn, xlsx, "人材机")
 
-    item_id = conn.execute("SELECT id FROM cost_items WHERE item_name = ?", ("空价格项",)).fetchone()[0]
+    item_id = conn.execute("SELECT id FROM cost_items WHERE original_name = ?", ("空价格项",)).fetchone()[0]
     assert conn.execute("SELECT COUNT(*) FROM cost_price_components WHERE cost_item_id = ?", (item_id,)).fetchone()[0] == 0

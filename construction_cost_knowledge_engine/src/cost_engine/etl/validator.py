@@ -7,26 +7,29 @@ from cost_engine.schemas import NormalizedRow
 
 def flag_duplicates(rows: list[NormalizedRow]) -> None:
     keys = [
-        (row.normalized_item_name, row.normalized_unit)
+        row.normalized_name
         for row in rows
-        if row.normalized_item_name and row.normalized_unit
+        if row.normalized_name
     ]
     duplicates = {key for key, count in Counter(keys).items() if count > 1}
     for row in rows:
-        if (row.normalized_item_name, row.normalized_unit) in duplicates:
-            row.quality_flags = sorted(set(row.quality_flags + ["DUPLICATE_ITEM_NAME_UNIT"]))
+        if row.normalized_name in duplicates:
+            row.quality_flags = sorted(set(row.quality_flags + ["DUPLICATE_NORMALIZED_NAME"]))
 
 
 def rows_needing_review(rows: list[NormalizedRow]) -> list[int]:
     review_flags = {
         "MISSING_ITEM_NAME",
         "MISSING_UNIT",
-        "NO_PRICE_COMPONENT",
+        "MISSING_PRICE",
         "ZERO_PRICE_COMPONENT",
         "INVALID_PRICE",
-        "DUPLICATE_ITEM_NAME_UNIT",
+        "DUPLICATE_NORMALIZED_NAME",
         "CATEGORY_MISMATCH",
         "UNKNOWN_UNIT",
+        "NEEDS_MANUAL_REVIEW",
+        "MISSING_CATEGORY",
+        "INCONSISTENT_UNIT",
     }
     return [
         row.raw.source_row_no

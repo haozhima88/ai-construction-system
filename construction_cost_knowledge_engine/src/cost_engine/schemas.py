@@ -23,12 +23,27 @@ class NormalizedRow:
     category_level_2: str
     item_name: str
     normalized_item_name: str
+    standard_name: str
+    keywords: str
     unit: str
     normalized_unit: str
     remark: str
+    original_remark: str
+    needs_review: int
+    review_status: str
+    confidence: float
+    knowledge_version: str
     prices: dict[str, float | None]
     invalid_price_components: list[str] = field(default_factory=list)
     quality_flags: list[str] = field(default_factory=list)
+
+    @property
+    def original_name(self) -> str:
+        return self.item_name
+
+    @property
+    def normalized_name(self) -> str:
+        return self.normalized_item_name
 
 
 @dataclass
