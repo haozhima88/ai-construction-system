@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>招标清单导入验收</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="page-header">
+    <div>
+      <h1>招标清单导入验收</h1>
+      <p>查看 import_bid_records 暂存数据，完成导入结果核对与验收标记。</p>
+    </div>
+    <a class="export-link" href="/export-bid-records/" target="_blank" rel="noreferrer">导出 Excel</a>
+  </header>
+
+  <main>
+    <section class="stats-grid" id="statsGrid"></section>
+
+    <section class="toolbar">
+      <label>
+        解析状态
+        <select id="parseStatus">
+          <option value="">全部</option>
+          <option value="parsed">parsed</option>
+          <option value="warning">warning</option>
+          <option value="error">error</option>
+        </select>
+      </label>
+      <label>
+        验收状态
+        <select id="reviewStatus">
+          <option value="">全部</option>
+          <option value="pending">pending</option>
+          <option value="approved">approved</option>
+          <option value="rejected">rejected</option>
+          <option value="needs_fix">needs_fix</option>
+        </select>
+      </label>
+      <label class="keyword-field">
+        搜索
+        <input id="keyword" type="search" placeholder="项目编码或项目名称">
+      </label>
+      <button id="searchBtn" type="button">查询</button>
+      <button id="resetBtn" type="button" class="secondary">重置</button>
+    </section>
+
+    <section class="bulkbar">
+      <label class="check-label">
+        <input id="selectAll" type="checkbox">
+        当前页全选
+      </label>
+      <button data-bulk-status="approved" type="button">批量通过</button>
+      <button data-bulk-status="rejected" type="button" class="danger">批量驳回</button>
+      <button data-bulk-status="needs_fix" type="button" class="warning">批量需修正</button>
+      <span id="selectedCount">已选 0 条</span>
+    </section>
+
+    <div id="message" class="message" hidden></div>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Excel行号</th>
+            <th>验收状态</th>
+            <th>解析状态</th>
+            <th>项目编码</th>
+            <th>项目名称</th>
+            <th>项目特征</th>
+            <th>单位</th>
+            <th>工程量</th>
+            <th>综合单价</th>
+            <th>合价</th>
+            <th>分部分类</th>
+            <th>来源文件</th>
+            <th>来源Sheet</th>
+            <th>解析警告</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty-state" hidden>没有符合条件的数据</div>
+    </section>
+
+    <section class="pager">
+      <button id="prevBtn" type="button" class="secondary">上一页</button>
+      <span id="pageInfo">offset 0 / limit 50</span>
+      <button id="nextBtn" type="button" class="secondary">下一页</button>
+      <span id="countInfo"></span>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File
 import pandas as pd
 from utils.db import conn
 import uuid
@@ -53,12 +53,6 @@ from services.excel_row_parser import  (
 from services.data_quality import (
 
     validate_records
-)
-
-
-from services.cost_match_service import (
-    insert_cost_matches,
-    match_import_records_with_price_library
 )
 
 
@@ -224,8 +218,7 @@ def sync_approved_records(batch_id: str):
 @router.post("/match-import-records-cost/")
 def match_import_records_cost():
 
-    matched_records = match_import_records_with_price_library()
-
-    result = insert_cost_matches(matched_records)
-
-    return result
+    raise HTTPException(
+        status_code=501,
+        detail="Cost matching is not available in the current Web Import Review MVP."
+    )
