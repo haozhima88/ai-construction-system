@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>国标清单-省定额明细展示工作台 V0.1</title>
+    <link rel="stylesheet" href="/static/quota_a111_style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="title-block">
+        <h1>国标清单-省定额明细展示工作台 V0.1</h1>
+        <span>只读 / A.1.1 PDF 官方源候选 / pending only</span>
+      </div>
+      <nav class="top-actions" aria-label="工作台入口">
+        <a href="/" class="ghost-button">企业定额审核</a>
+        <a href="/bid" class="ghost-button">招标清单匹配</a>
+        <a href="/quota-a111" class="primary-button">A.1.1 定额明细</a>
+        <span id="summaryPill" class="status-pill muted">加载中</span>
+        <span id="draftStatsPill" class="status-pill muted">草稿 0</span>
+      </nav>
+    </header>
+
+    <main id="quotaWorkspace" class="quota-workspace">
+      <aside class="tree-panel" aria-label="GB/T 国标清单树">
+        <div class="panel-head">
+          <div>
+            <h2>GB/T 国标清单树</h2>
+            <span id="treeMeta">Appendix A 土石方工程</span>
+          </div>
+        </div>
+        <label class="search-box">
+          <span>检索</span>
+          <input id="treeSearchInput" type="search" placeholder="bill_code / bill_name / A1-1-* / 资源" />
+        </label>
+        <div id="searchResults" class="search-results"></div>
+        <div id="treeRoot" class="tree-root"></div>
+      </aside>
+
+      <div id="leftSplitter" class="splitter splitter-vertical" role="separator" aria-label="调整左侧树宽度"></div>
+
+      <section class="center-shell">
+        <section class="main-panel" aria-label="GB/T bill 到省定额 A1-1 候选">
+          <div class="panel-head">
+            <div>
+              <h2 id="mainTitle">GB/T bill → GD2018 A1-1 quota</h2>
+              <span id="mainMeta">请选择左侧清单</span>
+            </div>
+            <div class="toolbar">
+              <label class="inline-toggle">
+                <input id="showExcludedToggle" type="checkbox" />
+                <span>显示被排除草稿</span>
+              </label>
+              <span id="draftBreakdown" class="status-pill muted">copy 0 / move 0 / exclude 0 / reverted 0</span>
+              <button id="exportDraftBtn" type="button" class="ghost-button">导出草稿 CSV</button>
+              <button id="exportAuditBtn" type="button" class="ghost-button">导出 audit CSV</button>
+              <button id="resetDraftBtn" type="button" class="ghost-button danger-button">清空测试草稿</button>
+              <button id="collapseBtn" type="button" class="ghost-button">收起</button>
+              <button id="expandBtn" type="button" class="ghost-button">展开</button>
+            </div>
+          </div>
+          <div id="draftMessage" class="draft-message">草稿操作只写本地 SQLite overlay，不修改原始映射，不生成 approved。</div>
+          <div class="table-scroll">
+            <table class="quota-table">
+              <colgroup>
+                <col class="col-index" />
+                <col class="col-type" />
+                <col class="col-code" />
+                <col class="col-name" />
+                <col class="col-unit" />
+                <col class="col-money" />
+                <col class="col-money" />
+                <col class="col-money" />
+                <col class="col-money" />
+                <col class="col-money" />
+                <col class="col-status" />
+                <col class="col-status" />
+                <col class="col-status" />
+                <col class="col-risk" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="sticky-col">序</th>
+                  <th>类型</th>
+                  <th>编码</th>
+                  <th>名称</th>
+                  <th>单位</th>
+                  <th>人工</th>
+                  <th>材料</th>
+                  <th>机械</th>
+                  <th>管理</th>
+                  <th>基价</th>
+                  <th>映射角色</th>
+                  <th>覆盖状态</th>
+                  <th>review</th>
+                  <th>风险</th>
+                </tr>
+              </thead>
+              <tbody id="mainRows">
+                <tr><td colspan="14" class="empty-row">加载中</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div id="bottomSplitter" class="splitter splitter-horizontal" role="separator" aria-label="调整底部明细高度"></div>
+
+        <section class="bottom-panel" aria-label="省定额明细">
+          <div class="panel-head tabs-head">
+            <div>
+              <h2>定额明细</h2>
+              <span id="tabMeta">选择 A1-1-* 后显示</span>
+            </div>
+            <div class="tab-buttons" role="tablist">
+              <button class="tab-button active" data-tab="resources" type="button">工料机显示</button>
+              <button class="tab-button" data-tab="work_content" type="button">工作内容</button>
+              <button class="tab-button" data-tab="quantity_rule" type="button">工程量规则</button>
+              <button class="tab-button" data-tab="reconciliation" type="button">PDF/XLSX 对账</button>
+              <button class="tab-button" data-tab="issues" type="button">Issues</button>
+            </div>
+          </div>
+          <div id="tabContent" class="tab-content">请选择 A1-1-* 省定额候选。</div>
+        </section>
+      </section>
+
+      <div id="rightSplitter" class="splitter splitter-vertical" role="separator" aria-label="调整右侧详情宽度"></div>
+
+      <aside class="detail-panel" aria-label="当前详情">
+        <div class="panel-head">
+          <div>
+            <h2>当前详情</h2>
+            <span>PDF / coverage / risk 摘要</span>
+          </div>
+        </div>
+        <div class="detail-scroll">
+          <section>
+            <h3>选中对象</h3>
+            <div id="selectedDetails" class="detail-grid"></div>
+          </section>
+          <section>
+            <h3>PDF / 对账摘要</h3>
+            <div id="pdfDetails" class="detail-grid"></div>
+          </section>
+          <section>
+            <h3>治理边界</h3>
+            <div class="governance-list">
+              <span>只读展示</span>
+              <span>pending only</span>
+              <span>只写本地草稿 SQLite</span>
+              <span>不生成 approved</span>
+              <span>不做成本测算</span>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </main>
+
+    <div id="draftModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="draftModalTitle">
+      <section class="draft-modal">
+        <header>
+          <h2 id="draftModalTitle">调整省定额候选关系草稿</h2>
+          <button id="cancelDraftBtn" class="link-button" type="button">取消</button>
+        </header>
+        <div class="detail-grid modal-grid">
+          <div class="detail-label">省定额编码</div><div id="modalQuotaCode" class="detail-value"></div>
+          <div class="detail-label">省定额名称</div><div id="modalQuotaName" class="detail-value"></div>
+          <div class="detail-label">原清单</div><div id="modalSourceBill" class="detail-value"></div>
+          <div class="detail-label">目标清单</div><div id="modalTargetBill" class="detail-value"></div>
+          <div class="detail-label">操作备注</div>
+          <label class="modal-input-wrap">
+            <textarea id="draftReasonInput" rows="3" placeholder="例如：项目特征更接近目标清单，需成本部复核。"></textarea>
+          </label>
+        </div>
+        <p class="modal-warning">本操作只生成草稿关系，不修改国家清单、省级定额、原始映射，不生成 approved。</p>
+        <footer class="modal-actions">
+          <button id="confirmCopyBtn" class="primary-button" type="button">复制为候选关系 Copy</button>
+          <button id="confirmMoveBtn" class="ghost-button" type="button">移动为候选关系 Move</button>
+          <button id="confirmExcludeBtn" class="ghost-button danger-button" type="button">仅从当前清单排除 Exclude</button>
+          <button id="cancelDraftBtn2" class="ghost-button" type="button">取消</button>
+        </footer>
+      </section>
+    </div>
+
+    <script src="/static/quota_a111_app.js"></script>
+  </body>
+</html>

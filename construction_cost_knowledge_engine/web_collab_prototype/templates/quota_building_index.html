@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>国标清单－省定额明细展示工作台 V0.1</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/static/quota_building_style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-block">
+      <h1>国标清单－省定额明细展示工作台 V0.1</h1>
+      <span>GB/T 50854-2024 / 广东省房屋建筑与装饰工程综合定额2018 / pending only</span>
+    </div>
+    <nav class="top-actions" aria-label="工作台入口">
+      <a href="/" class="ghost-button">企业定额</a>
+      <a href="/bid" class="ghost-button">招标清单</a>
+      <a href="/quota-a111" class="ghost-button">A1.1 明细</a>
+      <a href="/quota-building" class="primary-button">房建全册</a>
+      <a href="/quota-building-legacy" class="ghost-button">旧版总览</a>
+      <button id="resetLayoutBtn" class="ghost-button layout-reset" type="button" title="恢复默认布局"><span aria-hidden="true">↺</span> 默认布局</button>
+      <span id="summaryPill" class="status-pill muted">载入中</span>
+      <span id="draftStatsPill" class="status-pill muted">Draft 0 / Audit 0</span>
+    </nav>
+  </header>
+
+  <main id="quotaWorkspace" class="quota-workspace">
+    <aside class="tree-panel" aria-label="GB/T 国标清单树">
+      <div class="panel-head">
+        <div><h2>GB/T 国标清单树</h2><span id="treeMeta">0 / 472 bill</span></div>
+      </div>
+      <div class="tree-tools">
+        <label class="search-box"><span>检索</span><input id="treeSearchInput" type="search" placeholder="bill / quota / resource" /></label>
+        <select id="treeFilter" aria-label="审核筛选">
+          <option value="all">全部</option><option value="has_candidate">有候选</option><option value="zero_candidate">无候选</option>
+          <option value="high_risk">高风险</option><option value="has_issue">有 Issue</option><option value="manual_review">待人工核验</option>
+          <option value="reviewed_candidate">已查看</option><option value="needs_followup">needs_followup</option><option value="reviewed_mismatch">reviewed_mismatch</option>
+        </select>
+        <select id="priorityFilter" aria-label="优先级筛选"><option value="all">P0/P1/P2</option><option value="P0">P0</option><option value="P1">P1</option><option value="P2">P2</option></select>
+      </div>
+      <div class="badge-legend" aria-label="动态数量图例">
+        <span class="count original" title="original">O</span><span class="count copy" title="copy">C</span>
+        <span class="count move-in" title="move in">I</span><span class="count move-out" title="move out">M</span>
+        <span class="count exclude" title="exclude">X</span><span class="count effective" title="effective">E</span>
+        <span class="count manual" title="manual review">R</span>
+      </div>
+      <div id="searchResults" class="search-results"></div>
+      <div id="treeRoot" class="tree-root"></div>
+    </aside>
+
+    <div id="leftSplitter" class="splitter splitter-vertical" role="separator" aria-label="调节国标清单树宽度" aria-orientation="vertical" tabindex="0"></div>
+
+    <section class="center-shell">
+      <section class="main-panel" aria-label="国标清单到省定额候选">
+        <div class="panel-head main-head">
+          <div><h2 id="mainTitle">国标清单 → 省定额候选</h2><span id="mainMeta">请选择左侧清单</span></div>
+          <div class="toolbar">
+            <span id="priorityPill" class="status-pill muted">Priority —</span>
+            <label>Review <select id="reviewSelect" disabled><option value="not_reviewed">not_reviewed</option><option value="reviewed_candidate">reviewed_candidate</option><option value="needs_followup">needs_followup</option><option value="reviewed_mismatch">reviewed_mismatch</option></select></label>
+            <a id="exportCurrentBtn" class="ghost-button disabled" href="#">导出当前</a>
+            <a class="ghost-button" href="/api/quota-building/export/drafts">导出 Draft</a>
+            <a class="ghost-button" href="/api/quota-building/export/audit">导出 Audit</a>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="quota-table">
+            <colgroup><col class="c-index"/><col class="c-type"/><col class="c-code"/><col class="c-name"/><col class="c-unit"/><col class="c-money" span="5"/><col class="c-role"/><col class="c-status" span="3"/><col class="c-actions"/></colgroup>
+            <thead><tr><th>序号</th><th>类型/PDF</th><th>编码</th><th>名称 / 项目特征</th><th>单位</th><th>人工</th><th>材料</th><th>机具</th><th>管理</th><th>基价</th><th>映射角色</th><th>覆盖状态</th><th>Review</th><th>风险</th><th>操作</th></tr></thead>
+            <tbody id="mainRows"><tr><td colspan="15" class="empty-row">请选择左侧国标清单</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="horizontalSplitter" class="splitter splitter-horizontal" role="separator" aria-label="调节主表和标签区高度" aria-orientation="horizontal" tabindex="0"></div>
+
+      <section class="bottom-panel" aria-label="省定额证据与明细">
+        <div class="tabs-head">
+          <div class="tab-buttons" role="tablist">
+            <button class="tab-button active" data-tab="resources" type="button">工料机显示</button>
+            <button class="tab-button" data-tab="work" type="button">工作内容</button>
+            <button class="tab-button" data-tab="rules" type="button">工程量规则</button>
+            <button class="tab-button" data-tab="province-pdf" type="button">省定额 PDF 原页</button>
+            <button class="tab-button" data-tab="price" type="button">费用构成</button>
+            <button class="tab-button" data-tab="conversions" type="button">换算规则</button>
+            <button class="tab-button" data-tab="notes" type="button">注释</button>
+            <button class="tab-button" data-tab="authority" type="button">国家标准 PDF</button>
+            <button class="tab-button" data-tab="mapping" type="button">Mapping 解释</button>
+            <button class="tab-button" data-tab="issues" type="button">Issues</button>
+            <button class="tab-button" data-tab="v1v2" type="button">V1/V2 差异</button>
+            <button class="tab-button" data-tab="audit" type="button">Audit</button>
+          </div>
+          <span id="tabMeta">选择省定额候选后自动加载</span>
+        </div>
+        <div id="tabContent" class="tab-content"><div class="empty-row">请选择省定额候选</div></div>
+      </section>
+    </section>
+
+    <div id="rightSplitter" class="splitter splitter-vertical" role="separator" aria-label="调节当前详情宽度" aria-orientation="vertical" tabindex="0"></div>
+
+    <aside class="detail-panel" aria-label="当前业务详情">
+      <div class="panel-head"><div><h2>当前详情</h2><span id="detailMeta">业务字段</span></div></div>
+      <div class="detail-scroll">
+        <section><h3>国标清单</h3><div id="billDetails" class="detail-grid"></div></section>
+        <section><h3>省定额</h3><div id="quotaDetails" class="detail-grid"></div></section>
+        <section><h3>Mapping</h3><div id="mappingDetails" class="detail-grid"></div></section>
+        <details class="technical-details"><summary>技术信息</summary><div id="technicalDetails" class="detail-grid"></div></details>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="draftDialog" class="draft-dialog">
+    <form method="dialog">
+      <header><h2 id="draftDialogTitle">Draft 操作</h2><button value="cancel" title="关闭">×</button></header>
+      <div class="modal-grid"><span>来源清单</span><strong id="dialogSource"></strong><span>省定额</span><strong id="dialogQuota"></strong></div>
+      <label id="targetWrap">目标清单<select id="targetBill"></select></label>
+      <label>操作说明<textarea id="draftReason" rows="3" placeholder="人工判断依据"></textarea></label>
+      <footer><button value="cancel">取消</button><button id="confirmDraftBtn" value="default" class="primary-button">写入 Draft</button></footer>
+    </form>
+  </dialog>
+
+  <script src="/static/quota_building_app.js"></script>
+</body>
+</html>

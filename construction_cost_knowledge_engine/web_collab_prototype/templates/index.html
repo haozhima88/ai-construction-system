@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>企业定额协同审核工作台原型</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>企业定额协同审核工作台原型</h1>
+        <p>清单-定额候选映射浏览、企业候选价对比、人工草稿价试填</p>
+      </div>
+      <div class="top-actions">
+        <a href="/bid" class="ghost-button">招标清单匹配</a>
+        <button id="exportDraftBtn" class="ghost-button">导出草稿快照</button>
+        <button id="exportAuditBtn" class="ghost-button">导出 audit 快照</button>
+        <button id="retrySaveBtn" class="ghost-button hidden">重试保存</button>
+        <span id="globalSaveState" class="status-pill muted">未编辑</span>
+        <span class="status-pill">仅原型</span>
+      </div>
+    </header>
+
+    <main id="workspace" class="workspace">
+      <aside class="tree-panel" aria-label="清单树">
+        <div class="panel-head">
+          <div>
+            <h2>清单目录</h2>
+            <span id="treeCount">加载中</span>
+          </div>
+        </div>
+        <label class="search-box">
+          <span>搜索</span>
+          <input id="searchInput" type="search" placeholder="清单编码、名称、章节或定额编码" />
+        </label>
+        <div id="treeRoot" class="tree-root"></div>
+      </aside>
+
+      <div id="leftSplitter" class="splitter" role="separator" aria-label="调整清单目录宽度"></div>
+
+      <section class="grid-panel" aria-label="候选定额表">
+        <div class="panel-head">
+          <div>
+            <h2 id="billTitle">请选择清单项</h2>
+            <span id="billMeta">附录 / 章节 / 候选数量</span>
+          </div>
+          <div id="saveStatus" class="save-status"></div>
+        </div>
+        <div class="table-scroll">
+          <table class="quota-table">
+            <thead>
+              <tr>
+                <th class="sticky-col code-col">定额编码</th>
+                <th class="sticky-col name-col second">定额名称</th>
+                <th>单位</th>
+                <th>省人工费</th>
+                <th>省材料费</th>
+                <th>省机具费</th>
+                <th>省管理费</th>
+                <th>省合计</th>
+                <th>企人工费</th>
+                <th>企材料费</th>
+                <th>企机具费</th>
+                <th>企管理费</th>
+                <th>企合计</th>
+                <th>差异率</th>
+                <th>企业价状态</th>
+                <th>版本/保存</th>
+                <th>治理角色</th>
+                <th>风险标记</th>
+                <th class="actions-col">操作</th>
+              </tr>
+            </thead>
+            <tbody id="quotaRows">
+              <tr>
+                <td colspan="19" class="empty-row">请从左侧选择清单项</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="rightSplitter" class="splitter" role="separator" aria-label="调整详情宽度"></div>
+
+      <aside class="detail-panel" aria-label="详情">
+        <div class="panel-head">
+          <div>
+            <h2>详情</h2>
+            <span id="detailHint">清单与定额信息</span>
+          </div>
+        </div>
+        <div class="detail-scroll">
+          <section>
+            <h3>清单信息</h3>
+            <div id="billDetails" class="detail-grid"></div>
+          </section>
+          <section>
+            <h3>定额信息</h3>
+            <div id="quotaDetails" class="detail-grid"></div>
+          </section>
+        </div>
+      </aside>
+    </main>
+
+    <dialog id="draftDialog" class="draft-dialog">
+      <form method="dialog" id="draftForm">
+        <div class="dialog-head">
+          <div>
+            <h2>编辑企业价草稿</h2>
+            <p id="draftContext">清单 / 定额</p>
+          </div>
+          <button type="button" id="closeDialogBtn" class="icon-button" aria-label="关闭">×</button>
+        </div>
+        <div class="draft-state-bar">
+          <span id="dialogSaveState">未编辑</span>
+          <span id="dialogVersion">版本 -</span>
+          <span id="dialogLastSaved">最后保存 -</span>
+          <span id="dialogCacheState">本地缓存 -</span>
+        </div>
+        <div class="form-grid">
+          <label>
+            <span>企业人工费</span>
+            <input id="draftLabor" type="number" step="0.01" />
+          </label>
+          <label>
+            <span>企业材料费</span>
+            <input id="draftMaterial" type="number" step="0.01" />
+          </label>
+          <label>
+            <span>企业机具费</span>
+            <input id="draftMachine" type="number" step="0.01" />
+          </label>
+          <label>
+            <span>企业管理费</span>
+            <input id="draftManagement" type="number" step="0.01" />
+          </label>
+          <label>
+            <span>企业合计</span>
+            <input id="draftTotal" type="number" step="0.01" />
+          </label>
+          <label class="checkbox-line">
+            <input id="manualOverride" type="checkbox" />
+            <span>人工覆盖合计</span>
+          </label>
+          <label class="wide">
+            <span>备注</span>
+            <textarea id="draftComment" rows="3"></textarea>
+          </label>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" id="useProvinceInDialogBtn" class="ghost-button">采用省定额价</button>
+          <button type="button" id="saveDraftBtn" class="primary-button">保存草稿</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

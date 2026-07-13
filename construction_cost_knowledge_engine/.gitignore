@@ -12,5 +12,10 @@ data/private/*
 *.sqlite3
 *.csv
 
+# Governance artifacts are source-controlled, even though generated CSV data is not.
+!docs/recovery/*.md
+!docs/reference_extraction/*.md
+!docs/reference_extraction/*.csv
+
 # Local generated outputs
 data/private/converted/
