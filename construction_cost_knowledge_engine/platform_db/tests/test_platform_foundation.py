@@ -24,11 +24,11 @@ from platform_db.services.workspace import optimistic_rename_workspace
 
 def test_01_migration_current_equals_head(engine):
     with engine.connect() as connection:
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0003_postgres_review_cutover"
+        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0007_quota_spreadsheet_batch"
 
 
 def test_02_physical_entity_count(engine):
-    assert len(inspect(engine).get_table_names()) == 45  # 44 physical entities plus alembic_version
+    assert len(inspect(engine).get_table_names()) == 51  # 50 physical entities plus alembic_version
 
 
 def test_03_required_constraints_and_triggers(engine):

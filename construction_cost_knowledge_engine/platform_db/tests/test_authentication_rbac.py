@@ -153,7 +153,10 @@ def _csrf(response) -> dict[str, str]:
 def test_auth_01_authentication_schema_is_migrated(engine):
     with engine.connect() as connection:
         assert connection.scalar(text("SELECT version_num FROM alembic_version")) in {
-            "0002_authentication_session_rbac", "0003_postgres_review_cutover",
+            "0002_authentication_session_rbac", "0003_postgres_review_cutover", "0004_enterprise_price_a111_pilot",
+            "0005_price_fallback_a111",
+            "0006_component_editing_mvp",
+            "0007_quota_spreadsheet_batch",
         }
     assert {"app_session", "app_login_attempt", "app_password_history", "app_permission", "app_role_permission", "app_security_event"} <= set(inspect(engine).get_table_names())
 

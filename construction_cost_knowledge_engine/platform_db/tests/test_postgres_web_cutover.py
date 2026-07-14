@@ -77,7 +77,7 @@ def pg_web(auth_harness):
 
 
 def test_pg_01_migration_is_cutover_head(pg_web):
-    assert pg_web["h"].session.scalar(text("SELECT version_num FROM alembic_version")) == "0003_postgres_review_cutover"
+    assert pg_web["h"].session.scalar(text("SELECT version_num FROM alembic_version")) == "0007_quota_spreadsheet_batch"
 
 
 def test_pg_02_anonymous_postgres_page_redirects(pg_web):

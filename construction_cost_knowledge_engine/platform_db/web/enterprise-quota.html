@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>A1.1 企业定额试点</title>
+  <link rel="stylesheet" href="/platform-static/platform.css">
+  <link rel="stylesheet" href="/platform-static/enterprise-quota.css">
+</head>
+<body>
+  <header class="eq-header">
+    <div>
+      <p class="eq-eyebrow">ENTERPRISE QUOTA · A1.1 PILOT</p>
+      <h1>企业定额与资源价格工作台</h1>
+    </div>
+    <div class="eq-header-actions">
+      <span id="sourceStatus" class="eq-status eq-warning">省定额回填 · 待人工核价</span>
+      <a href="/quota-building">省定额审核台</a>
+      <a href="/platform-account">账户</a>
+    </div>
+  </header>
+
+  <section id="metrics" class="eq-metrics" aria-label="试点数据摘要"></section>
+
+  <section class="eq-price-toolbar" aria-label="成本部价格核定筛选">
+    <strong>成本部价格核定</strong>
+    <label>筛选
+      <select id="priceFilter">
+        <option value="all">全部</option>
+        <option value="provincial_fallback">省定额回填</option>
+        <option value="pending_manual_pricing">待人工核价</option>
+        <option value="manual_priced">已人工核价</option>
+        <option value="accepted_fallback">接受省定额</option>
+        <option value="reference_price_missing">省定额价缺失</option>
+        <option value="internal_observation_large">内部观察差异较大</option>
+        <option value="manual_adjustment_large">人工调整差异较大</option>
+        <option value="ready_for_review">可提交审核</option>
+      </select>
+    </label>
+    <label>差异阈值 % <input id="priceThreshold" type="number" value="20" min="0" step="1"></label>
+    <button id="priceFilterButton" type="button">应用筛选</button>
+    <span id="priceCoverage">计算覆盖 — · 企业确认 —</span>
+  </section>
+
+  <main class="eq-workbench">
+    <aside class="eq-left">
+      <label class="eq-search">A1.1 企业定额树
+        <input id="quotaSearch" type="search" placeholder="编码或名称">
+      </label>
+      <div id="quotaTree" class="eq-tree" role="listbox"></div>
+    </aside>
+
+    <section class="eq-center">
+      <div class="eq-quota-head">
+        <div>
+          <p id="quotaCode" class="eq-eyebrow">—</p>
+          <input id="quotaName" class="eq-title-input" aria-label="企业定额名称" disabled>
+          <div class="eq-inline-fields">
+            <label>单位 <input id="quotaUnit" disabled></label>
+            <span id="versionBadge" class="eq-status">—</span>
+          </div>
+        </div>
+        <div class="eq-actions">
+          <button id="editButton" type="button">编辑 Draft</button>
+          <button id="submitButton" type="button" disabled>提交审核</button>
+        </div>
+      </div>
+
+      <div id="editToolbar" class="eq-edit-toolbar" hidden>
+        <strong>Draft 编辑模式</strong>
+        <button id="saveButton" type="button">保存修改</button>
+        <button id="undoButton" type="button">撤销修改</button>
+        <button id="changesButton" type="button">查看变更（<span id="changeCount">0</span>）</button>
+        <button id="saveNewButton" type="button">另存为新版本</button>
+        <button id="discardAllButton" type="button">撤销全部</button>
+        <button id="exitEditButton" type="button">退出编辑</button>
+        <span id="unsavedCount" class="eq-unsaved-count" aria-live="polite">未保存 0 项</span>
+      </div>
+
+      <nav id="tabs" class="eq-tabs" aria-label="企业定额详情标签">
+        <button data-tab="composition" class="active">定额组成</button>
+        <button data-tab="prices">价格对比</button>
+        <button data-tab="manualPricing">人工核价</button>
+        <button data-tab="summary">费用汇总</button>
+        <button data-tab="work">工作内容</button>
+        <button data-tab="quantity">工程量规则</button>
+        <button data-tab="conversion">企业换算规则</button>
+        <button data-tab="changes">变更记录</button>
+        <button data-tab="pdf">省定额 PDF</button>
+        <button data-tab="audit">审核记录</button>
+        <button data-tab="history">版本历史</button>
+      </nav>
+      <div id="tabContent" class="eq-tab-content"></div>
+    </section>
+
+    <aside class="eq-right">
+      <section>
+        <h2>省定额来源</h2>
+        <dl id="referenceMeta"></dl>
+      </section>
+      <section>
+        <h2>企业版本</h2>
+        <dl id="versionMeta"></dl>
+      </section>
+      <section>
+        <h2>审核信息</h2>
+        <p id="reviewHint">省定额回填不是企业确认价；本轮禁止正式批准和发布。</p>
+      </section>
+    </aside>
+  </main>
+
+  <div id="drawerBackdrop" class="eq-overlay" hidden></div>
+  <aside id="resourceDrawer" class="eq-drawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <header><div><p class="eq-eyebrow">DRAFT BUFFER</p><h2 id="drawerTitle">资源操作</h2></div><button id="drawerCloseButton" type="button" aria-label="关闭侧边抽屉">×</button></header>
+    <div id="drawerBody" class="eq-drawer-body"></div>
+    <footer id="drawerActions" class="eq-drawer-actions"></footer>
+  </aside>
+
+  <div id="modalBackdrop" class="eq-overlay" hidden></div>
+  <section id="businessModal" class="eq-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+    <header><div><p class="eq-eyebrow">CONTROLLED ACTION</p><h2 id="modalTitle">业务操作</h2></div><button id="modalCloseButton" type="button" aria-label="关闭">×</button></header>
+    <div id="modalBody" class="eq-modal-body"></div>
+    <footer id="modalActions" class="eq-modal-actions"></footer>
+  </section>
+
+  <div id="toast" class="eq-toast" role="status" aria-live="polite"></div>
+  <script src="/platform-static/enterprise-quota.js" defer></script>
+</body>
+</html>

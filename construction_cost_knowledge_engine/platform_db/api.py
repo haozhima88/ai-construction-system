@@ -16,7 +16,7 @@ from platform_db.config import get_settings
 from platform_db.dependencies import SessionFactory, get_db_session, require_permission
 from platform_db.models import MappingCandidateEdge, ReferenceBillItem, ReferenceQuotaItem, ReferenceQuotaResource
 from platform_db.repositories import PlatformReadRepository
-from platform_db.routers import admin_router, auth_router, review_router, sqlite_fallback_router
+from platform_db.routers import admin_router, auth_router, enterprise_quota_router, review_router, sqlite_fallback_router
 from platform_db.services.authentication import AuthContext, load_auth_context
 from platform_db.services.security_catalog import bootstrap_initial_administrator, seed_security_catalog
 
@@ -42,6 +42,7 @@ app = FastAPI(
 )
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(enterprise_quota_router)
 app.include_router(review_router)
 app.include_router(sqlite_fallback_router)
 app.mount("/platform-static", StaticFiles(directory=STATIC_ROOT), name="platform-static")
@@ -68,7 +69,7 @@ async def security_headers(request: Request, call_next):
         f"frame-ancestors {frame_ancestors}; form-action 'self'"
     )
     response.headers["Cache-Control"] = "no-store" if request.url.path.startswith(
-        ("/api/v1/auth", "/api/v1/admin", "/api/v1/review")
+        ("/api/v1/auth", "/api/v1/admin", "/api/v1/review", "/api/v1/enterprise-quota")
     ) else "no-cache"
     return response
 
@@ -270,6 +271,17 @@ def quota_building_pg(request: Request, db: Session = Depends(get_db_session)):
     if isinstance(context, RedirectResponse):
         return context
     return _review_page("/api/v1/review", "postgres", "PostgreSQL RC1")
+
+
+@app.get("/enterprise-quota", include_in_schema=False)
+@app.get("/enterprise-quota/a111-pilot", include_in_schema=False)
+def enterprise_quota_page(request: Request, db: Session = Depends(get_db_session)):
+    context = _protected_page_context(request, db)
+    if isinstance(context, RedirectResponse):
+        return context
+    if "enterprise_quota.read" not in context.permissions:
+        raise HTTPException(403, "Enterprise Quota read permission required")
+    return _page("enterprise-quota.html")
 
 
 @app.get("/quota-building", include_in_schema=False)
