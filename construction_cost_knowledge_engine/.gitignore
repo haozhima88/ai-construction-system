@@ -1,16 +1,66 @@
-__pycache__/
-*.pyc
-.pytest_cache/
-.venv/
-venv/
+# ==================================================
+# Private source data and generated run artifacts
+# Keep the directory placeholder only.
+# ==================================================
 
-# Private company cost data and derived real-data artifacts
-data/private/*
-!data/private/.gitkeep
-*.db
-*.sqlite
-*.sqlite3
-*.csv
+/data/private/*
+!/data/private/.gitkeep
 
-# Local generated outputs
-data/private/converted/
+
+# ==================================================
+# Local runtime directories
+# ==================================================
+
+/logs/
+/backups/
+/exports/local/
+/tmp/
+/runtime/
+
+
+# ==================================================
+# SQLite runtime databases and sidecar files
+# Scope these rules to known runtime locations only.
+# ==================================================
+
+/web_collab_prototype/data/*.db
+/web_collab_prototype/data/*.sqlite
+/web_collab_prototype/data/*.sqlite3
+/web_collab_prototype/data/*.db-journal
+/web_collab_prototype/data/*.sqlite-journal
+/web_collab_prototype/data/*.sqlite-wal
+/web_collab_prototype/data/*.sqlite-shm
+/web_collab_prototype/data/*.sqlite3-journal
+/web_collab_prototype/data/*.sqlite3-wal
+/web_collab_prototype/data/*.sqlite3-shm
+
+/platform_db/**/*.db
+/platform_db/**/*.sqlite
+/platform_db/**/*.sqlite3
+/platform_db/**/*.db-journal
+/platform_db/**/*.sqlite-journal
+/platform_db/**/*.sqlite-wal
+/platform_db/**/*.sqlite-shm
+/platform_db/**/*.sqlite3-journal
+/platform_db/**/*.sqlite3-wal
+/platform_db/**/*.sqlite3-shm
+
+
+# ==================================================
+# PostgreSQL bind-mounted data
+# Named Docker volumes do not need Git ignore rules.
+# ==================================================
+
+/postgres_data/
+/docker-data/
+/.postgres-data/
+/data/postgres/
+
+
+# ==================================================
+# Local exports and release scratch space
+# Do not ignore source-controlled manifests or docs.
+# ==================================================
+
+/exports/private/
+/releases/local/

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>招标清单匹配工作台</title>
+    <link rel="stylesheet" href="/static/bid_style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="title-block">
+        <h1>招标清单匹配工作台</h1>
+        <span>GB/T 50854 标准树 · 只读预览 · 不生成 approved</span>
+      </div>
+      <nav class="top-actions" aria-label="工作台入口">
+        <a href="/" class="ghost-button">企业定额审核</a>
+        <a href="/bid" class="primary-button">招标清单匹配</a>
+        <span id="summaryPill" class="status-pill muted">加载中</span>
+      </nav>
+    </header>
+
+    <main id="bidWorkspace" class="bid-workspace">
+      <aside class="tree-panel" aria-label="GB/T 国标清单标准树">
+        <div class="panel-head compact">
+          <div>
+            <h2>GB/T 国标清单标准树</h2>
+            <span id="treeCount">加载中</span>
+          </div>
+        </div>
+        <label class="search-box">
+          <span>检索</span>
+          <input id="treeSearchInput" type="search" placeholder="国标编码、名称、章节" />
+        </label>
+        <div id="treeRoot" class="tree-root"></div>
+
+        <section class="source-filter-panel" aria-label="投标来源筛选器">
+          <div class="filter-title">
+            <strong>投标来源筛选器</strong>
+            <span id="sourceFilterCount">0 项</span>
+          </div>
+          <label>
+            <span>文件</span>
+            <select id="sourceFileFilter">
+              <option value="">全部文件</option>
+            </select>
+          </label>
+          <label>
+            <span>分部</span>
+            <select id="sourceSectionFilter">
+              <option value="">全部分部</option>
+            </select>
+          </label>
+          <label>
+            <span>清单</span>
+            <input id="itemSearchInput" type="search" placeholder="投标编码、名称、特征" />
+          </label>
+        </section>
+      </aside>
+
+      <div id="leftSplitter" class="splitter splitter-vertical" role="separator" aria-label="调整国标树宽度"></div>
+
+      <section class="center-shell">
+        <section class="main-panel" aria-label="招标清单与推荐定额组成">
+          <div class="panel-head compact">
+            <div>
+              <h2 id="listTitle">招标清单 → 推荐定额组成</h2>
+              <span id="listMeta">请选择国标清单</span>
+            </div>
+            <div class="toolbar-line">
+              <button id="collapseAllBtn" type="button" class="ghost-button">收起子行</button>
+              <button id="expandAllBtn" type="button" class="ghost-button">展开子行</button>
+            </div>
+          </div>
+          <div class="table-scroll main-scroll">
+            <table class="bid-table">
+              <colgroup>
+                <col class="col-index" />
+                <col class="col-level" />
+                <col class="col-code" />
+                <col class="col-code" />
+                <col class="col-code" />
+                <col class="col-name" />
+                <col class="col-feature" />
+                <col class="col-unit" />
+                <col class="col-qty" />
+                <col class="col-money" />
+                <col class="col-money" />
+                <col class="col-status" />
+                <col class="col-risk" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="sticky-col">序</th>
+                  <th>层级</th>
+                  <th>GB/T bill_code_9</th>
+                  <th>投标 Item Code</th>
+                  <th>定额 / 补子目编码</th>
+                  <th>名称</th>
+                  <th>项目特征摘要</th>
+                  <th>单位</th>
+                  <th>工程量</th>
+                  <th>省定额价</th>
+                  <th>企业候选价</th>
+                  <th>匹配角色</th>
+                  <th>风险说明</th>
+                </tr>
+              </thead>
+              <tbody id="compositionRows">
+                <tr>
+                  <td colspan="13" class="empty-row">加载中</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div id="bottomSplitter" class="splitter splitter-horizontal" role="separator" aria-label="调整候选池高度"></div>
+
+        <section class="candidate-panel" aria-label="候选池">
+          <div class="panel-head compact">
+            <div>
+              <h2>候选池</h2>
+              <span id="candidateMeta">选择投标清单实例后显示 Top 候选</span>
+            </div>
+            <div class="candidate-filters">
+              <button id="topCandidatesBtn" type="button" class="primary-button">Top</button>
+              <button id="allCandidatesBtn" type="button" class="ghost-button">全部候选</button>
+              <select id="groupFilter" aria-label="候选分组">
+                <option value="">全部分组</option>
+                <option value="R1_direct">R1</option>
+                <option value="R2_feature">R2</option>
+                <option value="R3_work_content">R3</option>
+                <option value="R4_method_measure">R4</option>
+                <option value="risk_or_unrecommended">R5</option>
+                <option value="supplement">补子目</option>
+              </select>
+              <select id="typeFilter" aria-label="候选类型">
+                <option value="">全部类型</option>
+                <option value="province_quota">省定额</option>
+                <option value="supplement">补子目</option>
+              </select>
+              <select id="riskFilter" aria-label="风险筛选">
+                <option value="">全部风险</option>
+                <option value="manual_review_required">需人工</option>
+                <option value="high">高风险</option>
+              </select>
+            </div>
+          </div>
+          <div class="candidate-scroll">
+            <table class="candidate-table">
+              <colgroup>
+                <col class="col-rank" />
+                <col class="col-code" />
+                <col class="col-name" />
+                <col class="col-status" />
+                <col class="col-money" />
+                <col class="col-status" />
+                <col class="col-risk" />
+                <col class="col-reason" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>序</th>
+                  <th>编码</th>
+                  <th>名称</th>
+                  <th>分组</th>
+                  <th>企业候选价</th>
+                  <th>默认</th>
+                  <th>风险</th>
+                  <th>推荐理由</th>
+                </tr>
+              </thead>
+              <tbody id="candidateRows">
+                <tr>
+                  <td colspan="8" class="empty-row small">请选择投标清单实例</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <div id="rightSplitter" class="splitter splitter-vertical" role="separator" aria-label="调整详情宽度"></div>
+
+      <aside class="detail-panel" aria-label="详情">
+        <div class="panel-head compact">
+          <div>
+            <h2>详情</h2>
+            <span id="detailHint">当前行信息与风险提示</span>
+          </div>
+        </div>
+        <div class="detail-scroll">
+          <section>
+            <h3>当前行</h3>
+            <div id="rowDetails" class="detail-grid"></div>
+          </section>
+          <section>
+            <h3>编码-名称一致性</h3>
+            <div id="consistencyDetails" class="detail-grid"></div>
+          </section>
+          <section>
+            <h3>项目特征全文</h3>
+            <div id="featureDetails" class="feature-full">—</div>
+          </section>
+        </div>
+      </aside>
+    </main>
+
+    <script src="/static/bid_app.js"></script>
+  </body>
+</html>

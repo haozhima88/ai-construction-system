@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Platform account</title><link rel="stylesheet" href="/platform-static/platform.css"></head>
+<body>
+  <header class="topbar"><div class="brand">AI Construction System</div><nav><a href="/platform-account" aria-current="page">Account</a><a href="/platform-admin/users" data-admin-link hidden>Users</a></nav><div class="spacer"></div><span class="identity" data-identity></span></header>
+  <main class="page">
+    <div class="page-heading"><div><h1>Platform account</h1><p class="muted">Identity, password, and active sessions.</p></div><div class="actions"><a class="button" href="/quota-building">进入审核工作台</a><button id="logoutButton" class="button secondary" type="button">Sign out</button></div></div>
+    <div id="accountStatus" class="status" role="status"></div>
+    <dl class="identity-grid"><div class="identity-item"><dt>Current user</dt><dd id="userName"></dd><dd class="muted" id="loginName"></dd></div><div class="identity-item"><dt>Tenant</dt><dd id="tenantName"></dd></div><div class="identity-item"><dt>Roles</dt><dd id="roles"></dd></div></dl>
+    <div class="grid mt-16">
+      <section class="panel"><h2>Change password</h2><form id="passwordForm"><div class="field"><label for="currentPassword">Current password</label><input id="currentPassword" name="current_password" type="password" autocomplete="current-password" required></div><div class="field mt-12"><label for="newPassword">New password</label><input id="newPassword" name="new_password" type="password" autocomplete="new-password" minlength="12" required></div><div class="actions"><button class="button" type="submit">Change password</button></div></form><div id="passwordStatus" class="status" role="status"></div></section>
+      <section class="panel"><h2>Session control</h2><p class="muted">Revoke every active session except this browser.</p><div class="actions"><button id="revokeOthers" class="button danger" type="button">Revoke other sessions</button></div></section>
+    </div>
+    <section class="panel flush"><div class="panel-header"><h2>Sessions</h2></div><div class="table-wrap"><table><thead><tr><th>Session</th><th>Last seen</th><th>Client IP</th><th>Status</th><th>Action</th></tr></thead><tbody id="sessionBody"></tbody></table></div></section>
+  </main><script type="module" src="/platform-static/account.js"></script>
+</body></html>

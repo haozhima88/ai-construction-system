@@ -1,48 +1,119 @@
-# Python virtual environments
-venv/
-.venv/
+# ==================================================
+# Local environment and secrets
+# ==================================================
 
-# Python cache
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Environment files
 .env
-.env.local
+.env.*
+!.env.example
 
-# Local uploads / exports
-uploads/
-exports/
+**/.env.platform.local
+**/.env.*.local
 
-# Local archive / private data
-archive/
-construction_cost_knowledge_engine/data/private/
+*.secret
+*.secrets
+*.key
+*.pem
+.pgpass
 
-# Logs
-*.log
-construction_cost_knowledge_engine/docs/*.log
 
-# Python package build artifacts
-*.egg-info/
-construction_cost_knowledge_engine/src/*.egg-info/
 
-# Local notebooks / scratch tests
-services/ipynb/
-services/tests/
+# ==================================================
+# Runtime logs
+# ==================================================
 
-# Codex / workspace temp files
-.stubs/
-.vfsmeta/
-.work-folder-info
+/construction_cost_knowledge_engine/logs/
+**/*.log
+**/*.log.*
 
-# OS / editor files
-.DS_Store
-Thumbs.db
+
+# ==================================================
+# Local backups and exports
+# ==================================================
+
+/construction_cost_knowledge_engine/backups/
+/construction_cost_knowledge_engine/exports/local/
+
+**/*.bak
+**/*.backup
+**/*.dump
+**/*.sql.gz
+
+
+# ==================================================
+# SQLite runtime databases
+# ==================================================
+
+/construction_cost_knowledge_engine/web_collab_prototype/data/*.sqlite
+/construction_cost_knowledge_engine/web_collab_prototype/data/*.sqlite3
+/construction_cost_knowledge_engine/web_collab_prototype/data/*.sqlite-*
+
+/construction_cost_knowledge_engine/platform_db/**/*.sqlite
+/construction_cost_knowledge_engine/platform_db/**/*.sqlite3
+/construction_cost_knowledge_engine/platform_db/**/*.sqlite-*
+
+
+# ==================================================
+# PostgreSQL bind-mounted data
+# Only needed when Docker data is stored inside repo
+# ==================================================
+
+/construction_cost_knowledge_engine/postgres_data/
+/construction_cost_knowledge_engine/docker-data/
+/construction_cost_knowledge_engine/.postgres-data/
+
+
+# ==================================================
+# Python runtime
+# ==================================================
+
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+
+
+# ==================================================
+# Virtual environments
+# ==================================================
+
+**/.venv/
+**/venv/
+**/env/
+
+
+# ==================================================
+# IDE / operating-system files
+# ==================================================
+
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Excel temporary files
-~$*.xlsx
-~$*.xls
-*.tmp
+# ==================================================
+# Private uploaded project documents
+# ==================================================
+
+/uploads/
+
+
+# ==================================================
+# Generated IDE / analysis stubs
+# ==================================================
+
+/.stubs/
+
+
+# ==================================================
+# Workspace metadata
+# ==================================================
+
+/.vfsmeta/
+/.work-folder-info
+
+# Local / third-party UI reference screenshots
+/construction_cost_knowledge_engine/docs/ui_reference/

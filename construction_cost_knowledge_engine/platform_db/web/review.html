@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>国标清单与省定额审核工作台</title>
+  <link rel="stylesheet" href="/platform-static/review.css">
+</head>
+<body data-api-base="{{API_BASE}}" data-mode="{{MODE}}">
+  <header class="topbar">
+    <div class="product-title">
+      <strong>国标清单与省定额审核工作台</strong>
+      <span>GB/T 50854-2024 · 广东省综合定额 2018 · Mapping Overlay</span>
+    </div>
+    <span id="backendBadge" class="backend-badge">{{MODE_LABEL}}</span>
+    <span id="summaryText" class="summary-text">正在连接数据源</span>
+    <label class="workspace-control">布局
+      <select id="layoutMode" aria-label="候选表布局模式">
+        <option value="auto_fit" selected>自动适配</option>
+        <option value="full_columns">完整列滚动</option>
+        <option value="compact_review">紧凑审核</option>
+      </select>
+    </label>
+    <label class="workspace-control">显示密度
+      <select id="reviewDensity" aria-label="工作台显示密度">
+        <option value="80">80%</option><option value="90">90%</option><option value="100" selected>100%</option><option value="110">110%</option><option value="125">125%</option>
+      </select>
+    </label>
+    <nav class="top-actions" aria-label="账户操作">
+      <span id="identityText">未登录</span>
+      <a href="/platform-account">账户</a>
+      <a href="/logout">退出</a>
+    </nav>
+  </header>
+
+  <main id="reviewWorkspace" class="review-workspace">
+    <aside class="tree-pane" aria-label="清单树">
+      <div class="pane-head">
+        <div><strong>国标清单</strong><span id="treeCount">0 / 0</span></div>
+        <button id="resetLayout" class="icon-command" type="button" title="恢复默认布局">↺</button>
+      </div>
+      <div class="tree-tools">
+        <label class="search-field"><span>检索</span><input id="treeSearch" type="search" placeholder="编码、名称、定额或资源"></label>
+        <select id="priorityFilter" aria-label="审核优先级">
+          <option value="all">全部优先级</option><option value="P0">P0</option><option value="P1">P1</option><option value="P2">P2</option>
+        </select>
+        <select id="reviewFilter" aria-label="审核状态">
+          <option value="all">全部状态</option><option value="not_reviewed">未审核</option><option value="reviewed_candidate">候选确认</option><option value="needs_followup">需跟进</option><option value="reviewed_mismatch">映射不符</option>
+        </select>
+      </div>
+      <div id="treeRoot" class="tree-root"><div class="empty-state">正在加载清单树</div></div>
+    </aside>
+
+    <div id="leftSplitter" class="splitter splitter-v" role="separator" aria-orientation="vertical" tabindex="0"></div>
+
+    <section class="center-pane review-center-pane">
+      <section class="mapping-panel">
+        <div class="pane-head mapping-head">
+          <div><strong id="billTitle">请选择清单</strong><span id="billMeta">候选关系与 Draft Overlay</span></div>
+          <div class="review-control">
+            <label>Review
+              <select id="reviewState" disabled>
+                <option value="not_reviewed">not_reviewed</option>
+                <option value="reviewed_candidate">reviewed_candidate</option>
+                <option value="needs_followup">needs_followup</option>
+                <option value="reviewed_mismatch">reviewed_mismatch</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div id="candidateTableContainer" class="candidate-table-container table-scroll">
+          <table class="mapping-table">
+            <colgroup>
+              <col class="col-index"><col class="col-origin"><col class="col-code"><col class="col-name">
+              <col class="col-unit"><col class="col-cost"><col class="col-cost"><col class="col-cost">
+              <col class="col-cost"><col class="col-cost"><col class="col-status"><col class="col-action">
+            </colgroup>
+            <thead><tr><th class="cell-index">#</th><th class="cell-origin">类型</th><th>定额编码</th><th>名称</th><th>单位</th><th>人工</th><th>材料</th><th>机具</th><th>管理费</th><th>基价</th><th>状态</th><th class="action-column">操作</th></tr></thead>
+            <tbody id="mappingRows"><tr><td colspan="12" class="empty-state">请选择左侧清单</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="horizontalSplitter" class="splitter splitter-h" role="separator" aria-orientation="horizontal" tabindex="0"></div>
+
+      <section class="evidence-panel">
+        <div class="tabs-bar">
+          <div id="tabButtons" class="tab-buttons" role="tablist">
+            <button data-tab="resources" class="active" type="button">工料机</button>
+            <button data-tab="cost" type="button">费用对账</button>
+            <button data-tab="work" type="button">工作内容</button>
+            <button data-tab="rules" type="button">工程量规则</button>
+            <button data-tab="conversion" type="button">换算规则</button>
+            <button data-tab="notes" type="button">注释</button>
+            <button data-tab="provincePdf" type="button">省定额 PDF</button>
+            <button data-tab="authorityPdf" type="button">国标 PDF</button>
+            <button data-tab="mapping" type="button">Mapping 解释</button>
+            <button data-tab="issues" type="button">Issues</button>
+            <button data-tab="v1v2" type="button">V1/V2 差异</button>
+            <button data-tab="audit" type="button">Audit</button>
+          </div>
+          <span id="tabMeta">请选择定额候选</span>
+        </div>
+        <div id="tabContent" class="tab-content"><div class="empty-state">请选择定额候选</div></div>
+      </section>
+    </section>
+
+    <div id="rightSplitter" class="splitter splitter-v" role="separator" aria-orientation="vertical" tabindex="0"></div>
+
+    <aside id="detailPane" class="detail-pane" aria-label="当前详情">
+      <div class="pane-head">
+        <div><strong>当前详情</strong><span id="detailMeta">业务字段</span></div>
+        <button id="toggleDetail" class="icon-command" type="button" title="折叠详情">›</button>
+      </div>
+      <div class="detail-scroll">
+        <section><h2>国标清单</h2><div id="billDetails" class="detail-grid"></div></section>
+        <section><h2>省定额</h2><div id="quotaDetails" class="detail-grid"></div></section>
+        <section><h2>Mapping</h2><div id="mappingDetails" class="detail-grid"></div></section>
+        <section><h2>来源治理</h2><div id="sourceDetails" class="detail-grid"></div></section>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="draftDialog" class="draft-dialog">
+    <form method="dialog">
+      <header><strong id="draftDialogTitle">Draft 操作</strong><button value="cancel" type="submit" title="关闭">×</button></header>
+      <div class="dialog-body">
+        <div class="dialog-summary"><span>来源</span><strong id="draftSource"></strong><span>定额</span><strong id="draftQuota"></strong></div>
+        <label id="targetBillWrap">目标清单<select id="targetBill"></select></label>
+        <label>操作说明<textarea id="operationReason" rows="3" maxlength="2000"></textarea></label>
+      </div>
+      <footer><button value="cancel" type="submit">取消</button><button id="confirmDraft" value="default" class="primary-command" type="submit">写入 PostgreSQL Draft</button></footer>
+    </form>
+  </dialog>
+
+  <script src="/platform-static/review.js"></script>
+</body>
+</html>

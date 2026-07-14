@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>房屋建筑清单与定额审核工作台</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/static/quota_building_legacy.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <strong>房屋建筑清单与定额审核工作台</strong>
+      <span>GB/T 50854-2024 · 广东省综合定额 2018 · pending review</span>
+    </div>
+    <nav aria-label="工作台导航">
+      <a href="/">企业定额</a>
+      <a href="/bid">招标清单</a>
+      <a href="/quota-a111">A1.1 明细</a>
+      <a class="active" href="/quota-building">房建全册</a>
+    </nav>
+    <div class="top-status">
+      <span id="summaryStatus">载入中</span>
+      <span id="draftStatus">Draft 0 · Audit 0</span>
+    </div>
+  </header>
+
+  <section class="filterbar" aria-label="筛选器">
+    <label>搜索 <input id="searchInput" type="search" placeholder="清单编码、名称、章节" /></label>
+    <label>附录 <select id="appendixFilter"><option value="">全部</option></select></label>
+    <label>候选 <select id="candidateFilter"><option value="">全部</option><option value="yes">有候选</option><option value="no">无候选</option></select></label>
+    <label>风险 <select id="riskFilter"><option value="">全部</option><option value="high">高风险</option><option value="manual">待人工核验</option><option value="evidence">国标证据待补</option></select></label>
+    <label>草稿 <select id="draftFilter"><option value="">全部</option><option value="copy">有 Copy</option><option value="move">有 Move</option><option value="exclude">有 Exclude</option><option value="reviewed">已人工查看</option></select></label>
+    <button id="refreshBtn" type="button" title="刷新">↻</button>
+    <a id="exportCurrent" class="command disabled" href="#">导出当前 CSV</a>
+    <a class="command" href="/api/quota-building/export/drafts">导出 Draft</a>
+    <a class="command" href="/api/quota-building/export/audit">导出 Audit</a>
+  </section>
+
+  <main class="workspace">
+    <aside class="tree-pane">
+      <div class="pane-title"><strong>GB/T 50854 清单树</strong><span id="treeCount">0 / 472</span></div>
+      <div id="tree" class="tree"></div>
+    </aside>
+
+    <section class="mapping-pane">
+      <div class="pane-title">
+        <div><strong id="billTitle">请选择清单</strong><span id="billMeta">附录 / 章节 / 单位</span></div>
+        <label>人工状态
+          <select id="reviewSelect" disabled>
+            <option value="not_reviewed">未查看</option>
+            <option value="reviewed_candidate">已查看候选</option>
+            <option value="needs_followup">需要跟进</option>
+            <option value="reviewed_mismatch">已确认不匹配</option>
+          </select>
+        </label>
+      </div>
+      <div class="notice">本页仅维护人工审核草稿。Source、Parsed Baseline、Mapping Reference 均为只读，不生成 approved。</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>序</th><th>关系</th><th>省定额编码</th><th>省定额名称</th><th>册次</th><th>页</th><th>单位</th><th>Routing</th><th>得分</th><th>风险</th><th>Review</th><th>操作</th></tr></thead>
+          <tbody id="mappingRows"><tr><td colspan="12" class="empty">请从左侧选择清单</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="detail-pane">
+      <div class="pane-title"><strong>当前详情</strong><span id="detailType">清单 / 定额</span></div>
+      <div id="detail" class="detail"><p class="empty">选择一条关系查看详情</p></div>
+    </aside>
+
+    <section class="evidence-pane">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="province-pdf">省定额 PDF 原页</button>
+        <button class="tab" data-tab="resources">工料机</button>
+        <button class="tab" data-tab="price">费用构成</button>
+        <button class="tab" data-tab="work">工作内容</button>
+        <button class="tab" data-tab="rules">工程量规则</button>
+        <button class="tab" data-tab="conversions">换算规则</button>
+        <button class="tab" data-tab="notes">注释</button>
+        <button class="tab" data-tab="authority">国家标准 PDF</button>
+        <button class="tab" data-tab="mapping">Mapping 解释</button>
+        <button class="tab" data-tab="issues">Issues</button>
+        <button class="tab" data-tab="v1v2">V1/V2 差异</button>
+        <button class="tab" data-tab="audit">Audit</button>
+      </div>
+      <div id="evidenceContent" class="evidence-content"><p class="empty">选择省定额候选后显示来源证据</p></div>
+    </section>
+  </main>
+
+  <dialog id="draftDialog">
+    <form method="dialog">
+      <header><strong id="dialogTitle">草稿操作</strong><button value="cancel" title="关闭">×</button></header>
+      <dl><dt>来源清单</dt><dd id="dialogSource"></dd><dt>省定额</dt><dd id="dialogQuota"></dd></dl>
+      <label id="targetWrap">目标清单
+        <select id="targetBill"></select>
+      </label>
+      <label>操作说明 <textarea id="draftReason" rows="3" placeholder="记录人工判断依据"></textarea></label>
+      <footer><button value="cancel">取消</button><button id="confirmDraft" value="default" class="primary">写入草稿</button></footer>
+    </form>
+  </dialog>
+
+  <script src="/static/quota_building_legacy.js"></script>
+</body>
+</html>

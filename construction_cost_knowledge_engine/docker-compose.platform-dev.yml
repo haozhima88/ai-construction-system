@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16.14
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - platform_postgres_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  platform-api:
+    build:
+      context: .
+      dockerfile: platform_db/Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      PLATFORM_TENANT_CODE: ${PLATFORM_TENANT_CODE}
+      PLATFORM_SESSION_HASH_SECRET: ${PLATFORM_SESSION_HASH_SECRET}
+      SESSION_IDLE_TIMEOUT_MINUTES: ${SESSION_IDLE_TIMEOUT_MINUTES:-30}
+      SESSION_ABSOLUTE_TIMEOUT_HOURS: ${SESSION_ABSOLUTE_TIMEOUT_HOURS:-12}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-lax}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-ai_construction_session}
+      AUTH_MAX_FAILED_ATTEMPTS: ${AUTH_MAX_FAILED_ATTEMPTS:-5}
+      AUTH_FAILURE_WINDOW_MINUTES: ${AUTH_FAILURE_WINDOW_MINUTES:-15}
+      AUTH_LOCKOUT_MINUTES: ${AUTH_LOCKOUT_MINUTES:-15}
+      PLATFORM_BOOTSTRAP_ADMIN_USERNAME: ${PLATFORM_BOOTSTRAP_ADMIN_USERNAME}
+      PLATFORM_BOOTSTRAP_ADMIN_PASSWORD: ${PLATFORM_BOOTSTRAP_ADMIN_PASSWORD}
+      PLATFORM_BOOTSTRAP_ADMIN_DISPLAY_NAME: ${PLATFORM_BOOTSTRAP_ADMIN_DISPLAY_NAME:-Platform Administrator}
+      RC1_MANIFEST_PATH: /app/rc1/building_rc1_release_manifest.csv
+      PLATFORM_PROJECT_ROOT: /app/project
+    ports:
+      - "${PLATFORM_API_PORT:-8016}:8000"
+    volumes:
+      - ./data/private/reference_extraction/source_standards:/app/project/construction_cost_knowledge_engine/data/private/reference_extraction/source_standards:ro
+      - ./data/private/reference_extraction/runs:/app/project/construction_cost_knowledge_engine/data/private/reference_extraction/runs:ro
+      - ./data/private/reference_extraction/runs/PLATFORM_FOUNDATION_AND_ENTERPRISE_QUOTA_ARCHITECTURE_LOCK_1:/app/rc1:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/platform/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  platform_postgres_dev:
+    name: construction_platform_postgres16_dev
