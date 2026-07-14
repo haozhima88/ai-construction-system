@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Platform sign in</title><link rel="stylesheet" href="/platform-static/platform.css"></head>
+<body class="login-shell">
+  <header class="topbar"><div class="brand">AI Construction System</div><div class="spacer"></div><span class="identity">Platform access</span></header>
+  <main class="login-main">
+    <section class="login-panel" aria-labelledby="loginTitle">
+      <h1 id="loginTitle">Sign in</h1><p class="muted">Use your assigned platform account.</p>
+      <form autocomplete="on">
+        <div class="field"><label for="username">Username</label><input id="username" name="username" autocomplete="username" maxlength="128" required autofocus></div>
+        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" maxlength="1024" required></div>
+        <button class="button" type="submit">Sign in</button>
+      </form>
+      <div id="loginStatus" class="status" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+  <script type="module" src="/platform-static/login.js"></script>
+</body></html>
